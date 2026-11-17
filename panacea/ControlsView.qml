@@ -30,7 +30,12 @@ Item {
     // Пустая настройка — заводской порядок. Неизвестные имена (остались от
     // прежней версии) отбрасываются, забытые дописываются в конец: раскладка
     // переживает и обновление оболочки, и правку файла руками.
-    readonly property var ccDefault: ["clock", "toggles", "sliders", "media", "power", "quick", "tray"]
+    // Android-style quick settings in the split island: clock, brightness slider,
+    // 2-column tiles, then record/battery, bottom buttons
+    readonly property bool android: view.sys && view.sys.splitMode
+    readonly property int tileR: view.android ? 26 : 14
+    readonly property var ccDefault: view.android ? ["clock", "sliders", "toggles", "media", "power", "quick", "tray"]
+                                                  : ["clock", "toggles", "sliders", "media", "power", "quick", "tray"]
     readonly property var ccOrder: {
         if (view.ccOrderOverride) return view.ccOrderOverride;
         var saved = String(view.sys.cfg.ccLayout || "").split(",").filter(x => x.length);
@@ -437,7 +442,7 @@ Item {
         // карточки схлопывались друг на друга в точке 0,0.
         implicitWidth: 140
         implicitHeight: 56
-        radius: 14
+        radius: view.tileR
         color: solid ? accent
              : on ? Qt.rgba(accent.r, accent.g, accent.b, 0.16)
                   : Qt.rgba(1, 1, 1, 0.05)
@@ -563,7 +568,7 @@ Item {
         implicitWidth: 90
         implicitHeight: 44
         Layout.fillWidth: true
-        radius: 12
+        radius: view.tileR
         color: Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
         border.width: 1
@@ -760,7 +765,7 @@ Item {
     component VolCard: Rectangle {
         implicitWidth: 190
         implicitHeight: 56
-        radius: 14
+        radius: view.tileR
         color: Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
         border.width: 1
@@ -850,7 +855,7 @@ Item {
 
         implicitWidth: 190
         implicitHeight: 56
-        radius: 14
+        radius: view.tileR
         color: Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
         border.width: 1
@@ -1068,7 +1073,7 @@ Item {
     component RecordCard: Rectangle {
         id: recCard
 
-        radius: 14
+        radius: view.tileR
         color: recBodyMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.recActive
                       ? Qt.rgba(view.sys.colCrit.r, view.sys.colCrit.g,
@@ -1256,7 +1261,7 @@ Item {
     }
 
     component LoadCard: Rectangle {
-        radius: 14
+        radius: view.tileR
         color: Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
         border.width: 1
@@ -1414,12 +1419,14 @@ Item {
             // ------------------------------- Wi-Fi · Bluetooth · звук в строчку
             // Три самых частых переключателя занимали три полосы подряд.
             // Теперь это одна строка, а громкость правится прямо в плитке.
-            RowLayout {
+            GridLayout {
                 objectName: "cc-toggles"
                 Layout.row: view.ccRow("toggles")
                 Layout.column: 0
                 Layout.fillWidth: true
-                spacing: 8
+                columns: view.android ? 2 : 3
+                columnSpacing: 8
+                rowSpacing: 8
 
                 // Wi-Fi и Bluetooth делят строку поровну. Раньше рядом с ними
                 // стоял ещё и звук, и три плитки в ряд ужимали каждую до
@@ -1433,7 +1440,7 @@ Item {
                 MiniTile {
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
-                    Layout.preferredHeight: 56
+                    Layout.preferredHeight: view.android ? 72 : 56
                     // Кабель рисуется фигурой, Wi-Fi остаётся знаком шрифта:
                     // антенна в Nerd Font сделана хорошо, а дерева сети без
                     // перекладины во всю ширину там просто нет.
@@ -1473,7 +1480,7 @@ Item {
                 MiniTile {
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
-                    Layout.preferredHeight: 56
+                    Layout.preferredHeight: view.android ? 72 : 56
                     icon: view.sys.btOn ? "󰂯" : "󰂲"
                     // подключено устройство — его имя вместо «Bluetooth»
                     label: (view.sys.btOn && view.sys.btConnectedName.length)
@@ -1507,7 +1514,8 @@ Item {
                     visible: view.sys.cfg.featAudio
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
-                    Layout.preferredHeight: 56
+                    Layout.columnSpan: view.android ? 2 : 1
+                    Layout.preferredHeight: view.android ? 64 : 56
                 }
             }
 
@@ -1537,7 +1545,7 @@ Item {
                         required property var modelData
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
-                        Layout.preferredHeight: 56
+                        Layout.preferredHeight: view.android ? 64 : 56
                         bid:  modelData.id
                         bpct: modelData.pct
                         bname: (view.sys.brightList || []).length > 1 ? modelData.name : ""

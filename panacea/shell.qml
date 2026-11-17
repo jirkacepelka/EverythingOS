@@ -1742,9 +1742,12 @@ PanelWindow {
     // vpravo, středové (hudba, chat, kalendář) uprostřed
     // Split island: idle = pills visible on a transparent capsule; otherwise the capsule
     // (popup, toast, OSD) covers only the pill it replaces
-    readonly property bool splitIdle: splitMode && (!expanded || keepVis) && !btToastActive && !wifiToastActive
-                                      && !acToastActive && !recPickActive && !voxActive && !osdActive && !toastActive
-    readonly property bool rightCover: splitMode && !splitIdle && expanded && splitRight
+    readonly property bool toastish: btToastActive || wifiToastActive || acToastActive || recPickActive
+                                     || voxActive || osdActive || toastActive
+    readonly property bool splitIdleRaw: splitMode && (!expanded || keepVis) && !toastish
+    // idle only once the capsule has finished collapsing (it keeps its popup geometry meanwhile)
+    readonly property bool splitIdle: splitIdleRaw && !capsule.collapsing
+    readonly property bool rightCover: splitMode && !splitIdle && !toastish && (expanded ? splitRight : capsule.heldRight)
     readonly property bool midCover: splitMode && !splitIdle && !rightCover
     readonly property var rightPages: ["main", "notif", "vpn", "audio", "power", "record", "wifi", "bt"]
     readonly property bool splitRight: splitMode && rightPages.indexOf(page) >= 0
@@ -5092,7 +5095,7 @@ PanelWindow {
         anchors.right:  root.pillAtRight  ? parent.right  : undefined
         anchors.horizontalCenter: root.pillSide ? undefined : parent.horizontalCenter
         // Pilulky: pravé stránky ukotvit vpravo (okraj = společná mezera)
-        anchors.horizontalCenterOffset: (root.splitRight && root.expanded && !root.keepVis)
+        anchors.horizontalCenterOffset: ((root.splitRight && root.expanded && !root.keepVis) || (capsule.collapsing && capsule.heldRight))
                                         ? Math.round((root.width - width) / 2 - (freeGap + 1)) : 0
         Behavior on anchors.horizontalCenterOffset { enabled: !root.splitMode; NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
         anchors.verticalCenter:   root.pillSide ? parent.verticalCenter : undefined
@@ -5177,9 +5180,20 @@ PanelWindow {
                 : root.toastActive
                 ? toastCapsule.implicitHeight + 24 : root.pillH
 
+        // Split island: while a popup/toast collapses, keep its width and side so the
+        // shrinking capsule does not stretch across the whole screen
+        readonly property bool collapsing: root.splitIdleRaw && capsule.height > root.pillH + 4
+        property real heldW: 540
+        property bool heldRight: false
+        Connections {
+            target: root
+            function onExpandedChanged() { if (root.expanded) capsule.heldRight = root.splitRight; }
+            function onSplitRightChanged() { if (root.expanded) capsule.heldRight = root.splitRight; }
+        }
         width: root.settingsMode ? root.settingsW
              : (root.expanded && !root.keepVis) ? root.panelW
              : root.pillSide     ? idleThick
+             : capsule.collapsing ? capsule.heldW
                                  : idleLen
         // целевая высота — к ней анимируется height и по ней же сразу
         // рассчитывается центрирование, чтобы движение было одноэтапным
@@ -5249,7 +5263,7 @@ PanelWindow {
 
         onXChanged:      root.pillRectX = capsule.x
         onYChanged:      root.pillRectY = capsule.y
-        onWidthChanged:  root.pillRectW = capsule.width
+        onWidthChanged:  { root.pillRectW = capsule.width; if (root.expanded || root.toastish) capsule.heldW = capsule.width; }
         onHeightChanged: root.pillRectH = capsule.height
         Component.onCompleted: {
             root.pillRectX = capsule.x;      root.pillRectY = capsule.y;
