@@ -234,6 +234,7 @@ FocusScope {
                         id: winLayer
                         anchors.fill: parent
                         anchors.margins: 7
+                        z: 2   // above the card click area so window previews can be dragged
 
                     Repeater {
                         model: view.sys.overviewToplevels
