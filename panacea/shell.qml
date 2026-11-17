@@ -1754,7 +1754,9 @@ PanelWindow {
     readonly property var centerPages: ["music", "chat", "cal"]
     readonly property bool splitCenter: splitMode && centerPages.indexOf(page) >= 0
     property string lastCenter: "music"
-    readonly property bool tabbedPage: page === "main" || page === "chat" || page === "vpn" || splitCenter
+    readonly property bool tabbedPage: splitMode ? splitCenter : (page === "main" || page === "chat" || page === "vpn")
+    // Right popup (control center) is 25% narrower than the center one
+    readonly property int popupW: splitRight ? Math.round(panelW * 0.75) : panelW
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
@@ -5213,14 +5215,17 @@ PanelWindow {
                     capsule.splitAnim = false;
                     capsule.splitW = capsule.pillStartW(root.splitRight);
                     capsule.splitAnim = true;
-                    capsule.splitW = root.panelW;
+                    capsule.splitW = root.popupW;
                 } else if (!root.expanded && !root.keepVis) {
                     capsule.popupClosing = true;
                     capsule.splitAnim = true;
                     capsule.splitW = capsule.pillStartW(capsule.heldRight);
                 }
             }
-            function onSplitRightChanged() { if (root.expanded) capsule.heldRight = root.splitRight; }
+            function onSplitRightChanged() {
+                if (root.expanded) capsule.heldRight = root.splitRight;
+                if (root.expanded && root.splitMode && !root.keepVis) { capsule.splitAnim = true; capsule.splitW = root.popupW; }
+            }
         }
         width: root.settingsMode ? root.settingsW
              : (root.expanded && !root.keepVis) ? (root.splitMode ? capsule.splitW : root.panelW)
@@ -6979,7 +6984,7 @@ PanelWindow {
             // Ширина берётся у ЦЕЛЕВОЙ панели, а не у анимируемой капсулы:
             // иначе содержимое переливалось по ширине на каждом кадре
             // сворачивания и выглядело как размазанная краска.
-            width: (root.settingsMode ? root.settingsW : root.panelW) - 30
+            width: (root.settingsMode ? root.settingsW : root.popupW) - 30
             // Пока показывается карточка выбора экрана (или тост), контент
             // раскрытой панели не рисуем: при старте записи из quick settings
             // панель сворачивается, а её содержимое иначе видно ещё пару кадров
@@ -7127,7 +7132,7 @@ PanelWindow {
 
         readonly property real panelGap: root.cfg.islandGap > 0 ? root.cfg.islandGap : 10
 
-        width: (root.keepVis && !root.settingsMode && (root.expanded || opacity > 0.005)) ? root.panelW : 0
+        width: (root.keepVis && !root.settingsMode && (root.expanded || opacity > 0.005)) ? root.popupW : 0
 
         readonly property real detachedTargetH: Math.min(capsule.contentH, root.cfg.expandedH)
         height: (root.keepVis && !root.settingsMode && (root.expanded || opacity > 0.005))

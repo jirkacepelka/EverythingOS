@@ -638,13 +638,14 @@ Item {
         property string valueText: ""         // цифра справа
         property real wheelStep: 0.05
         property bool dim: false              // выключено (без звука)
+        property bool iconAtEnd: false        // icon at the end of the active fill (Android style)
 
         signal setFrac(real frac)
         signal iconClicked()
 
         implicitHeight: 22
 
-        readonly property real padL: trk.icon.length ? 22 : 0
+        readonly property real padL: (trk.icon.length && !trk.iconAtEnd) ? 22 : 0
         function fracAt(x) {
             return Math.max(0, Math.min(1, (x + trk.padL) / Math.max(1, trk.width)));
         }
@@ -684,6 +685,7 @@ Item {
             clip: true
 
             Rectangle {
+                id: trkFill
                 width: Math.max(parent.height, parent.width * trk.shown)
                 height: parent.height
                 radius: height / 2
@@ -698,12 +700,12 @@ Item {
         }
 
         Text {
-            x: 6
+            x: trk.iconAtEnd ? trkFill.width - width - Math.max(8, (trk.height - height) / 2) : 6
             anchors.verticalCenter: parent.verticalCenter
             visible: trk.icon.length > 0
             text: trk.icon
             color: view.sys.colBg
-            font { family: view.sys.fontFam; pixelSize: 15 }
+            font { family: view.sys.fontFam; pixelSize: trk.iconAtEnd ? 18 : 15 }
         }
 
         Text {
@@ -754,7 +756,8 @@ Item {
         }
 
         MouseArea {
-            width: 22
+            x: trk.iconAtEnd ? trkFill.width - 34 : 0
+            width: trk.iconAtEnd ? 34 : 22
             height: parent.height
             visible: trk.icon.length > 0
             cursorShape: Qt.PointingHandCursor
@@ -766,21 +769,22 @@ Item {
         implicitWidth: 190
         implicitHeight: 56
         radius: view.tileR
-        color: Qt.rgba(1, 1, 1, 0.05)
+        color: view.android ? "transparent" : Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
-        border.width: 1
+        border.width: view.android ? 0 : 1
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.leftMargin: 11
-            anchors.rightMargin: 11
-            anchors.topMargin: 7
+            anchors.leftMargin: view.android ? 0 : 11
+            anchors.rightMargin: view.android ? 0 : 11
+            anchors.topMargin: view.android ? 0 : 7
             // Снизу больше, чем сверху: дорожка тоньше заголовка и при равных
             // отступах садилась на кромку карточки, читаясь как её край.
-            anchors.bottomMargin: 11
+            anchors.bottomMargin: view.android ? 0 : 11
             spacing: 4
 
             RowLayout {
+                visible: !view.android
                 Layout.fillWidth: true
                 spacing: 8
                 Text {
@@ -822,7 +826,9 @@ Item {
             Track {
                 id: vol
                 Layout.fillWidth: true
-                Layout.preferredHeight: 22
+                Layout.fillHeight: view.android
+                Layout.preferredHeight: view.android ? 56 : 22
+                iconAtEnd: view.android
 
                 readonly property var a: view.sys.sinkAudio
 
@@ -833,9 +839,9 @@ Item {
                     : vol.a.volume < 0.34 ? String.fromCodePoint(0xF057F)
                     : vol.a.volume < 0.67 ? String.fromCodePoint(0xF0580)
                                           : String.fromCodePoint(0xF057E)
-                valueText: !vol.a ? "—"
+                valueText: view.android ? "" : (!vol.a ? "—"
                     : vol.a.muted ? view.sys.tr("Без звука")
-                                  : Math.round(vol.shown * 100) + "%"
+                                  : Math.round(vol.shown * 100) + "%")
                 // шаг 5%, как у мультимедийных клавиш
                 onSetFrac: f => { if (vol.a) vol.a.volume = Math.round(f * 20) / 20; }
                 onIconClicked: if (vol.a) vol.a.muted = !vol.a.muted
@@ -856,19 +862,20 @@ Item {
         implicitWidth: 190
         implicitHeight: 56
         radius: view.tileR
-        color: Qt.rgba(1, 1, 1, 0.05)
+        color: view.android ? "transparent" : Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
-        border.width: 1
+        border.width: view.android ? 0 : 1
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.leftMargin: 11
-            anchors.rightMargin: 11
-            anchors.topMargin: 7
-            anchors.bottomMargin: 8
+            anchors.leftMargin: view.android ? 0 : 11
+            anchors.rightMargin: view.android ? 0 : 11
+            anchors.topMargin: view.android ? 0 : 7
+            anchors.bottomMargin: view.android ? 0 : 8
             spacing: 5
 
             RowLayout {
+                visible: !view.android
                 Layout.fillWidth: true
                 spacing: 8
                 Text {
@@ -892,10 +899,12 @@ Item {
             Track {
                 id: brTrk
                 Layout.fillWidth: true
-                Layout.preferredHeight: 22
+                Layout.fillHeight: view.android
+                Layout.preferredHeight: view.android ? 56 : 22
+                iconAtEnd: view.android
                 pos: Math.max(0, Math.min(1, brCard.bpct / 100))
                 icon: String.fromCodePoint(0xF00DD)   // солнце
-                valueText: Math.round(brTrk.shown * 100) + "%"
+                valueText: view.android ? "" : Math.round(brTrk.shown * 100) + "%"
                 // шаг 5%, как у клавиш яркости
                 onSetFrac: f => view.sys.brightSet(brCard.bid, Math.round(f * 20) * 5)
             }
@@ -1352,16 +1361,18 @@ Item {
                 // часы: клик открывает календарь
                 Rectangle {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 40
+                    Layout.preferredHeight: view.android ? 64 : 40
                     radius: 12
                     color: clockMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
                     Behavior on color { ColorAnimation { duration: 150 } }
 
-                    RowLayout {
+                    GridLayout {
                         anchors.left: parent.left
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.leftMargin: 4
-                        spacing: 10
+                        columns: view.android ? 1 : 2
+                        rowSpacing: 2
+                        columnSpacing: 10
 
                         // Часы точками в стиле Nothing, секунды — мелким числом сбоку.
                         RowLayout {
@@ -1370,7 +1381,7 @@ Item {
                             PlainNum {
                                 Layout.alignment: Qt.AlignVCenter
                                 value: view.sys.timeText
-                                size: view.sys.dotHBig
+                                size: view.android ? view.sys.dotHBig * 0.72 : view.sys.dotHBig
                                 color: view.sys.colFg
                             }
                             PlainNum {
@@ -1383,7 +1394,7 @@ Item {
                                 // включённой настройкой «показывать секунды»
                                 // они уже стоят в timeText, и это число
                                 // повторяло их второй раз: «19:36:42 42».
-                                visible: !view.sys.cfg.clockSeconds
+                                visible: !view.sys.cfg.clockSeconds && !view.android
                                 value: view.sys.secText
                                 size: view.sys.dotHSmall
                                 color: view.sys.colMuted
@@ -1397,7 +1408,7 @@ Item {
                                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             Text {
-                                visible: view.sys.cfg.featCalendar
+                                visible: view.sys.cfg.featCalendar && !view.android
                                 text: view.sys.tr("Календарь")
                                 color: clockMa.containsMouse ? view.sys.colOn
                                                             : Qt.rgba(1, 1, 1, 0.28)
@@ -1413,6 +1424,24 @@ Item {
                         hoverEnabled: view.sys.cfg.featCalendar
                         cursorShape: Qt.PointingHandCursor
                         onClicked: view.sys.togglePage("cal")
+                    }
+                }
+
+                // Android style: settings + power at the top right, opposite the time
+                Row {
+                    visible: view.android
+                    Layout.alignment: Qt.AlignTop
+                    spacing: 8
+                    IconBtn {
+                        glyph: String.fromCodePoint(0xF0493)
+                        tip: view.sys.tr("Настройки")
+                        onAct: view.sys.togglePage("settings")
+                    }
+                    IconBtn {
+                        glyph: String.fromCodePoint(0xF0425)
+                        tip: view.sys.tr("Питание")
+                        activeColor: view.sys.colCrit
+                        onAct: view.sys.togglePage("power")
                     }
                 }
 
@@ -1517,7 +1546,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
                     Layout.columnSpan: view.android ? 2 : 1
-                    Layout.preferredHeight: view.android ? 64 : 56
+                    Layout.preferredHeight: 56
                 }
             }
 
@@ -1547,7 +1576,7 @@ Item {
                         required property var modelData
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
-                        Layout.preferredHeight: view.android ? 64 : 56
+                        Layout.preferredHeight: 56
                         bid:  modelData.id
                         bpct: modelData.pct
                         bname: (view.sys.brightList || []).length > 1 ? modelData.name : ""
@@ -2000,6 +2029,7 @@ Item {
 
             // кнопка питания: меню выключения, перезагрузки, блокировки и сна
             IconBtn {
+                visible: !view.android
                 glyph: String.fromCodePoint(0xF0425)
                 tip: view.sys.tr("Питание")
                 activeColor: view.sys.colCrit
@@ -2016,6 +2046,7 @@ Item {
             }
 
             IconBtn {
+                visible: !view.android
                 glyph: String.fromCodePoint(0xF0493)
                 tip: view.sys.tr("Настройки")
                 onAct: view.sys.togglePage("settings")
