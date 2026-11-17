@@ -1747,10 +1747,35 @@ PanelWindow {
     // The grid is stretched so the cells reach exactly to the right and bottom screen edges
     readonly property real gridW: screen ? screen.width : 1920
     readonly property real gridH: screen ? screen.height : 1080
-    readonly property int widgetCols: Math.max(1, Math.round((gridW - 2 * widgetsOriginX + 12) / 78))
+    // a strip on the right edge is always reserved for the scroll buttons
+    readonly property real widgetStrip: 64
+    readonly property int widgetMaxRows: 60   // the desktop can scroll down through this many rows
+    readonly property int widgetCols: Math.max(1, Math.round((gridW - 2 * widgetsOriginX - widgetStrip + 12) / 78))
     readonly property int widgetRows: Math.max(1, Math.round((gridH - widgetsOriginY - (cfg.islandGap + 1) + 12) / 78))
-    readonly property real pitchX: (gridW - 2 * widgetsOriginX + 12) / widgetCols
+    readonly property real pitchX: (gridW - 2 * widgetsOriginX - widgetStrip + 12) / widgetCols
     readonly property real pitchY: (gridH - widgetsOriginY - (cfg.islandGap + 1) + 12) / widgetRows
+    // vertical scrolling of the widget desktop, in whole rows (animated in pixels)
+    property int widgetScroll: 0
+    property real widgetScrollY: widgetScroll * pitchY
+    Behavior on widgetScrollY { NumberAnimation { duration: root.noMotion ? 0 : 240; easing.type: Easing.OutCubic } }
+    // lowest edge (px, desktop coordinates) of any widget: placed ones and the visible built-in cards
+    readonly property real widgetBottomPx: {
+        var b = 0, it = widgetItems;
+        for (var i = 0; i < it.length; i++) {
+            var sp = widgetSpan(it[i]);
+            b = Math.max(b, (it[i].gy + sp.ch) * pitchY);
+        }
+        var pos = widgets.wpos, sz = widgets.sizes;
+        for (var k in pos) if (sz[k] && widgetHidden.indexOf(k) < 0) b = Math.max(b, pos[k].y + sz[k][1] + 12);
+        return b;
+    }
+    readonly property int widgetMaxScroll: {
+        var rowsNeeded = Math.ceil(widgetBottomPx / pitchY);
+        return Math.max(0, Math.min(widgetMaxRows - widgetRows, rowsNeeded - widgetRows + (widgetEdit ? widgetRows : 0)));
+    }
+    readonly property bool widgetsScrollable: widgetMaxScroll > 0
+    function scrollWidgets(rows) { widgetScroll = Math.max(0, Math.min(widgetMaxScroll, widgetScroll + rows)); }
+    onWidgetMaxScrollChanged: if (widgetScroll > widgetMaxScroll) widgetScroll = widgetMaxScroll
     readonly property var widgetItems: {
         var out = [];
         try {
@@ -1775,7 +1800,7 @@ PanelWindow {
         var r = [];
         var cards = [widgets.cDate, widgets.cClock, widgets.cWeather, widgets.cRight, widgets.cProgress, widgets.cMusic, widgets.cScratch];
         for (var i = 0; i < cards.length; i++)
-            if (cards[i].visible) r.push({ x: cards[i].x, y: cards[i].y, w: cards[i].width, h: cards[i].height });
+            if (cards[i].visible) r.push({ x: cards[i].x, y: cards[i].y + widgetScrollY, w: cards[i].width, h: cards[i].height });
         for (var j = 0; j < widgetItems.length; j++) {
             var it = widgetItems[j];
             if (it.id === ignoreId || !widgetCat.find(it.type)) continue;
@@ -1786,7 +1811,7 @@ PanelWindow {
     }
     // does a widget with this span fit exactly at (gx, gy) without touching anything else?
     function widgetFits(gx, gy, cw, ch, ignoreId) {
-        if (gx < 0 || gy < 0 || gx + cw > widgetCols || gy + ch > widgetRows) return false;
+        if (gx < 0 || gy < 0 || gx + cw > widgetCols || gy + ch > widgetMaxRows) return false;
         var rects = widgetRects(ignoreId);
         var x = widgetsOriginX + gx * pitchX, y = widgetsOriginY + gy * pitchY;
         var w = cw * pitchX - 12, h = ch * pitchY - 12;
@@ -1798,10 +1823,10 @@ PanelWindow {
     function widgetFreeSpot(type, gx, gy, ignoreId, cw, ch) {
         var t = widgetCat.find(type); if (!t) return { gx: gx, gy: gy };
         cw = cw || t.cw; ch = ch || t.ch;
-        gx = Math.max(0, Math.min(widgetCols - cw, gx)); gy = Math.max(0, Math.min(widgetRows - ch, gy));
+        gx = Math.max(0, Math.min(widgetCols - cw, gx)); gy = Math.max(0, Math.min(widgetMaxRows - ch, gy));
         if (widgetFits(gx, gy, cw, ch, ignoreId)) return { gx: gx, gy: gy };
         var best = null, bd = 1e9;
-        for (var cy = 0; cy + ch <= widgetRows; cy++) for (var cx = 0; cx + cw <= widgetCols; cx++) {
+        for (var cy = 0; cy + ch <= widgetMaxRows; cy++) for (var cx = 0; cx + cw <= widgetCols; cx++) {
             if (!widgetFits(cx, cy, cw, ch, ignoreId)) continue;
             var d = (cx - gx) * (cx - gx) + (cy - gy) * (cy - gy);
             if (d < bd) { bd = d; best = { gx: cx, gy: cy }; }
@@ -1813,6 +1838,10 @@ PanelWindow {
         var p = widgetFreeSpot(type, gx < 0 ? 0 : gx, gy < 0 ? 0 : gy, "");
         l.push({ id: "w" + Date.now() + Math.floor(Math.random() * 1000), type: type, gx: p.gx, gy: p.gy });
         saveWidgetItems(l);
+        // bring the new widget into view if it landed below the current screen
+        var t = widgetCat.find(type), bottom = p.gy + (t ? t.ch : 1);
+        if (bottom > widgetScroll + widgetRows) widgetScroll = Math.min(widgetMaxRows - widgetRows, bottom - widgetRows);
+        else if (p.gy < widgetScroll) widgetScroll = p.gy;
     }
     function moveWidget(id, gx, gy) {
         var l = widgetItems.slice();
@@ -4876,6 +4905,7 @@ PanelWindow {
         function widgetsEdit(): void { root.widgetEdit = !root.widgetEdit; }
         function widgetsReset(): void { root.cfg.widgetPosJson = ""; root.saveCfg(); }
         // removes every tray widget, restores hidden built-ins and resets positions
+        function dockSet(on: string): void { root.cfg.dockEnabled = (on === "on"); root.cfg.overviewDock = (on === "on"); root.saveCfg(); }
         function widgetsClear(): void { root.cfg.widgetItemsJson = "[]"; root.cfg.widgetHiddenJson = "[]"; root.cfg.widgetPosJson = ""; root.saveCfg(); }
         // открыть окно настроек сразу на нужном разделе: удобно вешать на
         // сочетание клавиш и незаменимо при проверке самих настроек
@@ -8079,6 +8109,69 @@ PanelWindow {
 }
 
 
+// Pruh vpravo vyhrazený pro tlačítka: posun plochy s widgety nahoru / dolů a ukazatel stránky.
+// Widgety do něj nikdy nezasahují (mřížka je o jeho šířku užší).
+PanelWindow {
+    id: scrollWin
+    visible: root.cfg.featWidgets && !root.fullscreenActive && (root.widgetsScrollable || root.widgetEdit)
+    screen: root.screen
+    anchors { top: true; bottom: true; right: true }
+    implicitWidth: root.widgetStrip
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.layer: root.widgetEdit ? WlrLayer.Top : WlrLayer.Bottom
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    mask: Region { item: scrollCol }
+
+    Column {
+        id: scrollCol
+        anchors.centerIn: parent
+        spacing: 10
+        readonly property int pages: Math.max(1, Math.ceil((root.widgetMaxScroll + root.widgetRows) / Math.max(1, root.widgetRows - 1)))
+
+        Rectangle {
+            id: upBtn
+            width: 40; height: 40; radius: 20
+            color: upMa.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : root.colBg
+            border.width: root.edgeW; border.color: root.edgeColor
+            opacity: root.widgetScroll > 0 ? 1 : 0.35
+            Text { anchors.centerIn: parent; text: "▲"; color: root.colFg; font.pixelSize: 14 }
+            MouseArea {
+                id: upMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                onClicked: root.scrollWidgets(-Math.max(1, root.widgetRows - 1))
+            }
+        }
+
+        // page dots: the current page is red, like the day progress
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 6
+            Repeater {
+                model: scrollCol.pages
+                Rectangle {
+                    required property int index
+                    readonly property int cur: Math.round(root.widgetScroll / Math.max(1, root.widgetRows - 1))
+                    width: 6; height: 6; radius: 3
+                    color: index === cur ? root.colCrit : Qt.rgba(1, 1, 1, 0.25)
+                }
+            }
+        }
+
+        Rectangle {
+            id: downBtn
+            width: 40; height: 40; radius: 20
+            color: downMa.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : root.colBg
+            border.width: root.edgeW; border.color: root.edgeColor
+            opacity: root.widgetScroll < root.widgetMaxScroll ? 1 : 0.35
+            Text { anchors.centerIn: parent; text: "▼"; color: root.colFg; font.pixelSize: 14 }
+            MouseArea {
+                id: downMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                onClicked: root.scrollWidgets(Math.max(1, root.widgetRows - 1))
+            }
+        }
+    }
+}
+
 // Kontextové menu plochy: pravý klik (dva prsty na touchpadu) na prázdnou plochu.
 // Okno leží pod okny aplikací, takže chytá jen klik na volné místo; při otevřeném
 // menu se zvedne nad widgety a klik mimo menu ho zavře.
@@ -8099,6 +8192,7 @@ PanelWindow {
     MouseArea {
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onWheel: w => root.scrollWidgets(w.angleDelta.y > 0 ? -2 : 2)
         onPressed: m => {
             if (m.button === Qt.RightButton) {
                 desktopWin.mx = Math.min(m.x, width - 250);

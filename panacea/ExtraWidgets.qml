@@ -20,7 +20,7 @@ Item {
             var t = cat.find(view.items[i].type); var sp = view.sys.widgetSpan(view.items[i]);
             var m = 0;
             var m = view.editing ? 10 : 0;   // room for the resize handles that straddle the card edge
-            if (t) r.push({ x: view.sys.widgetsOriginX + view.items[i].gx * view.sys.pitchX - m, y: view.sys.widgetsOriginY + view.items[i].gy * view.sys.pitchY - m, w: sp.cw * view.sys.pitchX - 12 + 2 * m, h: sp.ch * view.sys.pitchY - 12 + 2 * m });
+            if (t) r.push({ x: view.sys.widgetsOriginX + view.items[i].gx * view.sys.pitchX - m, y: view.sys.widgetsOriginY + view.items[i].gy * view.sys.pitchY - view.sys.widgetScrollY - m, w: sp.cw * view.sys.pitchX - 12 + 2 * m, h: sp.ch * view.sys.pitchY - 12 + 2 * m });
         }
         return r;
     }
@@ -36,7 +36,7 @@ Item {
             required property var modelData
             readonly property var t: cat.find(card.modelData.type)
             property real px: view.sys.widgetsOriginX + card.gx * view.sys.pitchX
-            property real py: view.sys.widgetsOriginY + card.gy * view.sys.pitchY
+            property real py: view.sys.widgetsOriginY + card.gy * view.sys.pitchY - view.sys.widgetScrollY
             visible: card.t !== null
             x: card.px; y: card.py
             // span in cells: the widget's own size (resized) or the default of its type
@@ -72,12 +72,12 @@ Item {
                     if (!pressed) return;
                     var p = drag.mapToItem(view, m.x, m.y);
                     card.px = Math.max(0, Math.min(view.width - card.width, sx + p.x - pp.x));
-                    card.py = Math.max(0, Math.min(view.height - card.height, sy + p.y - pp.y));
+                    card.py = sy + p.y - pp.y;
                 }
                 onReleased: {
                     view.sys.moveWidget(card.modelData.id,
                         Math.max(0, Math.round((card.px - view.sys.widgetsOriginX) / view.sys.pitchX)),
-                        Math.max(0, Math.round((card.py - view.sys.widgetsOriginY) / view.sys.pitchY)));
+                        Math.max(0, Math.round((card.py - view.sys.widgetsOriginY + view.sys.widgetScrollY) / view.sys.pitchY)));
                 }
                 Rectangle {
                     anchors.fill: parent; radius: card.radius
