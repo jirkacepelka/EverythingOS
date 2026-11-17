@@ -107,6 +107,7 @@ PanelWindow {
             property string vpnPreferredClient: ""
             property string vpnPreferred: ""
             property bool   mascotEnabled: true
+            property bool   splitIsland: false
             property bool   reduceMotion: false
             property int    animMove: 230      // размер и положение, мс
             property int    animFade: 200      // прозрачность и цвет, мс
@@ -425,7 +426,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 10, islandRadius: 0,
+        islandGap: 10, islandRadius: 0, splitIsland: false,
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -5035,7 +5036,7 @@ PanelWindow {
                 : root.osdActive ? capsule.evenUp(osdCapsule.implicitWidth + 32)
                 : root.pillSide  ? capsule.evenUp(Math.max(vertCapsule.implicitHeight + 30,
                                                            capsule.collapsedMin))
-                : capsule.evenUp(Math.max(nothingCapsule.implicitWidth + (mascot.active ? 140 : 28),
+                : capsule.evenUp(Math.max(nothingCapsule.implicitWidth + (mascot.active && !nothingCapsule.splitOn ? 140 : 28),
                                           capsule.collapsedMin))
         readonly property real idleThick: (root.fileOverIsland || fileAbsorbAnimation.running) ? 58
                 : (root.btToastActive || root.wifiToastActive || root.acToastActive
@@ -5129,7 +5130,8 @@ PanelWindow {
         visible: opacity > 0.01
         Behavior on opacity { NumberAnimation { duration: root.animFast } }
 
-        color: root.colBg
+        color: nothingCapsule.splitOn ? "transparent" : root.colBg
+        Behavior on color { ColorAnimation { duration: root.animFast } }
         // Углы у прижатой кромки срезаны, у смотрящей в экран — скруглены:
         // так остров выглядит выросшим из края, а не приклеенным к нему.
         // В режиме настроек капсула отрывается от кромки, и круглыми
@@ -5312,7 +5314,7 @@ PanelWindow {
             onClicked: if (root.notifCurrent) root.activateNotification(root.notifCurrent)
         }
 
-        Mascot { id: mascot; sys: root; anchors.centerIn: parent; z: 10; visible: active && !root.pillSide }
+        Mascot { id: mascot; sys: root; anchors.centerIn: parent; z: 10; visible: active && !root.pillSide && !nothingCapsule.splitOn }
 
         // ------------------------------------------ свёрнутое: уведомление
         RowLayout {
@@ -6087,7 +6089,31 @@ PanelWindow {
             Behavior on opacity { NumberAnimation { duration: root.animFast } }
 
             // просвет между часами и крайними группами
-            readonly property real armGap: 22
+            readonly property real armGap: splitOn ? 36 : 22
+
+            // Rozdělený ostrov: tři samostatné pilulky (stoly | hodiny | systém).
+            // Jen ve floating režimu a v klidovém stavu; kapsle je pak průhledná.
+            readonly property bool splitOn: root.cfg.splitIsland && !root.cfg.notchMode
+                                            && !root.settingsMode && !root.pillSide
+            readonly property real splitPad: 12
+            Rectangle {
+                z: -1; visible: nothingCapsule.splitOn
+                x: nLeft.x - nothingCapsule.splitPad - 6
+                width: nLeft.width + 2 * nothingCapsule.splitPad + 6
+                height: root.pillH; radius: height / 2; color: root.colBg
+            }
+            Rectangle {
+                z: -1; visible: nothingCapsule.splitOn
+                x: nClock.x - nothingCapsule.splitPad - 6
+                width: nClock.width + 2 * nothingCapsule.splitPad + 12
+                height: root.pillH; radius: height / 2; color: root.colBg
+            }
+            Rectangle {
+                z: -1; visible: nothingCapsule.splitOn
+                x: nRight.x - nothingCapsule.splitPad
+                width: nRight.width + 2 * nothingCapsule.splitPad + 6
+                height: root.pillH; radius: height / 2; color: root.colBg
+            }
 
             // Место под точки столов: пять слотов по шесть пикселей, просветы
             // между ними и надбавка на текущий стол — он растекается в полосу
@@ -6255,7 +6281,7 @@ PanelWindow {
             PlainNum {
                 id: nClock
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: mascot.active ? -80 : 0
+                anchors.horizontalCenterOffset: mascot.active && !nothingCapsule.splitOn ? -80 : 0
                 Behavior on anchors.horizontalCenterOffset { enabled: !root.expanded && capsule.height <= root.pillH + 2; NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
                 value: root.timeText
                 size: root.dotHPill
@@ -7521,8 +7547,13 @@ PanelWindow {
     visible: root.cfg.featWidgets
     screen: root.screen
     anchors { top: true; left: true }
-    implicitWidth:  widgets.implicitWidth + 56
-    implicitHeight: widgets.implicitHeight + 56
+    // Widgety stojí přesně na mřížce oken: okraj 10 px mezery + 1 px rámeček
+    // zleva a pod zónou ostrova shora. Nevyčnívají zpod oken.
+    readonly property int edgeInset: 11
+    readonly property int topInset: ((root.cfg.pillOverlay || root.pillHidden) ? 0
+                                    : root.pillH + (root.cfg.notchMode ? 0 : root.cfg.islandGap)) + widgetsWin.edgeInset
+    implicitWidth:  widgets.implicitWidth + widgetsWin.edgeInset
+    implicitHeight: widgets.implicitHeight + widgetsWin.topInset
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Bottom
@@ -7534,10 +7565,10 @@ PanelWindow {
         sys: root
         anchors.left: parent.left
         anchors.top: parent.top
-        anchors.leftMargin: 28
+        anchors.leftMargin: widgetsWin.edgeInset
         // ниже острова: тот стоит по центру верхней кромки и до левого
         // угла не достаёт, но запас нужен под его вогнутый уголок
-        anchors.topMargin: 28
+        anchors.topMargin: widgetsWin.topInset
     }
 }
 

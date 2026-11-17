@@ -20,6 +20,14 @@ ColumnLayout {
 
         SetToggle {
             sys: page.sys
+            label: "Rozdělený ostrov (3 pilulky)"
+            sub: "Stoly, hodiny a systém jako tři samostatné pilulky. Funguje jen při vypnutém režimu výřezu (plovoucí ostrov)."
+            on: page.sys.cfg.splitIsland
+            onToggled: value => { page.sys.cfg.splitIsland = value; page.sys.saveCfg(); }
+        }
+
+        SetToggle {
+            sys: page.sys
             label: page.sys.tr("Режим выреза")
             sub: page.sys.tr("Остров прилегает к кромке экрана и растекается по ней вогнутыми уголками. Выключить — станет отдельной капсулой с отступом от кромки.")
             on: page.notch
