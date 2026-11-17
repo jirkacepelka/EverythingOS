@@ -4,8 +4,8 @@
     "type": "file",
     "source": "~/.config/fastfetch/nothing-logo.txt",
     "padding": {
-      "top": 1,
-      "left": 3,
+      "top": 0,
+      "left": 2,
       "right": 9
     },
     "color": {
