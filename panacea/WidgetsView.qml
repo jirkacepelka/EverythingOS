@@ -80,12 +80,11 @@ Item {
         function onWidgetPosJsonChanged() { if (!view.editing) view.wpos = view.loadPos(); }
     }
     function wx(id) { return view.originX + view.wpos[id].x; }
-    function wy(id) { return view.originY + view.wpos[id].y - (view.sys ? view.sys.widgetScrollY : 0); }
+    function wy(id) { return view.originY + view.wpos[id].y; }
     function movePos(id, x, y, commit) {
         var sz = view.sizes[id];
-        var strip = view.sys ? view.sys.widgetStrip : 0;
-        var nx = Math.max(-view.originX, Math.min(view.width - view.originX - strip - sz[0], x));
-        var ny = Math.max(0, Math.min((view.sys ? view.sys.widgetMaxRows * view.sys.pitchY : view.height) - sz[1], y));
+        var nx = Math.max(-view.originX, Math.min(view.width - view.originX - sz[0], x));
+        var ny = Math.max(-view.originY, Math.min(view.height - view.originY - sz[1], y));
         if (commit) {
             nx = Math.round(nx / view.snap) * view.snap;
             ny = Math.round(ny / (view.sys ? view.sys.pitchY : view.snap)) * (view.sys ? view.sys.pitchY : view.snap);

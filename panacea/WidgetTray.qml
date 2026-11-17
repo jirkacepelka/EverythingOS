@@ -131,7 +131,7 @@ Item {
                                 ghost.visible = false;
                                 if (p.y < bar.y - 10) {
                                     view.sys.addWidget(tile.modelData.id,
-                                        Math.round((ghost.x - view.ox) / view.px), Math.round((ghost.y - view.oy) / view.py) + view.sys.widgetScroll);
+                                        Math.round((ghost.x - view.ox) / view.px), Math.round((ghost.y - view.oy) / view.py));
                                 }
                             }
                         }
