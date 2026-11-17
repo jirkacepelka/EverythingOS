@@ -188,13 +188,63 @@ Rectangle {
     }
 
     // ---- bottom pills: session + power
+    // ---- session picker: pill with the current session, click opens a list above it
+    property bool sessionOpen: false
+    readonly property int sessionCount: root.sessionNames.length
+
+    Rectangle {
+        id: sessionList
+        visible: root.sessionOpen && root.sessionCount > 0
+        width: 280
+        height: root.sessionCount * 38 + 12
+        radius: 20
+        color: Qt.rgba(root.bg.r, root.bg.g, root.bg.b, 0.92)
+        border.width: 1
+        border.color: Qt.rgba(root.fg.r, root.fg.g, root.fg.b, 0.18)
+        anchors { horizontalCenter: parent.horizontalCenter; bottom: bottomRow.top; bottomMargin: 10 }
+        Column {
+            anchors.fill: parent
+            anchors.margins: 6
+            Repeater {
+                model: root.sessionNames
+                Rectangle {
+                    width: parent.width; height: 38; radius: 16
+                    color: index === root.sessionIndex ? Qt.rgba(root.fg.r, root.fg.g, root.fg.b, 0.16)
+                           : (sma.containsMouse ? Qt.rgba(root.fg.r, root.fg.g, root.fg.b, 0.08) : "transparent")
+                    Text {
+                        anchors { left: parent.left; leftMargin: 16; verticalCenter: parent.verticalCenter }
+                        text: modelData
+                        color: root.fg
+                        font { family: root.fontFam; pixelSize: 15 }
+                    }
+                    Text {
+                        anchors { right: parent.right; rightMargin: 16; verticalCenter: parent.verticalCenter }
+                        visible: index === root.sessionIndex
+                        text: "\u25CF"
+                        color: root.fg
+                        font.pixelSize: 10
+                    }
+                    MouseArea {
+                        id: sma
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: { root.sessionIndex = index; root.sessionOpen = false; pw.forceActiveFocus(); }
+                    }
+                }
+            }
+        }
+    }
+
     Row {
+        id: bottomRow
         anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 36 }
         spacing: 10
-        Pill { fg: root.fg; fontFam: root.fontFam;
-            visible: sessionModel.count > 1
-            label: (root.sessionNames[root.sessionIndex] || "Session")
-            onClicked: root.sessionIndex = (root.sessionIndex + 1) % Math.max(1, sessionModel.count)
+        Pill {
+            fg: root.fg; fontFam: root.fontFam
+            visible: root.sessionCount > 0
+            label: (root.sessionNames[root.sessionIndex] || "Session") + (root.sessionOpen ? "  \u25B4" : "  \u25BE")
+            onClicked: root.sessionOpen = !root.sessionOpen
         }
         Pill { fg: root.fg; fontFam: root.fontFam; visible: sddm.canSuspend; label: "Sleep"; onClicked: sddm.suspend() }
         Pill { fg: root.fg; fontFam: root.fontFam; visible: sddm.canReboot; label: "Restart"; onClicked: sddm.reboot() }

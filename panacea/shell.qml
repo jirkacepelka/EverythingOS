@@ -875,12 +875,14 @@ PanelWindow {
             else if (code === 126 || code === 127) root.loginRootStatus = "Cancelled (no permission was given).";
             else root.loginRootStatus = "Failed: " + (String(pLoginRootErr.text).trim() || ("exit " + code));
             root.loginRootSeq++;
+            root.showTask(code === 0 ? "Done" : (code === 126 ? "Cancelled" : "Failed"), false);
             Quickshell.execDetached(["notify-send", "-a", "EverythingOS", "Login", root.loginRootStatus]);
         }
     }
     function runLoginRoot(args) {
         root.loginRootBusy = true;
         root.loginRootStatus = "Waiting for confirmation…";
+        root.showTask("Installing", true);
         pLoginRoot.command = ["pkexec", Quickshell.env("HOME") + "/.config/panacea/sddm/install.sh"].concat(args);
         pLoginRoot.running = false;
         pLoginRoot.running = true;
@@ -3860,6 +3862,18 @@ PanelWindow {
         interval: 1700
         onTriggered: root.osdKind = ""
     }
+    // Background task in the notch (e.g. installing the SDDM theme): an indeterminate bar
+    // while busy, then a short "Done" / "Failed". Not gated by the OSD setting.
+    property string osdLabel: ""
+    property bool   osdBusy: false
+    function showTask(label, busy) {
+        osdKind = "task";
+        osdLabel = label;
+        osdBusy = busy;
+        osdMuted = false;
+        osdValue = 1;
+        if (busy) osdTimer.stop(); else osdTimer.restart();
+    }
     function showOsd(kind, value, muted) {
         if (!cfg.featOsd) return;
         osdKind = kind;
@@ -3869,6 +3883,7 @@ PanelWindow {
     }
 
     readonly property string osdIcon: {
+        if (osdKind === "task") return String.fromCodePoint(0xF0BC4);         // shield with key
         if (osdKind === "bright") return String.fromCodePoint(0xF00DE);       // солнце
         if (osdKind === "mic")
             return String.fromCodePoint(osdMuted ? 0xF036D : 0xF036C);        // микрофон
@@ -4945,6 +4960,7 @@ PanelWindow {
         function switcherNext(): void { root.switcherStep(1); }
         function switcherPrev(): void { root.switcherStep(-1); }
         function switcherDone(): void { root.switcherCommit(); }
+        function task(label: string, busy: string): void { root.showTask(label || "Working", busy !== "off"); }
         function onboarding(): void { root.onboardingOpen = !root.onboardingOpen; }
         function widgetsEdit(): void { root.widgetEdit = !root.widgetEdit; }
         function lightmode(on: string): void { root.setLightMode(on === "on" ? true : on === "off" ? false : !root.lightMode); }
@@ -6464,7 +6480,23 @@ PanelWindow {
                 radius: 3
                 color: ShellColors.fgA(0.16)
 
+                // indeterminate shuttle while a task runs
                 Rectangle {
+                    id: osdShuttle
+                    visible: root.osdKind === "task" && root.osdBusy
+                    width: parent.width * 0.35
+                    height: parent.height
+                    radius: 3
+                    color: root.colOn
+                    SequentialAnimation on x {
+                        running: osdShuttle.visible
+                        loops: Animation.Infinite
+                        NumberAnimation { from: 0; to: 150 * 0.65; duration: 700; easing.type: Easing.InOutSine }
+                        NumberAnimation { from: 150 * 0.65; to: 0; duration: 700; easing.type: Easing.InOutSine }
+                    }
+                }
+                Rectangle {
+                    visible: !(root.osdKind === "task" && root.osdBusy)
                     width: parent.width * (root.osdMuted ? 0 : root.osdValue)
                     height: parent.height
                     radius: 3
@@ -6477,9 +6509,10 @@ PanelWindow {
             }
 
             Text {
-                Layout.preferredWidth: mBatt.width
+                Layout.preferredWidth: root.osdKind === "task" ? 96 : mBatt.width
                 horizontalAlignment: Text.AlignRight
-                text: root.osdMuted ? "—" : Math.round(root.osdValue * 100) + "%"
+                text: root.osdKind === "task" ? root.osdLabel
+                      : root.osdMuted ? "—" : Math.round(root.osdValue * 100) + "%"
                 color: root.colMuted
                 font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             }
