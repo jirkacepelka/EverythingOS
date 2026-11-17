@@ -48,34 +48,45 @@ ColumnLayout {
             width: parent.width - 28
             height: pk.cardHeight - 78
             radius: 10
-            color: "#141416"
+            // wallpaper-like backdrop opposite to the island colour, so the island always stands out
+            color: ShellColors.light ? "#3c3c42" : "#85858d"   // shown only until the wallpaper loads
             clip: true
+
+            Image {   // the wallpaper that is actually set, so the preview shows the real contrast
+                anchors.fill: parent
+                source: pk.sys.currentWallPath().length ? "file://" + pk.sys.currentWallPath() : ""
+                sourceSize: Qt.size(400, 240)
+                fillMode: Image.PreserveAspectCrop
+                asynchronous: true
+            }
 
             Rectangle {   // app window
                 x: 8; y: card.kind === "attached" ? 20 : 30
                 width: parent.width - 16
                 height: parent.height - y - 8
                 radius: 6
-                color: "#2b2b2f"
+                color: ShellColors.fgA(0.28)
             }
             Rectangle {   // attached notch
                 visible: card.kind === "attached"
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 0; width: 110; height: 14
                 bottomLeftRadius: 8; bottomRightRadius: 8
-                color: "#000000"
+                color: pk.sys.colBg
+                border.width: 1; border.color: ShellColors.fgA(0.35)
             }
             Rectangle {   // floating single capsule
                 visible: card.kind === "floating" || card.kind === "together"
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: 8; width: 110; height: 14; radius: 7
-                color: "#000000"
+                color: pk.sys.colBg
+                border.width: 1; border.color: ShellColors.fgA(0.35)
             }
             Repeater {    // three pills (flush with the top edge when Attached is selected)
                 model: card.kind === "pills" ? 3 : 0
                 delegate: Rectangle {
                     required property int index
-                    y: pk.attached ? 0 : 8; height: 14; radius: 7; color: "#000000"
+                    y: pk.attached ? 0 : 8; height: 14; radius: 7; color: pk.sys.colBg; border.width: 1; border.color: ShellColors.fgA(0.35)
                     topLeftRadius: pk.attached ? 0 : radius; topRightRadius: pk.attached ? 0 : radius
                     width: index === 1 ? 34 : 50
                     x: index === 0 ? 8 : index === 1 ? (scr.width - width) / 2 : scr.width - width - 8
@@ -92,7 +103,7 @@ ColumnLayout {
             anchors { left: parent.left; leftMargin: 16; right: parent.right; rightMargin: 12
                       bottom: parent.bottom; bottomMargin: 10 }
             text: card.sub
-            color: pk.sys.colMuted
+            color: ShellColors.fgA(0.7)
             elide: Text.ElideRight
             font { family: pk.sys.fontFam; pixelSize: pk.sys.fontSize - 4 }
         }
@@ -105,7 +116,7 @@ ColumnLayout {
 
     Text {
         text: "POSITION"
-        color: pk.sys.colMuted
+        color: ShellColors.fgA(0.7)
         font { family: pk.sys.fontFam; pixelSize: pk.sys.fontSize - 4; letterSpacing: 1.5 }
     }
     RowLayout {
@@ -119,7 +130,7 @@ ColumnLayout {
 
     Text {
         text: "LAYOUT"
-        color: pk.sys.colMuted
+        color: ShellColors.fgA(0.7)
         font { family: pk.sys.fontFam; pixelSize: pk.sys.fontSize - 4; letterSpacing: 1.5 }
     }
     RowLayout {
