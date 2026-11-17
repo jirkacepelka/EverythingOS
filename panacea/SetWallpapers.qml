@@ -14,14 +14,8 @@ ColumnLayout {
     Layout.fillWidth: true
     spacing: 12
 
-    Component.onCompleted: { page.sys.refreshWalls(); warmDelay.start(); }
-    // build missing thumbnails in the background, then reload the list
-    Process {
-        id: pWarm
-        command: ["sh", "-c", page.sys.scriptDir + "/themes.sh warm"]
-        onRunningChanged: if (!running) page.sys.refreshWalls()
-    }
-    Timer { id: warmDelay; interval: 900; onTriggered: pWarm.running = true }
+    // the list is read once when the page opens (329 wallpapers: nothing here may touch every item at once)
+    Component.onCompleted: page.sys.refreshWalls()
 
     function pretty(n) {
         var s = String(n).replace(/_/g, " ");
@@ -35,9 +29,11 @@ ColumnLayout {
     }
     Process {
         id: pSet
-        onRunningChanged: if (!running) { page.applying = ""; page.sys.refreshWalls(); }
+        onRunningChanged: if (!running) { page.applying = ""; refreshLater.restart(); }
     }
-    Process { id: pDel; onRunningChanged: if (!running) page.sys.refreshWalls() }
+    Process { id: pDel; onRunningChanged: if (!running) refreshLater.restart() }
+    // one refresh, a moment after the change, instead of one per event
+    Timer { id: refreshLater; interval: 1200; onTriggered: page.sys.refreshWalls() }
 
     SetCard {
         sys: page.sys
@@ -66,83 +62,88 @@ ColumnLayout {
             font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
-        Flow {
+        // virtualised: only the tiles on screen exist, however many wallpapers there are
+        GridView {
+            id: grid
             Layout.fillWidth: true
-            spacing: 12
-            Repeater {
-                model: page.sys.wallList
-                delegate: Item {
-                    id: tile
-                    required property var modelData
-                    readonly property real w: Math.floor((parent.width - 24) / 3)
-                    width: w
-                    height: w * 9 / 16 + 26
+            Layout.preferredHeight: 440
+            clip: true
+            cellWidth: Math.floor(width / 3)
+            cellHeight: Math.floor(cellWidth * 9 / 16) + 44
+            cacheBuffer: 0
+            reuseItems: true
+            boundsBehavior: Flickable.StopAtBounds
+            model: page.sys.wallList
+            delegate: Item {
+                id: tile
+                required property var modelData
+                width: grid.cellWidth; height: grid.cellHeight
 
+                Rectangle {
+                    id: frame
+                    x: 6; y: 6
+                    width: parent.width - 12
+                    height: Math.floor((parent.width - 12) * 9 / 16)
+                    radius: 12
+                    color: Qt.rgba(1, 1, 1, 0.05)
+                    border.width: tile.modelData.wActive ? 2 : 1
+                    border.color: tile.modelData.wActive ? page.sys.colOn : Qt.rgba(1, 1, 1, 0.12)
+                    clip: true
+
+                    Image {
+                        anchors.fill: parent
+                        anchors.margins: 2
+                        // thumbnails only: never decode a full-size wallpaper for a preview
+                        source: tile.modelData.wThumb.length ? "file://" + tile.modelData.wThumb : ""
+                        sourceSize: Qt.size(320, 180)
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                        cache: false
+                        opacity: page.applying === tile.modelData.wPath ? 0.5 : 1
+                    }
                     Rectangle {
-                        id: frame
-                        width: parent.width
-                        height: tile.w * 9 / 16
-                        radius: 12
-                        color: Qt.rgba(1, 1, 1, 0.05)
-                        border.width: tile.modelData.wActive ? 2 : 1
-                        border.color: tile.modelData.wActive ? page.sys.colOn : Qt.rgba(1, 1, 1, 0.12)
-                        clip: true
-
-                        Image {
-                            anchors.fill: parent
-                            anchors.margins: 2
-                            source: tile.modelData.wThumb.length ? "file://" + tile.modelData.wThumb
-                                    : (tile.modelData.wPath.length ? "file://" + tile.modelData.wPath : "")
-                            sourceSize: Qt.size(400, 225)
-                            fillMode: Image.PreserveAspectCrop
-                            asynchronous: true
-                            opacity: page.applying === tile.modelData.wPath ? 0.5 : 1
-                        }
-                        Rectangle {
-                            visible: tile.modelData.wActive
-                            anchors { right: parent.right; top: parent.top; margins: 8 }
-                            width: 22; height: 22; radius: 11
-                            color: page.sys.colOn
-                            Text { anchors.centerIn: parent; text: "✓"; color: page.sys.colBg; font.pixelSize: 13; font.bold: true }
-                        }
+                        visible: tile.modelData.wActive
+                        anchors { right: parent.right; top: parent.top; margins: 8 }
+                        width: 22; height: 22; radius: 11
+                        color: page.sys.colOn
+                        Text { anchors.centerIn: parent; text: "✓"; color: page.sys.colBg; font.pixelSize: 13; font.bold: true }
+                    }
+                    MouseArea {
+                        id: ma
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: if (!tile.modelData.wActive && page.applying === "") page.apply(tile.modelData.wPath)
+                    }
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: frame.radius
+                        color: "white"
+                        opacity: ma.containsMouse && !tile.modelData.wActive ? 0.08 : 0
+                    }
+                    Rectangle {
+                        visible: tile.modelData.wOwn && ma.containsMouse
+                        anchors { left: parent.left; top: parent.top; margins: 8 }
+                        height: 22; width: rmTxt.implicitWidth + 16; radius: 11
+                        color: Qt.rgba(0, 0, 0, 0.7)
+                        Text { id: rmTxt; anchors.centerIn: parent; text: "Remove"; color: page.sys.colFg
+                               font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 5 } }
                         MouseArea {
-                            id: ma
                             anchors.fill: parent
-                            hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: if (!tile.modelData.wActive) page.apply(tile.modelData.wPath)
-                        }
-                        Rectangle {
-                            anchors.fill: parent
-                            radius: frame.radius
-                            color: "white"
-                            opacity: ma.containsMouse && !tile.modelData.wActive ? 0.08 : 0
-                        }
-                        // delete own wallpapers
-                        Rectangle {
-                            visible: tile.modelData.wOwn && ma.containsMouse
-                            anchors { left: parent.left; top: parent.top; margins: 8 }
-                            height: 22; width: rmTxt.implicitWidth + 16; radius: 11
-                            color: Qt.rgba(0, 0, 0, 0.7)
-                            Text { id: rmTxt; anchors.centerIn: parent; text: "Remove"; color: page.sys.colFg
-                                   font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 5 } }
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    pDel.command = ["sh", "-c", page.sys.scriptDir + "/themes.sh del \"$1\"", "_", tile.modelData.wName];
-                                    pDel.running = true;
-                                }
+                            onClicked: {
+                                pDel.command = ["sh", "-c", page.sys.scriptDir + "/themes.sh del \"$1\"", "_", tile.modelData.wName];
+                                pDel.running = true;
                             }
                         }
                     }
-                    Text {
-                        anchors { top: frame.bottom; topMargin: 6; left: parent.left; right: parent.right }
-                        text: page.pretty(tile.modelData.wName)
-                        elide: Text.ElideRight
-                        color: tile.modelData.wActive ? page.sys.colFg : page.sys.colMuted
-                        font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
-                    }
+                }
+                Text {
+                    anchors { top: frame.bottom; topMargin: 6; left: frame.left; right: frame.right }
+                    text: page.pretty(tile.modelData.wName)
+                    elide: Text.ElideRight
+                    color: tile.modelData.wActive ? page.sys.colFg : page.sys.colMuted
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
                 }
             }
         }
