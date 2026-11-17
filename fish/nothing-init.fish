@@ -4,7 +4,7 @@ function fish_prompt
     set -l p (string replace -r "^$HOME/?" "" $PWD)
     test -z "$p"; and set p Home
     set -l parts (string split / $p)
-    set_color D71921; echo -n "  "
+    set_color D71921; echo -n " "
     if test (count $parts) -gt 1
         set -l parent (string join / $parts[1..-2])
         set_color 5f5f5f; echo -n "$parent/"
