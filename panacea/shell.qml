@@ -6248,7 +6248,7 @@ PanelWindow {
             // (stoly | hodiny | systém). Kapsle je přes celou šířku průhledná,
             // klikací jsou jen pilulky (viz capsuleRegion).
             readonly property bool splitOn: root.splitMode
-            readonly property real splitPad: 18
+            readonly property real splitPad: 14
             // Closed-state media index in the center pill: note icon + track title
             readonly property string trackName: root.player ? String(root.player.trackTitle || "") : ""
             readonly property bool showMedia: root.mediaActive && trackName.length > 0
@@ -6415,9 +6415,10 @@ PanelWindow {
 
                 Item  {
                     id: weatheritem
+                    visible: weatherrow.visible
 
                     implicitHeight: weatherrow.implicitHeight
-                    implicitWidth: weatherrow.implicitWidth
+                    implicitWidth: weatherrow.visible ? weatherrow.implicitWidth : 0
 
 
                     RowLayout {
