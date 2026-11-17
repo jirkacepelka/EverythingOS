@@ -100,6 +100,25 @@ ColumnLayout {
     SetCard {
         sys: page.sys
 
+        // nothing below reaches the real login screen until this has been done once
+        Rectangle {
+            Layout.fillWidth: true
+            visible: !page.info.stateWritable
+            implicitHeight: warn.implicitHeight + 20
+            radius: 12
+            color: Qt.rgba(page.sys.colCrit.r, page.sys.colCrit.g, page.sys.colCrit.b, 0.15)
+            border.width: 1
+            border.color: page.sys.colCrit
+            Text {
+                id: warn
+                anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter; margins: 12 }
+                wrapMode: Text.WordWrap
+                color: page.sys.colFg
+                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
+                text: "Not applied yet: the login screen is still " + (page.info.current || "the default") + ". Press “Install & apply” below (you confirm with your password); background, blur and the other login options take effect after that."
+            }
+        }
+
         LoginPreview {
             Layout.fillWidth: true
             Layout.maximumWidth: 560
