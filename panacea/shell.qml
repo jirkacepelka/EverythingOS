@@ -1662,18 +1662,20 @@ PanelWindow {
     // Společný okraj (cfg.islandGap): mezera oken od okrajů i mezi sebou (Hyprland
     // gaps), odstup ostrova od hrany a odsazení widgetů. Zapíše hypr/lua/gaps_data.lua
     // (platí i po restartu) a nastaví Hyprland za běhu.
+    // Společné zaoblení (0 = výchozí) pro widgety, popupy a okna
+    readonly property int shapeR: cfg.islandRadius > 0 ? cfg.islandRadius : 22
     readonly property color edgeColor: cfg.borderColor
     readonly property int edgeW: cfg.borderWidth
     Process {
         id: gapApply
         command: ["sh", "-c",
-                  "g=$1; w=$2; c=${3#\\#}; " +
-                  "printf 'return { gap = %s, bw = %s, bc = \"%s\" }\\n' \"$g\" \"$w\" \"$c\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
-                  "hyprctl dispatch \"hl.config({ general = { gaps_in = $g, gaps_out = $g, border_size = $w, col = { active_border = 'rgba(${c}ff)', inactive_border = 'rgba(${c}55)' } } })\" >/dev/null 2>&1; true",
-                  "_", String(root.cfg.islandGap), String(root.cfg.borderWidth), String(root.cfg.borderColor)]
+                  "g=$1; w=$2; c=${3#\\#}; r=$4; " +
+                  "printf 'return { gap = %s, bw = %s, bc = \"%s\", rd = %s }\\n' \"$g\" \"$w\" \"$c\" \"$r\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
+                  "hyprctl dispatch \"hl.config({ decoration = { rounding = $r }, general = { gaps_in = $g, gaps_out = $g, border_size = $w, col = { active_border = 'rgba(${c}ff)', inactive_border = 'rgba(${c}55)' } } })\" >/dev/null 2>&1; true",
+                  "_", String(root.cfg.islandGap), String(root.cfg.borderWidth), String(root.cfg.borderColor), String(root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, 24) : 12)]
     }
     Timer { id: gapTimer; interval: 200; onTriggered: gapApply.running = true }
-    Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } function onBorderWidthChanged() { gapTimer.restart(); } function onBorderColorChanged() { gapTimer.restart(); } }
+    Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } function onBorderWidthChanged() { gapTimer.restart(); } function onBorderColorChanged() { gapTimer.restart(); } function onIslandRadiusChanged() { gapTimer.restart(); } }
     Timer { interval: 2500; running: true; onTriggered: gapApply.running = true }
     // Přepínač oken Alt+Tab (AltTabView): seznam v pořadí posledního použití
     property bool switcherOpen: false

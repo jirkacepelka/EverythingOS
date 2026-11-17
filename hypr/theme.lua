@@ -1,6 +1,7 @@
 local okGap, gd = pcall(require, "lua.gaps_data")
 local GAP = (okGap and type(gd) == "table" and gd.gap) or 16
 local BW = (okGap and type(gd) == "table" and gd.bw) or 1
+local RD = (okGap and type(gd) == "table" and gd.rd) or 12
 local BC = (okGap and type(gd) == "table" and gd.bc) or "9a9aa2"
 return {
     gaps_in = GAP,
@@ -11,7 +12,7 @@ return {
     -- не обозначал — просто цвет.
     active_border = "rgba(" .. BC .. "ff)",
     inactive_border = "rgba(" .. BC .. "55)",
-    rounding = 12,
+    rounding = RD,
     rounding_power = 4.0,
     active_opacity = 1.0,
     inactive_opacity = 0.90,

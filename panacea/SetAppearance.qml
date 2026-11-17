@@ -72,6 +72,58 @@ ColumnLayout {
     }
 
     // ------------------------------------------------------------- виджеты
+    // --------------------------------------------- společný tvar a okraje
+    // Jedna sada hodnot pro okna, ostrov, popupy i widgety.
+    SetCard {
+        sys: page.sys
+
+        SetSlider {
+            sys: page.sys
+            label: "Mezera / odsazení od okrajů (okna, ostrov, widgety)"
+            from: 0; to: 48; step: 1
+            value: page.sys.cfg.islandGap
+            suffix: "px"
+            onMoved: v => { page.sys.cfg.islandGap = v; page.sys.saveCfg(); }
+        }
+
+        SetSlider {
+            sys: page.sys
+            label: "Zaoblení rohů (okna, ostrov, popupy, widgety)"
+            from: 0; to: 40; step: 1
+            value: page.sys.cfg.islandRadius
+            valueText: page.sys.cfg.islandRadius === 0 ? "výchozí" : page.sys.cfg.islandRadius + " px"
+            onMoved: v => { page.sys.cfg.islandRadius = v; page.sys.saveCfg(); }
+        }
+
+        SetSlider {
+            sys: page.sys
+            label: "Barevný okraj – tloušťka"
+            from: 0; to: 6; step: 1
+            value: page.sys.cfg.borderWidth
+            suffix: "px"
+            onMoved: v => { page.sys.cfg.borderWidth = v; page.sys.saveCfg(); }
+        }
+
+        Flow {
+            Layout.fillWidth: true
+            spacing: 10
+            Repeater {
+                model: ["#9a9aa2", "#ffffff", "#ff4d4d", "#ff9f43", "#ffd84d", "#4dd47a", "#4da6ff", "#a06bff", "#ff6bd5"]
+                delegate: Rectangle {
+                    required property string modelData
+                    width: 30; height: 30; radius: 15
+                    color: modelData
+                    border.width: page.sys.cfg.borderColor === modelData ? 3 : 1
+                    border.color: page.sys.cfg.borderColor === modelData ? page.sys.colFg : Qt.rgba(1, 1, 1, 0.25)
+                    MouseArea {
+                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: { page.sys.cfg.borderColor = parent.modelData; page.sys.saveCfg(); }
+                    }
+                }
+            }
+        }
+    }
+
     SetCard {
         sys: page.sys
 

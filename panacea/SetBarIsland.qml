@@ -86,61 +86,6 @@ ColumnLayout {
             suffix: "px"
             onMoved: v => { page.sys.cfg.notchFlare = v; page.sys.saveCfg(); }
         }
-
-        SetSlider {
-            sys: page.sys
-            visible: page.detailsOpen
-            enabled: !page.notch
-            opacity: enabled ? 1 : 0.4
-            label: "Společný okraj (okna, ostrov, widgety)"
-            from: 0; to: 48; step: 1
-            value: page.sys.cfg.islandGap
-            suffix: "px"
-            onMoved: v => { page.sys.cfg.islandGap = v; page.sys.saveCfg(); }
-        }
-
-        SetSlider {
-            sys: page.sys
-            label: "Společný barevný okraj (okna, ostrov, widgety)"
-            from: 0; to: 6; step: 1
-            value: page.sys.cfg.borderWidth
-            suffix: "px"
-            onMoved: v => { page.sys.cfg.borderWidth = v; page.sys.saveCfg(); }
-        }
-
-        Flow {
-            Layout.fillWidth: true
-            spacing: 10
-            Repeater {
-                model: ["#9a9aa2", "#ffffff", "#ff4d4d", "#ff9f43", "#ffd84d", "#4dd47a", "#4da6ff", "#a06bff", "#ff6bd5"]
-                delegate: Rectangle {
-                    required property string modelData
-                    width: 30; height: 30; radius: 15
-                    color: modelData
-                    border.width: page.sys.cfg.borderColor === modelData ? 3 : 1
-                    border.color: page.sys.cfg.borderColor === modelData ? page.sys.colFg : Qt.rgba(1, 1, 1, 0.25)
-                    MouseArea {
-                        anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                        onClicked: { page.sys.cfg.borderColor = parent.modelData; page.sys.saveCfg(); }
-                    }
-                }
-            }
-        }
-
-        SetSlider {
-            sys: page.sys
-            visible: page.detailsOpen
-            enabled: !page.notch
-            opacity: enabled ? 1 : 0.4
-            label: page.sys.tr("Скругление капсулы")
-            from: 0; to: 40; step: 1
-            value: page.sys.cfg.islandRadius
-            // ноль читается как «скругление по половине высоты», а не как
-            // прямые углы: именно так капсула и выглядит по умолчанию
-            valueText: page.sys.cfg.islandRadius === 0
-                       ? page.sys.tr("по высоте") : page.sys.cfg.islandRadius + " px"
-            onMoved: v => { page.sys.cfg.islandRadius = v; page.sys.saveCfg(); }
-        }
     }
 
     SetButton {

@@ -19,7 +19,7 @@ Rectangle {
     readonly property int fsDisplay: sys ? sys.fontSize + 9 : 22
     implicitWidth: 300
     implicitHeight: 180
-    radius: 22
+    radius: sys ? sys.shapeR : 22
     color: sys ? sys.colBg : "#000000"
     border.width: sys ? sys.edgeW : 0
     border.color: sys ? sys.edgeColor : "transparent"

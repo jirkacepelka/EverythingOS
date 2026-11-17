@@ -43,7 +43,7 @@ Item {
     readonly property int fsBody:    view.sys ? view.sys.fontSize - 3 : 10   // běžný text
     readonly property int fsLead:    view.sys ? view.sys.fontSize - 1 : 12   // zvýrazněný text
     readonly property int fsDisplay: view.sys ? view.sys.fontSize + 9 : 22   // velká čísla
-    readonly property int cardRadius: 22
+    readonly property int cardRadius: view.sys ? view.sys.shapeR : 22
     readonly property int cardPad: 14
     property real originX: 11
     property real originY: 59
@@ -131,7 +131,7 @@ Item {
             view.movePos(dl.wid, dl.sx + p.x - dl.pp.x, dl.sy + p.y - dl.pp.y, true);
         }
         Rectangle {
-            anchors.fill: parent; radius: 22; color: Qt.rgba(1, 1, 1, dl.pressed ? 0.10 : 0.04)
+            anchors.fill: parent; radius: view.cardRadius; color: Qt.rgba(1, 1, 1, dl.pressed ? 0.10 : 0.04)
             border.color: Qt.rgba(1, 1, 1, 0.55); border.width: 1.5
         }
     }
