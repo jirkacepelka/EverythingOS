@@ -1668,7 +1668,7 @@ PanelWindow {
     // Společné zaoblení (0 = výchozí) pro widgety, popupy a okna
     // Window/popup corner radius shared with Hyprland rounding: pill radius
     readonly property int winR: cfg.islandRadius > 0 ? Math.min(cfg.islandRadius, 24) : Math.round(cfg.pillH / 2)
-    readonly property int shapeR: cfg.islandRadius > 0 ? cfg.islandRadius : 22
+    readonly property int shapeR: root.winR
     readonly property color edgeColor: Qt.rgba(Qt.color(cfg.borderColor).r, Qt.color(cfg.borderColor).g, Qt.color(cfg.borderColor).b, cfg.borderAlpha / 100)
     readonly property int edgeW: cfg.borderWidth
     Process {
