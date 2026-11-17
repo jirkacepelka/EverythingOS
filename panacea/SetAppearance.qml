@@ -80,7 +80,7 @@ ColumnLayout {
 
         SetSlider {
             sys: page.sys
-            label: "Mezera / odsazení od okrajů (okna, ostrov, widgety)"
+            label: "Gap / edge spacing (windows, island, widgets)"
             from: 0; to: 48; step: 1
             value: page.sys.cfg.islandGap
             suffix: "px"
@@ -89,16 +89,16 @@ ColumnLayout {
 
         SetSlider {
             sys: page.sys
-            label: "Zaoblení rohů (okna, ostrov, popupy, widgety)"
+            label: "Corner radius (windows, island, popups, widgets)"
             from: 0; to: 40; step: 1
             value: page.sys.cfg.islandRadius
-            valueText: page.sys.cfg.islandRadius === 0 ? "výchozí" : page.sys.cfg.islandRadius + " px"
+            valueText: page.sys.cfg.islandRadius === 0 ? "default" : page.sys.cfg.islandRadius + " px"
             onMoved: v => { page.sys.cfg.islandRadius = v; page.sys.saveCfg(); }
         }
 
         SetSlider {
             sys: page.sys
-            label: "Barevný okraj – tloušťka"
+            label: "Colored border – width"
             from: 0; to: 6; step: 1
             value: page.sys.cfg.borderWidth
             suffix: "px"
@@ -107,7 +107,7 @@ ColumnLayout {
 
         SetSlider {
             sys: page.sys
-            label: "Barevný okraj – průhlednost"
+            label: "Colored border – opacity"
             from: 0; to: 100; step: 5
             value: page.sys.cfg.borderAlpha
             suffix: "%"
@@ -136,20 +136,20 @@ ColumnLayout {
 
         // Vlastní barva: odstín / sytost / jas
         Text {
-            text: "Vlastní barva (odstín · sytost · jas)"
+            text: "Custom color (hue · saturation · lightness)"
             color: page.sys.colMuted
             font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3 }
         }
         SetSlider {
             sys: page.sys
-            label: "Odstín"
+            label: "Hue"
             from: 0; to: 360; step: 1
             value: Math.max(0, page.cur.hslHue) * 360
             onMoved: v => { page.sys.cfg.borderColor = String(Qt.hsla(v / 360, Math.max(0.05, page.cur.hslSaturation), page.cur.hslLightness, 1)); page.sys.saveCfg(); }
         }
         SetSlider {
             sys: page.sys
-            label: "Sytost"
+            label: "Saturation"
             from: 0; to: 100; step: 1
             value: page.cur.hslSaturation * 100
             suffix: "%"
@@ -157,7 +157,7 @@ ColumnLayout {
         }
         SetSlider {
             sys: page.sys
-            label: "Jas"
+            label: "Lightness"
             from: 10; to: 95; step: 1
             value: page.cur.hslLightness * 100
             suffix: "%"

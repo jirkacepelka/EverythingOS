@@ -55,12 +55,12 @@ FocusScope {
             ColumnLayout {
                 spacing: 4
                 Text {
-                    text: "Vítej v Panacea"
+                    text: "Welcome to Panacea"
                     color: view.sys.colFg
                     font { family: view.sys.fontFam; pixelSize: view.fs + 12; weight: Font.Normal }
                 }
                 Text {
-                    text: "Pár věcí si můžeš nastavit hned. Všechno jde později změnit v Nastavení (Super+I)."
+                    text: "A few things you can set up right away. Everything can be changed later in Settings (Super+I)."
                     color: view.sys.colMuted
                     font { family: view.sys.fontFam; pixelSize: view.fs - 1 }
                 }
@@ -68,7 +68,7 @@ FocusScope {
 
             // ------------------------------------------------ styl ostrova
             Text {
-                text: "STYL OSTROVA"
+                text: "ISLAND STYLE"
                 color: view.sys.colMuted
                 font { family: view.sys.fontFam; pixelSize: view.fs - 4; letterSpacing: 1.5 }
             }
@@ -78,9 +78,9 @@ FocusScope {
 
                 Repeater {
                     model: [
-                        { m: 0, title: "Výřez",     sub: "Přisazený k hraně obrazovky" },
-                        { m: 1, title: "Plovoucí",  sub: "Samostatná kapsle s odstupem" },
-                        { m: 2, title: "3 pilulky", sub: "Stoly, hodiny a systém zvlášť" }
+                        { m: 0, title: "Notch",     sub: "Attached to the screen edge" },
+                        { m: 1, title: "Floating",  sub: "Detached capsule with a gap" },
+                        { m: 2, title: "3 pills", sub: "Workspaces, clock, system" }
                     ]
                     delegate: Rectangle {
                         id: card
@@ -183,9 +183,9 @@ FocusScope {
                     Column {
                         anchors { left: parent.left; leftMargin: 70; verticalCenter: parent.verticalCenter }
                         spacing: 3
-                        Text { text: "Oči v ostrově"; color: view.sys.colFg
+                        Text { text: "Eyes in the island"; color: view.sys.colFg
                                font { family: view.sys.fontFam; pixelSize: view.fs } }
-                        Text { text: parent.parent.on ? "Zapnuto" : "Vypnuto"; color: view.sys.colMuted
+                        Text { text: parent.parent.on ? "On" : "Off"; color: view.sys.colMuted
                                font { family: view.sys.fontFam; pixelSize: view.fs - 3 } }
                     }
                     MouseArea {
@@ -211,9 +211,9 @@ FocusScope {
                     Column {
                         anchors { left: parent.left; leftMargin: 70; verticalCenter: parent.verticalCenter }
                         spacing: 3
-                        Text { text: "Widgety na ploše"; color: view.sys.colFg
+                        Text { text: "Desktop widgets"; color: view.sys.colFg
                                font { family: view.sys.fontFam; pixelSize: view.fs } }
-                        Text { text: parent.parent.on ? "Zapnuto" : "Vypnuto"; color: view.sys.colMuted
+                        Text { text: parent.parent.on ? "On" : "Off"; color: view.sys.colMuted
                                font { family: view.sys.fontFam; pixelSize: view.fs - 3 } }
                     }
                     MouseArea {
@@ -226,7 +226,7 @@ FocusScope {
                         anchors { right: parent.right; rightMargin: 14; verticalCenter: parent.verticalCenter }
                         width: editTxt.implicitWidth + 24; height: 32; radius: 16
                         color: Qt.rgba(1, 1, 1, 0.10)
-                        Text { id: editTxt; anchors.centerIn: parent; text: "Upravit rozložení"; color: view.sys.colFg
+                        Text { id: editTxt; anchors.centerIn: parent; text: "Edit layout"; color: view.sys.colFg
                                font { family: view.sys.fontFam; pixelSize: view.fs - 3 } }
                         MouseArea {
                             anchors.fill: parent; cursorShape: Qt.PointingHandCursor
@@ -238,7 +238,7 @@ FocusScope {
 
             // ------------------------------------------------ zkratky
             Text {
-                text: "ZKRATKY"
+                text: "SHORTCUTS"
                 color: view.sys.colMuted
                 font { family: view.sys.fontFam; pixelSize: view.fs - 4; letterSpacing: 1.5 }
             }
@@ -247,13 +247,13 @@ FocusScope {
                 spacing: 10
                 Repeater {
                     model: [
-                        { k: "Super",      d: "Plochy, pak psaním hledání" },
-                        { k: "Super+A",    d: "Spouštěč aplikací" },
-                        { k: "Super+F",    d: "Soubory" },
-                        { k: "Super+B",    d: "Prohlížeč" },
-                        { k: "Alt+Tab",    d: "Přepínání oken" },
-                        { k: "Super+I",    d: "Nastavení" },
-                        { k: "Super+/",    d: "Všechny zkratky" }
+                        { k: "Super",      d: "Workspaces, then type to search" },
+                        { k: "Super+A",    d: "App launcher" },
+                        { k: "Super+F",    d: "Files" },
+                        { k: "Super+B",    d: "Browser" },
+                        { k: "Alt+Tab",    d: "Switch windows" },
+                        { k: "Super+I",    d: "Settings" },
+                        { k: "Super+/",    d: "All shortcuts" }
                     ]
                     delegate: Rectangle {
                         required property var modelData
@@ -300,7 +300,7 @@ FocusScope {
                     Text {
                         id: chk
                         anchors { left: box.right; leftMargin: 10; verticalCenter: parent.verticalCenter }
-                        text: "Zobrazovat při každém spuštění"
+                        text: "Show on every start"
                         color: view.sys.colMuted
                         font { family: view.sys.fontFam; pixelSize: view.fs - 2 }
                     }
@@ -314,7 +314,7 @@ FocusScope {
                     color: view.sys.colFg
                     Text {
                         anchors.centerIn: parent
-                        text: "Hotovo"
+                        text: "Done"
                         color: view.sys.colBg
                         font { family: view.sys.fontFam; pixelSize: view.fs - 1; weight: Font.DemiBold }
                     }

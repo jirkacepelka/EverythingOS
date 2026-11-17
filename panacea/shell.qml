@@ -1740,6 +1740,12 @@ PanelWindow {
     Timer { interval: 3500; running: true; onTriggered: onboardCheck.running = true }
     // Pilulky: pravé stránky (kontrolní centrum, notifikace, VPN…) se otevírají
     // vpravo, středové (hudba, chat, kalendář) uprostřed
+    // Split island: idle = pills visible on a transparent capsule; otherwise the capsule
+    // (popup, toast, OSD) covers only the pill it replaces
+    readonly property bool splitIdle: splitMode && (!expanded || keepVis) && !btToastActive && !wifiToastActive
+                                      && !acToastActive && !recPickActive && !voxActive && !osdActive && !toastActive
+    readonly property bool rightCover: splitMode && !splitIdle && expanded && splitRight
+    readonly property bool midCover: splitMode && !splitIdle && !rightCover
     readonly property var rightPages: ["main", "notif", "vpn", "audio", "power", "record", "wifi", "bt"]
     readonly property bool splitRight: splitMode && rightPages.indexOf(page) >= 0
     readonly property var centerPages: ["music", "chat", "cal"]
@@ -4899,10 +4905,10 @@ PanelWindow {
 
     Region {
         id: capsuleRegion
-        item: nothingCapsule.splitOn ? null : capsule
-        Region { item: nothingCapsule.splitOn ? leftPill : null;  intersection: Intersection.Combine }
-        Region { item: nothingCapsule.splitOn ? midPill : null;   intersection: Intersection.Combine }
-        Region { item: nothingCapsule.splitOn ? rightPill : null; intersection: Intersection.Combine }
+        item: root.splitIdle ? null : capsule
+        Region { item: root.splitMode && leftPill.visible ? leftPill : null;  intersection: Intersection.Combine }
+        Region { item: root.splitMode && midPill.visible ? midPill : null;   intersection: Intersection.Combine }
+        Region { item: root.splitMode && rightPill.visible ? rightPill : null; intersection: Intersection.Combine }
         // спрятанный остров вне экрана, и без полоски его не позвать
         Region {
             item: root.cfg.pillAutoHide ? revealStrip : null
@@ -4987,6 +4993,18 @@ PanelWindow {
             visible: opacity > 0.01
             Behavior on opacity { NumberAnimation { duration: 140 } }
         }
+    }
+
+    // Layer with the three pills (split island); sits above the capsule while idle
+    // (clickable pills) and below it while a popup/toast replaces one of them
+    Item {
+        id: splitLayer
+        visible: root.splitMode
+        z: root.splitIdle ? 5 : -1
+        x: capsule.freeGap + 1
+        width: root.width - 2 * (capsule.freeGap + 1)
+        y: root.pillAtBottom ? root.height - capsule.freeGap - root.pillH : capsule.freeGap
+        height: root.pillH
     }
 
     // ------------------------------------------------------------- сама пилюля
@@ -5076,7 +5094,7 @@ PanelWindow {
         // Pilulky: pravé stránky ukotvit vpravo (okraj = společná mezera)
         anchors.horizontalCenterOffset: (root.splitRight && root.expanded && !root.keepVis)
                                         ? Math.round((root.width - width) / 2 - (freeGap + 1)) : 0
-        Behavior on anchors.horizontalCenterOffset { NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
+        Behavior on anchors.horizontalCenterOffset { enabled: !root.splitMode; NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
         anchors.verticalCenter:   root.pillSide ? parent.verticalCenter : undefined
 
         // у кромки — 0, в режиме настроек — по центру экрана
@@ -5244,7 +5262,7 @@ PanelWindow {
         visible: opacity > 0.01
         Behavior on opacity { NumberAnimation { duration: root.animFast } }
 
-        color: nothingCapsule.splitOn ? "transparent" : root.colBg
+        color: root.splitIdle ? "transparent" : root.colBg
         Behavior on color { ColorAnimation { duration: root.animFast } }
         // Углы у прижатой кромки срезаны, у смотрящей в экран — скруглены:
         // так остров выглядит выросшим из края, а не приклеенным к нему.
@@ -5272,7 +5290,7 @@ PanelWindow {
         // passare 1px di sfondo sul lato superiore: da qui l'impressione che
         // la pillola non fosse attaccata al bordo dello schermo e che il fondo
         // cambiasse all'apertura.
-        border.width: (!root.cfg.notchMode && !nothingCapsule.splitOn) ? root.edgeW : 0
+        border.width: (!root.cfg.notchMode && !root.splitIdle) ? root.edgeW : 0
         border.color: root.edgeColor
 
         // Bounce со вкладки Motion живёт здесь: остров меняет размер по
@@ -5280,6 +5298,7 @@ PanelWindow {
         // проскакивает цель, прежде чем осесть. На нуле перелёта нет и
         // кривая обычная — движение просто останавливается.
         Behavior on width {
+            enabled: !root.splitMode
             NumberAnimation {
                 duration: root.animMs
                 easing.type: root.animBounce > 0 ? Easing.OutBack : Easing.InOutCubic
@@ -6210,14 +6229,15 @@ PanelWindow {
         // одинаковое место — часы стоят намертво по центру.
         Item {
             id: nothingCapsule
+            parent: root.splitMode ? splitLayer : capsule
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
             anchors.leftMargin: 18
             anchors.rightMargin: 18
             height: root.pillH
-            visible: (!root.expanded || (root.keepVis && !root.settingsMode)) && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
-                     && !root.osdActive && !root.toastActive
+            visible: root.splitMode || ((!root.expanded || (root.keepVis && !root.settingsMode)) && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
+                     && !root.osdActive && !root.toastActive)
             opacity: root.pillSide ? 0 : (visible ? 1 : 0)
             Behavior on opacity { NumberAnimation { duration: root.animFast } }
 
@@ -6227,7 +6247,7 @@ PanelWindow {
             // Rozdělený ostrov: tři samostatné pilulky na krajích a uprostřed
             // (stoly | hodiny | systém). Kapsle je přes celou šířku průhledná,
             // klikací jsou jen pilulky (viz capsuleRegion).
-            readonly property bool splitOn: root.splitMode && nothingCapsule.visible
+            readonly property bool splitOn: root.splitMode
             readonly property real splitPad: 18
             // Index sekcí středového popupu (hudba · chat · kalendář), vidět i zavřený
             Row {
@@ -6257,7 +6277,7 @@ PanelWindow {
             }
             Rectangle {
                 id: midPill
-                z: -1; visible: nothingCapsule.splitOn
+                z: -1; visible: nothingCapsule.splitOn && !root.midCover
                 border.width: root.edgeW; border.color: root.edgeColor
                 x: nClock.x - nothingCapsule.splitPad - 42
                 width: nClock.width + 2 * nothingCapsule.splitPad + 84
@@ -6265,7 +6285,7 @@ PanelWindow {
             }
             Rectangle {
                 id: rightPill
-                z: -1; visible: nothingCapsule.splitOn
+                z: -1; visible: nothingCapsule.splitOn && !root.rightCover
                 border.width: root.edgeW; border.color: root.edgeColor
                 x: nRight.x - nothingCapsule.splitPad
                 width: nRight.width + 2 * nothingCapsule.splitPad
@@ -6855,7 +6875,7 @@ PanelWindow {
             spacing: 6
             visible: root.expanded && !root.settingsMode && root.tabbedPage
             Repeater {
-                model: root.splitCenter ? [{page:"music", title:"Hudba"}, {page:"chat", title:root.tr("Чат")}, {page:"cal", title:"Kalendář"}] : (root.splitMode ? [{page:"main", title:root.tr("Главная")}] : [{page:"main", title:root.tr("Главная"), icon:0xF02DC}, {page:"chat", title:root.tr("Чат")}])
+                model: root.splitCenter ? [{page:"music", title:"Music"}, {page:"chat", title:root.tr("Чат")}, {page:"cal", title:"Calendar"}] : (root.splitMode ? [{page:"main", title:root.tr("Главная")}] : [{page:"main", title:root.tr("Главная"), icon:0xF02DC}, {page:"chat", title:root.tr("Чат")}])
                 delegate: Rectangle {
                     required property var modelData
                     width: root.page === modelData.page ? tabText.implicitWidth + 48 : 40

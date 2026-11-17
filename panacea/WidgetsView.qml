@@ -1168,13 +1168,13 @@ Item {
             spacing: 18
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "Přetahuj widgety myší"
+                text: "Drag widgets with the mouse"
                 color: view.sys ? view.sys.colMuted : "#888"
                 font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody }
             }
             Text {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "Obnovit"
+                text: "Reset"
                 color: view.sys ? view.sys.colFg : "#fff"
                 font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody }
                 MouseArea { anchors.fill: parent; anchors.margins: -8; cursorShape: Qt.PointingHandCursor; onClicked: view.resetPos() }
@@ -1184,7 +1184,7 @@ Item {
                 width: 76; height: 30; radius: 15
                 color: view.sys ? view.sys.colFg : "#fff"
                 Text {
-                    anchors.centerIn: parent; text: "Hotovo"
+                    anchors.centerIn: parent; text: "Done"
                     color: view.sys ? view.sys.colBg : "#000"
                     font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody; weight: Font.DemiBold }
                 }

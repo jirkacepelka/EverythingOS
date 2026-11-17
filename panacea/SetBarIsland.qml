@@ -20,8 +20,8 @@ ColumnLayout {
 
         SetToggle {
             sys: page.sys
-            label: "Rozdělený ostrov (3 pilulky)"
-            sub: "Stoly, hodiny a systém jako tři samostatné pilulky. Funguje jen při vypnutém režimu výřezu (plovoucí ostrov)."
+            label: "Split island (3 pills)"
+            sub: "Workspaces, clock and system as three separate pills. Works only with notch mode off (floating island)."
             on: page.sys.cfg.splitIsland
             onToggled: value => { page.sys.cfg.splitIsland = value; page.sys.saveCfg(); }
         }
