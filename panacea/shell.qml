@@ -5460,7 +5460,9 @@ PanelWindow {
                 // выезжает-то из-за кромки под этот самый курсор, так что
                 // раскрытие следом означало бы: хотел посмотреть время —
                 // получи панель во весь экран. Разворачивает клик.
-                if (root.cfg.pillAutoHide) return;
+                // (3 pilulky: pilulky jsou malé a samostatné, hover otevírá popup i s autoskrytím;
+                // samovolné otevření po vyjetí hlídá hoverExpandArmed)
+                if (root.cfg.pillAutoHide && !root.splitMode) return;
                 capsule.openPanel();
             }
         }
