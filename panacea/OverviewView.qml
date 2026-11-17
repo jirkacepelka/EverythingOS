@@ -17,16 +17,14 @@ FocusScope {
     id: view
     property var sys
 
-    // Opening: the content fades and scales in once everything has been created, instead of
+    // Opening: the content fades in once everything has been created, instead of
     // popping in piece by piece; the heavy parts (widget snapshots) stop updating after a moment.
     property bool opened: false
     property bool settling: true
     Timer { interval: 30; running: true; onTriggered: view.opened = true }
     Timer { interval: 900; running: true; onTriggered: view.settling = false }
     opacity: view.opened ? 1 : 0
-    scale: view.opened ? 1 : 0.97
     Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
-    Behavior on scale { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
 
     // Без focus: true клавиатура остаётся у корня окна, и Enter в оверлее
     // просто никуда не приходил — стол не переключался.
