@@ -919,7 +919,7 @@ PanelWindow {
     // со стороны выглядело, будто две наклейки слетаются к острову с разных
     // сторон. Пока он едет, их просто нет, и приезжает он целым.
     readonly property bool cornersWanted:
-        !(root.settingsMode || root.wallsOpen || root.pillHidden || root.splitMode)
+        !(root.settingsMode || root.wallsOpen || root.pillHidden || root.splitIdle)
     property bool cornersOn: false
     Timer {
         id: cornerReveal
@@ -6330,29 +6330,38 @@ PanelWindow {
             Rectangle {
                 id: leftPill
                 z: -1; visible: nothingCapsule.splitOn
-                border.width: root.edgeW; border.color: root.edgeColor
+                border.width: root.cfg.notchMode ? 0 : root.edgeW; border.color: root.edgeColor
                 x: nLeft.x - nothingCapsule.splitPad
                 width: nLeft.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
                 topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
+                // concave flares into the screen edge (Attached mode), like the single notch
+                NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
+                NotchCorner { visible: root.cfg.notchMode; side: "right"; fill: root.colBg; r: root.cfg.notchFlare; x: parent.width; y: 0 }
             }
             Rectangle {
                 id: midPill
                 z: -1; visible: nothingCapsule.splitOn && !root.midCover
-                border.width: root.edgeW; border.color: root.edgeColor
+                border.width: root.cfg.notchMode ? 0 : root.edgeW; border.color: root.edgeColor
                 x: nClock.x - nothingCapsule.splitPad
                 width: nClock.width + 2 * nothingCapsule.splitPad + nothingCapsule.midExtra
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
                 topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
+                // concave flares into the screen edge (Attached mode), like the single notch
+                NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
+                NotchCorner { visible: root.cfg.notchMode; side: "right"; fill: root.colBg; r: root.cfg.notchFlare; x: parent.width; y: 0 }
             }
             Rectangle {
                 id: rightPill
                 z: -1; visible: nothingCapsule.splitOn && !root.rightCover
-                border.width: root.edgeW; border.color: root.edgeColor
+                border.width: root.cfg.notchMode ? 0 : root.edgeW; border.color: root.edgeColor
                 x: nRight.x - nothingCapsule.splitPad
                 width: nRight.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
                 topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
+                // concave flares into the screen edge (Attached mode), like the single notch
+                NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
+                NotchCorner { visible: root.cfg.notchMode; side: "right"; fill: root.colBg; r: root.cfg.notchFlare; x: parent.width; y: 0 }
             }
 
             // Место под точки столов: пять слотов по шесть пикселей, просветы
