@@ -39,6 +39,9 @@ Item {
         { id: "wallpapers", title: "Wallpapers", g: 0xF0976, page: "SetWallpapers.qml",
           sub: "Pick, add and remove desktop wallpapers.",
           keys: "wallpaper wallpapers background desktop image tapeta pozadí обои фон" },
+        { id: "widgets", title: "Widgets", g: 0xF0572, page: "SetWidgets.qml",
+          sub: "Desktop widgets: layout, built-in cards and modes.",
+          keys: "widgets desktop cards clock weather sound brightness tray grid layout widgety plocha виджеты" },
         { id: "weather", title: view.sys.tr("Погода"),        g: 0xF0590, page: "SetWeather.qml",
           sub: view.sys.tr("Ключ, город и шкала для виджета погоды."),
           keys: "weather temperature city openweather api key celsius fahrenheit "
@@ -86,7 +89,7 @@ Item {
     // so links from notifications and IPC still open the intended page.
     readonly property var groups: [
         { id: "island", title: view.sys.tr("Остров"), g: 0xF12E1, pages: ["bar", "media", "clock"] },
-        { id: "appearance", title: view.sys.tr("Оформление"), g: 0xF03D8, pages: ["look", "wallpapers", "weather", "motion"] },
+        { id: "appearance", title: view.sys.tr("Оформление"), g: 0xF03D8, pages: ["look", "wallpapers", "widgets", "weather", "motion"] },
         { id: "controls", title: view.sys.tr("Управление"), g: 0xF062E, pages: ["cc", "dock", "launch", "notif"] },
         { id: "devices", title: view.sys.tr("Устройства"), g: 0xF0379, pages: ["display", "input"] },
         { id: "network", title: "Network", g: 0xF05A9, pages: ["wifi", "bluetooth"] },

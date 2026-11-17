@@ -1818,6 +1818,15 @@ PanelWindow {
         saveWidgetItems(widgetItems.filter(function (w) { return w.id !== id; }));
     }
     function clearWidgets() { saveWidgetItems([]); }
+    // full reset used by Settings: positions, hidden built-ins and added widgets
+    function widgetsResetAll() { cfg.widgetItemsJson = "[]"; cfg.widgetHiddenJson = "[]"; cfg.widgetPosJson = ""; saveCfg(); }
+    // open Settings on a given page id (order must match SettingsView.sections)
+    readonly property var settingsPageIds: ["bar","media","clock","look","wallpapers","widgets","weather","motion","launch","notif","cc","dock","lock","display","input","wifi","bluetooth","vpn","system"]
+    function openSettingsPage(id) {
+        var i = settingsPageIds.indexOf(id);
+        settingsTab = i < 0 ? 0 : i;
+        if (page !== "settings" || !expanded) togglePage("settings");
+    }
     // built-in widgets (date, clock, weather, right, progress, music, scratch) can be hidden and restored
     readonly property var widgetHidden: {
         try { var l = JSON.parse(cfg.widgetHiddenJson || "[]"); return Array.isArray(l) ? l : []; } catch (e) { return []; }
@@ -4831,6 +4840,8 @@ PanelWindow {
         function onboarding(): void { root.onboardingOpen = !root.onboardingOpen; }
         function widgetsEdit(): void { root.widgetEdit = !root.widgetEdit; }
         function widgetsReset(): void { root.cfg.widgetPosJson = ""; root.saveCfg(); }
+        // removes every tray widget, restores hidden built-ins and resets positions
+        function widgetsClear(): void { root.cfg.widgetItemsJson = "[]"; root.cfg.widgetHiddenJson = "[]"; root.cfg.widgetPosJson = ""; root.saveCfg(); }
         // открыть окно настроек сразу на нужном разделе: удобно вешать на
         // сочетание клавиш и незаменимо при проверке самих настроек
         function settingsAt(tab: string): void {
@@ -8029,6 +8040,101 @@ PanelWindow {
         Behavior on scale { NumberAnimation { duration: 250; easing.type: Easing.OutBack; easing.overshoot: 1.15 } }
         Behavior on y { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
         Behavior on opacity { NumberAnimation { duration: 200 } }
+    }
+}
+
+
+// Kontextové menu plochy: pravý klik (dva prsty na touchpadu) na prázdnou plochu.
+// Okno leží pod okny aplikací, takže chytá jen klik na volné místo; při otevřeném
+// menu se zvedne nad widgety a klik mimo menu ho zavře.
+PanelWindow {
+    id: desktopWin
+    property bool menuOpen: false
+    property real mx: 0
+    property real my: 0
+    visible: !root.fullscreenActive && !root.widgetEdit
+    screen: root.screen
+    anchors { top: true; left: true; right: true; bottom: true }
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.layer: desktopWin.menuOpen ? WlrLayer.Top : WlrLayer.Bottom
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    onVisibleChanged: if (!visible) menuOpen = false
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onPressed: m => {
+            if (m.button === Qt.RightButton) {
+                desktopWin.mx = Math.min(m.x, width - 250);
+                desktopWin.my = Math.min(m.y, height - 330);
+                desktopWin.menuOpen = true;
+            } else desktopWin.menuOpen = false;
+        }
+    }
+
+    Rectangle {
+        id: menuBox
+        visible: desktopWin.menuOpen
+        x: desktopWin.mx; y: desktopWin.my
+        width: 240
+        height: menuCol.implicitHeight + 16
+        radius: root.winR
+        color: root.colBg
+        border.width: root.edgeW
+        border.color: root.edgeColor
+
+        Column {
+            id: menuCol
+            x: 8; y: 8
+            width: parent.width - 16
+            spacing: 2
+            Repeater {
+                model: [
+                    { t: "Edit widgets",     a: "edit" },
+                    { t: "Widget settings",  a: "widgets" },
+                    { t: "Wallpapers",       a: "wallpapers" },
+                    { t: "Dock",             a: "dock" },
+                    { t: "Display settings", a: "display" },
+                    { t: "-" },
+                    { t: "All settings",     a: "bar" }
+                ]
+                delegate: Item {
+                    id: mi
+                    required property var modelData
+                    width: menuCol.width
+                    height: modelData.t === "-" ? 9 : 36
+                    Rectangle {
+                        visible: mi.modelData.t === "-"
+                        anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter }
+                        height: 1; color: Qt.rgba(1, 1, 1, 0.12)
+                    }
+                    Rectangle {
+                        visible: mi.modelData.t !== "-"
+                        anchors.fill: parent
+                        radius: Math.max(8, root.winR - 8)
+                        color: ma.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+                        Text {
+                            anchors { left: parent.left; leftMargin: 14; verticalCenter: parent.verticalCenter }
+                            text: mi.modelData.t
+                            color: root.colFg
+                            font { family: root.fontFam; pixelSize: root.fontSize - 2 }
+                        }
+                        MouseArea {
+                            id: ma
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: {
+                                desktopWin.menuOpen = false;
+                                if (mi.modelData.a === "edit") root.widgetEdit = true;
+                                else root.openSettingsPage(mi.modelData.a);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

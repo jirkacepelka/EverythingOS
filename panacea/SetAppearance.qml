@@ -182,78 +182,18 @@ ColumnLayout {
     SetCard {
         sys: page.sys
 
-        SetLabel { sys: page.sys; text: page.sys.tr("Настольные виджеты") }
-
-        SetToggle {
-            sys: page.sys
-            label: page.sys.tr("Виджеты на рабочем столе")
-            sub: page.sys.tr("Карточки Nothing OS на обоях: дата, часы, погода, системный монитор и шкала прогресса. Клик по карточкам переключает режимы.")
-            on: page.sys.cfg.featWidgets
-            onToggled: v => { page.sys.cfg.featWidgets = v; page.sys.saveCfg(); }
-        }
-
-        SetSelect {
-            visible: page.sys.cfg.featWidgets && page.detailsOpen
-            sys: page.sys
-            label: page.sys.tr("Стиль часов")
-            options: [
-                { id: "analog", text: page.sys.tr("Аналоговые Nothing") },
-                { id: "digital", text: page.sys.tr("Цифровые точечные") }
-            ]
-            value: page.sys.cfg.widgetClockMode || "analog"
-            onPicked: id => { page.sys.cfg.widgetClockMode = id; page.sys.saveCfg(); }
-        }
-
-        SetSelect {
-            visible: page.sys.cfg.featWidgets && page.detailsOpen
-            sys: page.sys
-            label: page.sys.tr("Информационный блок")
-            options: [
-                { id: "weather", text: page.sys.tr("Погода (ветер и влажность)") },
-                { id: "system", text: page.sys.tr("Система (RAM и SSD)") }
-            ]
-            value: page.sys.cfg.widgetRightMode || "weather"
-            onPicked: id => { page.sys.cfg.widgetRightMode = id; page.sys.saveCfg(); }
-        }
-
-        SetSelect {
-            visible: page.sys.cfg.featWidgets && page.detailsOpen
-            sys: page.sys
-            label: page.sys.tr("Шкала прогресса")
-            options: [
-                { id: "day", text: page.sys.tr("Прогресс дня (24 часа)") },
-                { id: "year", text: page.sys.tr("Прогресс года (365 дней)") }
-            ]
-            value: page.sys.cfg.widgetProgressMode || "day"
-            onPicked: id => { page.sys.cfg.widgetProgressMode = id; page.sys.saveCfg(); }
-        }
-
-        SetToggle {
-            visible: page.sys.cfg.featWidgets && page.detailsOpen
-            sys: page.sys
-            label: page.sys.tr("Виджет Nothing Music")
-            sub: page.sys.tr("Плеер в стиле Nothing с крутящимся винилом и управлением воспроизведением прямо на рабочем столе.")
-            on: page.sys.cfg.widgetMusic !== false
-            onToggled: v => { page.sys.cfg.widgetMusic = v; page.sys.saveCfg(); }
-        }
-
-        SetToggle {
-            visible: page.sys.cfg.featWidgets && page.detailsOpen
-            sys: page.sys
-            label: page.sys.tr("Виджет ScratchPad")
-            sub: page.sys.tr("Быстрые заметки прямо на рабочем столе с автоматическим сохранением.")
-            on: page.sys.cfg.widgetScratchpad !== false
-            onToggled: v => { page.sys.cfg.widgetScratchpad = v; page.sys.saveCfg(); }
-        }
-
+        SetLabel { sys: page.sys; text: "Desktop widgets" }
         Text {
             Layout.fillWidth: true
-            visible: page.sys.cfg.featWidgets
-                     && page.sys.cfg.weatherKey.length === 0
-            text: page.sys.tr("Впишите ключ и город во вкладке Weather, иначе карточка погоды останется пустой.")
+            text: "Layout, built-in cards and modes now have their own page."
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
             font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
+        }
+        RowLayout {
+            Layout.fillWidth: true
+            SetButton { sys: page.sys; text: "Widget settings…"; primary: true; onClicked: page.sys.openSettingsPage("widgets") }
+            Item { Layout.fillWidth: true }
         }
     }
 

@@ -35,6 +35,8 @@ Item {
     // Ширина колонки и просвет между карточками
     // two grid cells wide / tall: the desktop grid is stretched to the screen (sys.pitchX / pitchY)
     readonly property real col: view.sys ? 2 * view.sys.pitchX - 12 : 144
+    readonly property real row1: view.sys ? view.sys.pitchY - 12 : 66
+    readonly property real row3: view.sys ? 3 * view.sys.pitchY - 12 : 222
     readonly property real row2: view.sys ? 2 * view.sys.pitchY - 12 : 140
     readonly property real gap: 12
     readonly property real fullW: view.col * 2 + view.gap
@@ -57,7 +59,7 @@ Item {
     readonly property real snap: view.sys ? view.sys.pitchX : 78   // desktop grid pitch (shared with the tray widgets)
     readonly property var sizes: ({
         date: [view.col, view.row2], clock: [view.col, view.row2], weather: [view.col, view.row2],
-        right: [view.col, view.row2], progress: [view.fullW, 72], music: [view.fullW, 180],
+        right: [view.col, view.row2], progress: [view.fullW, view.row1], music: [view.fullW, view.row3],
         scratch: [view.fullW, view.row2]
     })
     function defaults() {
@@ -800,7 +802,7 @@ Item {
             id: progressCard
             visible: !view.isHidden("progress")
             x: view.wx("progress"); y: view.wy("progress")
-            width: view.fullW; height: 72
+            width: view.fullW; height: view.row1
 
             ColumnLayout {
                 anchors.fill: parent
