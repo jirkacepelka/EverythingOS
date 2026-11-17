@@ -1771,7 +1771,8 @@ PanelWindow {
     readonly property bool backShown: expanded && !settingsMode && (["power", "notif", "record"].indexOf(page) >= 0 || (splitMode && page === "vpn"))
     // Right popup (control center) is 25% narrower than the center one
     // Narrow only for the right pill popup; the joined island keeps the full width
-    readonly property int popupW: (splitRight && ["main", "notif", "power"].indexOf(page) >= 0) ? Math.round(panelW * 0.75) : panelW
+    // every right-pill page (menu and its Wi-Fi / Bluetooth / VPN / audio sub-pages) keeps the same width
+    readonly property int popupW: splitRight ? Math.round(panelW * 0.75) : panelW
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
@@ -5279,11 +5280,16 @@ PanelWindow {
             interval: 24
             onTriggered: capsule.applyContentH()
         }
+        property real menuH: 0
         function refreshContentH() { contentSettle.restart(); }
         function applyContentH() {
             var it = contentLoader.item;
             if (!it || it.implicitHeight <= 40) return;
             var target = it.implicitHeight + ((root.tabbedPage || root.backShown) && !root.settingsMode ? 75 : 30);
+            // sub-pages opened from the menu keep at least the menu's height instead of shrinking/growing
+            if (root.splitMode && !root.settingsMode && (root.page === "main" || root.splitCenter)) capsule.menuH = target;
+            else if (root.splitMode && ["wifi", "bt", "vpn", "audio"].indexOf(root.page) >= 0 && capsule.menuH > 0)
+                target = Math.max(target, capsule.menuH);
             // Мелкие колебания раскладки цель не двигают. Высота идёт через
             // Behavior, а тот на каждое изменение цели начинает анимацию
             // заново — с текущей точки и на полную длительность. Пока страница
