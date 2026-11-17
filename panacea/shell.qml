@@ -1663,7 +1663,7 @@ PanelWindow {
     property var islandChatMessages: []
     property var islandAgentEvents: []
     // Rozdělený ostrov (3 pilulky) vždy drží ostrov viditelný: popup je samostatná karta
-    readonly property bool splitMode: cfg.splitIsland && !settingsMode && !pillSide
+    readonly property bool splitMode: cfg.splitIsland && !pillSide   // stays on while Settings is open: the pills remain visible
     // Auto-hide is locked off with the split island (3 pills): popups did not open reliably
     readonly property bool autoHide: cfg.pillAutoHide && !cfg.splitIsland
     readonly property bool keepVis: cfg.pillKeepVisible
@@ -1754,11 +1754,11 @@ PanelWindow {
     // (popup, toast, OSD) covers only the pill it replaces
     readonly property bool toastish: btToastActive || wifiToastActive || acToastActive || recPickActive
                                      || voxActive || osdActive || toastActive
-    readonly property bool splitIdleRaw: splitMode && (!expanded || keepVis) && !toastish
+    readonly property bool splitIdleRaw: splitMode && !settingsMode && (!expanded || keepVis) && !toastish
     // idle only once the capsule has finished collapsing (it keeps its popup geometry meanwhile)
     readonly property bool splitIdle: splitIdleRaw && !capsule.collapsing
-    readonly property bool rightCover: splitMode && !splitIdle && !toastish && (expanded ? splitRight : capsule.heldRight)
-    readonly property bool midCover: splitMode && !splitIdle && !rightCover
+    readonly property bool rightCover: splitMode && !settingsMode && !splitIdle && !toastish && (expanded ? splitRight : capsule.heldRight)
+    readonly property bool midCover: splitMode && !settingsMode && !splitIdle && !rightCover
     readonly property var rightPages: ["main", "notif", "vpn", "audio", "power", "record", "wifi", "bt"]
     readonly property bool splitRight: splitMode && rightPages.indexOf(page) >= 0
     readonly property var centerPages: ["music", "chat", "cal"]
@@ -4873,7 +4873,7 @@ PanelWindow {
     implicitWidth: root.screen ? root.screen.width : 1920
     color: "transparent"
     // зазор между пилюлей и окнами (0 в режиме оверлея или при скрытии)
-    exclusiveZone: (root.cfg.pillOverlay || root.pillHidden || (root.fullscreenActive && !root.expanded))
+    exclusiveZone: ((root.cfg.pillOverlay && !root.splitMode) || root.pillHidden || (root.fullscreenActive && !root.expanded))
                    ? 0 : pillH + (root.cfg.notchMode ? 0 : root.cfg.islandGap)
     WlrLayershell.layer: WlrLayer.Overlay
 
@@ -5026,7 +5026,7 @@ PanelWindow {
     Item {
         id: splitLayer
         visible: root.splitMode
-        z: root.splitIdle ? 5 : -1
+        z: (root.splitIdle || root.settingsMode) ? 5 : -1
         x: root.cfg.islandGap + 1
         width: root.width - 2 * (root.cfg.islandGap + 1)
         y: root.pillAtBottom ? root.height - capsule.freeGap - root.pillH : capsule.freeGap
@@ -7386,7 +7386,17 @@ LazyLoader {
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
         visible: !root.fullscreenActive && !root.overviewOpen
 
-        readonly property bool shown: !root.cfg.dockAutoHide || dockHover.hovered || stripHover.hovered || hideDelay.running
+        // Auto-hide only matters while the current workspace has windows;
+        // on a bare desktop the dock stays visible.
+        readonly property bool hasWindows: {
+            var tl = Hyprland.toplevels ? Hyprland.toplevels.values : [];
+            for (var i = 0; i < tl.length; i++) {
+                var o = tl[i].lastIpcObject;
+                if (o && o.workspace && o.workspace.id === root.wsId && o.mapped !== false && !o.hidden) return true;
+            }
+            return false;
+        }
+        readonly property bool shown: !root.cfg.dockAutoHide || !dockWin.hasWindows || dockHover.hovered || stripHover.hovered || hideDelay.running
         Timer { id: hideDelay; interval: 450 }
         Connections {
             target: dockHover
