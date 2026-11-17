@@ -6559,7 +6559,7 @@ PanelWindow {
                     height: parent.height
                     radius: 3
                     color: root.osdKind === "bright" ? root.colWarn
-                           : root.osdKind === "task" ? "#ff9f0a" : root.colOn
+                           : root.osdKind === "task" ? (ShellColors.light ? "#ff9500" : "#ff9f0a") : root.colOn
                     Behavior on width {
                         NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
                     }
