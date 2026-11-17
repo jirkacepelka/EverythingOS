@@ -1658,6 +1658,8 @@ PanelWindow {
     property var islandAgentEvents: []
     // Rozdělený ostrov (3 pilulky) vždy drží ostrov viditelný: popup je samostatná karta
     readonly property bool splitMode: cfg.splitIsland && !settingsMode && !pillSide
+    // Auto-hide is locked off with the split island (3 pills): popups did not open reliably
+    readonly property bool autoHide: cfg.pillAutoHide && !cfg.splitIsland
     readonly property bool keepVis: cfg.pillKeepVisible
     // Uvítací okno (OnboardingView): při každém spuštění EverythingOS, jde vypnout
     // Společný okraj (cfg.islandGap): mezera oken od okrajů i mezi sebou (Hyprland
@@ -4882,7 +4884,7 @@ PanelWindow {
     // проваливались мимо, и ползунки не реагировали.
     // Спрятан ли остров прямо сейчас. Всё, ради чего его вообще показывают —
     // раскрытая панель, перетаскивание, громкость — держит его на экране.
-    readonly property bool pillHidden: root.cfg.pillAutoHide
+    readonly property bool pillHidden: root.autoHide
                                        && !root.expanded && !root.holdOpen
                                        && !root.osdActive && !root.pillDragging
                                        && !revealHover.hovered && !capsuleHover.hovered
@@ -4901,7 +4903,7 @@ PanelWindow {
     // вернуть его нечем — кроме узкой зоны, которая ловит наведение.
     Item {
         id: revealStrip
-        visible: root.cfg.pillAutoHide
+        visible: root.autoHide
         anchors.top:    root.pillAtBottom ? undefined : parent.top
         anchors.bottom: root.pillAtBottom ? parent.bottom : undefined
         anchors.left:   root.pillAtRight  ? undefined : parent.left
@@ -4919,7 +4921,7 @@ PanelWindow {
         Region { item: root.splitMode && rightPill.visible ? rightPill : null; intersection: Intersection.Combine }
         // спрятанный остров вне экрана, и без полоски его не позвать
         Region {
-            item: root.cfg.pillAutoHide ? revealStrip : null
+            item: root.autoHide ? revealStrip : null
             intersection: Intersection.Combine
         }
         Region {
@@ -5462,7 +5464,7 @@ PanelWindow {
                 // получи панель во весь экран. Разворачивает клик.
                 // (3 pilulky: pilulky jsou malé a samostatné, hover otevírá popup i s autoskrytím;
                 // samovolné otevření po vyjetí hlídá hoverExpandArmed)
-                if (root.cfg.pillAutoHide && !root.splitMode) return;
+                if (root.autoHide) return;
                 capsule.openPanel();
             }
         }

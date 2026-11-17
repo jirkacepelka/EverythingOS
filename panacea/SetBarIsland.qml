@@ -24,8 +24,10 @@ ColumnLayout {
             sys: page.sys
             label: page.sys.tr("Автоскрытие")
             sub: page.sys.tr("Остров уезжает за кромку и не занимает место под себя: окна получают весь экран. Возвращается наведением на край.")
-            on: page.sys.cfg.pillAutoHide
-            onToggled: value => { page.sys.cfg.pillAutoHide = value; page.sys.saveCfg(); }
+            on: page.sys.autoHide
+            enabled: !page.sys.cfg.splitIsland
+            opacity: page.sys.cfg.splitIsland ? 0.4 : 1
+            onToggled: value => { if (page.sys.cfg.splitIsland) return; page.sys.cfg.pillAutoHide = value; page.sys.saveCfg(); }
         }
 
         SetToggle {
