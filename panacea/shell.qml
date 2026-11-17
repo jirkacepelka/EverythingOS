@@ -1758,7 +1758,8 @@ PanelWindow {
     // Split island: sub-pages of the control center without their own header need a back button
     readonly property bool backShown: expanded && !settingsMode && (["power", "notif", "record"].indexOf(page) >= 0 || (splitMode && page === "vpn"))
     // Right popup (control center) is 25% narrower than the center one
-    readonly property int popupW: ["main", "notif", "power"].indexOf(page) >= 0 ? Math.round(panelW * 0.75) : panelW
+    // Narrow only for the right pill popup; the joined island keeps the full width
+    readonly property int popupW: (splitRight && ["main", "notif", "power"].indexOf(page) >= 0) ? Math.round(panelW * 0.75) : panelW
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
