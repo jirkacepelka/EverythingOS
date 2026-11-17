@@ -18,6 +18,11 @@ hl.on("hyprland.start", function ()
   end, { timeout = 2000, type = "oneshot" })
 
   hl.exec_cmd("hyprpaper")
+  -- Po přihlášení občas hyprpaper naběhne dřív než výstup a ploše zůstane černá:
+  -- po pár sekundách ho jednou restartujeme.
+  hl.timer(function()
+      hl.exec_cmd("sh -c 'pkill -x hyprpaper; sleep 0.5; exec hyprpaper'")
+  end, { timeout = 5000, type = "oneshot" })
   hl.exec_cmd(programs.bar)
   hl.exec_cmd("wl-paste --type text --watch cliphist store")
   hl.exec_cmd("wl-paste --type image --watch cliphist store")
