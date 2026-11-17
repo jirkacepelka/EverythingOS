@@ -1756,9 +1756,9 @@ PanelWindow {
     property string lastCenter: "music"
     readonly property bool tabbedPage: splitMode ? splitCenter : (page === "main" || page === "chat" || page === "vpn")
     // Split island: sub-pages of the control center without their own header need a back button
-    readonly property bool backShown: splitMode && expanded && !settingsMode && ["power", "notif", "record", "vpn"].indexOf(page) >= 0
+    readonly property bool backShown: expanded && !settingsMode && (["power", "notif", "record"].indexOf(page) >= 0 || (splitMode && page === "vpn"))
     // Right popup (control center) is 25% narrower than the center one
-    readonly property int popupW: (splitRight && ["main", "notif", "power"].indexOf(page) >= 0) ? Math.round(panelW * 0.75) : panelW
+    readonly property int popupW: ["main", "notif", "power"].indexOf(page) >= 0 ? Math.round(panelW * 0.75) : panelW
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
@@ -5230,7 +5230,7 @@ PanelWindow {
             }
         }
         width: root.settingsMode ? root.settingsW
-             : (root.expanded && !root.keepVis) ? (root.splitMode ? capsule.splitW : root.panelW)
+             : (root.expanded && !root.keepVis) ? (root.splitMode ? capsule.splitW : root.popupW)
              : root.pillSide     ? idleThick
              : capsule.collapsing ? (capsule.popupClosing ? capsule.splitW : capsule.heldW)
                                  : idleLen
@@ -6304,10 +6304,10 @@ PanelWindow {
             readonly property real splitPad: 14
             // Closed-state media index in the center pill: note icon + track title
             readonly property string trackName: root.player ? String(root.player.trackTitle || "") : ""
-            readonly property bool showMedia: root.mediaActive && trackName.length > 0
+            readonly property bool showMedia: root.mediaActive && trackName.length > 0 && (root.splitMode || !mascot.active)
             Row {
                 id: midMedia
-                visible: nothingCapsule.splitOn && nothingCapsule.showMedia
+                visible: nothingCapsule.showMedia
                 x: nClock.x + nClock.width + 12
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 6
@@ -6363,7 +6363,7 @@ PanelWindow {
             // считались бы центром пустого места, а не острова.
             readonly property real arm:
                 Math.max(nLeft.implicitWidth, nRight.implicitWidth)
-            implicitWidth: (weatherrow.visible ? weatherrow.implicitWidth : 0) + nClock.implicitWidth + 2 * (nothingCapsule.arm + nothingCapsule.armGap)
+            implicitWidth: (weatherrow.visible ? weatherrow.implicitWidth : 0) + nClock.implicitWidth + 2 * (nothingCapsule.arm + nothingCapsule.armGap) + (nothingCapsule.splitOn ? 0 : 2 * nothingCapsule.midExtra)
 
             // ------------------------------------------- слева: столы
             RowLayout {
@@ -6519,7 +6519,7 @@ PanelWindow {
             PlainNum {
                 id: nClock
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: nothingCapsule.splitOn ? -nothingCapsule.midExtra / 2 : (mascot.active ? -80 : 0)
+                anchors.horizontalCenterOffset: nothingCapsule.showMedia ? -nothingCapsule.midExtra / 2 : (mascot.active && !nothingCapsule.splitOn ? -80 : 0)
                 Behavior on anchors.horizontalCenterOffset { enabled: !root.expanded && capsule.height <= root.pillH + 2; NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
                 value: root.timeText
                 size: root.dotHPill

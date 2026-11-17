@@ -32,7 +32,7 @@ Item {
     // переживает и обновление оболочки, и правку файла руками.
     // Android-style quick settings in the split island: clock, brightness slider,
     // 2-column tiles, then record/battery, bottom buttons
-    readonly property bool android: view.sys && view.sys.splitMode
+    readonly property bool android: true
     readonly property int tileR: view.android ? 26 : 14
     readonly property var ccDefault: view.android ? ["clock", "toggles", "sliders", "tiles", "media", "power", "quick", "tray"]
                                                   : ["clock", "toggles", "sliders", "media", "power", "quick", "tray"]

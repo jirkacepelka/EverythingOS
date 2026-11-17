@@ -18,21 +18,7 @@ ColumnLayout {
     SetCard {
         sys: page.sys
 
-        SetToggle {
-            sys: page.sys
-            label: "Split island (3 pills)"
-            sub: "Workspaces, clock and system as three separate pills. Works only with notch mode off (floating island)."
-            on: page.sys.cfg.splitIsland
-            onToggled: value => { page.sys.cfg.splitIsland = value; page.sys.saveCfg(); }
-        }
-
-        SetToggle {
-            sys: page.sys
-            label: page.sys.tr("Режим выреза")
-            sub: page.sys.tr("Остров прилегает к кромке экрана и растекается по ней вогнутыми уголками. Выключить — станет отдельной капсулой с отступом от кромки.")
-            on: page.notch
-            onToggled: value => { page.sys.cfg.notchMode = value; page.sys.saveCfg(); }
-        }
+        IslandStylePicker { sys: page.sys }
 
         SetToggle {
             sys: page.sys

@@ -10,13 +10,6 @@ FocusScope {
     property var sys
     readonly property var cfg: view.sys.cfg
 
-    // 0 výřez · 1 plovoucí · 2 tři pilulky
-    readonly property int islandMode: view.cfg.notchMode ? 0 : (view.cfg.splitIsland ? 2 : 1)
-    function setIslandMode(m) {
-        view.cfg.notchMode = (m === 0);
-        view.cfg.splitIsland = (m === 2);
-        view.sys.saveCfg();
-    }
     function close() { view.sys.onboardingOpen = false; }
 
     Component.onCompleted: view.forceActiveFocus()
@@ -66,100 +59,8 @@ FocusScope {
                 }
             }
 
-            // ------------------------------------------------ styl ostrova
-            Text {
-                text: "ISLAND STYLE"
-                color: view.sys.colMuted
-                font { family: view.sys.fontFam; pixelSize: view.fs - 4; letterSpacing: 1.5 }
-            }
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 14
-
-                Repeater {
-                    model: [
-                        { m: 0, title: "Notch",     sub: "Attached to the screen edge" },
-                        { m: 1, title: "Floating",  sub: "Detached capsule with a gap" },
-                        { m: 2, title: "3 pills", sub: "Workspaces, clock, system" }
-                    ]
-                    delegate: Rectangle {
-                        id: card
-                        required property var modelData
-                        readonly property bool sel: view.islandMode === card.modelData.m
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 190
-                        radius: 18
-                        color: view.cardBg
-                        border.width: card.sel ? 2 : 1
-                        border.color: card.sel ? view.accent : view.cardLine
-
-                        // náhled obrazovky
-                        Rectangle {
-                            id: scr
-                            anchors { top: parent.top; topMargin: 16; horizontalCenter: parent.horizontalCenter }
-                            width: parent.width - 32
-                            height: 104
-                            radius: 10
-                            color: "#141416"
-                            clip: true
-
-                            // okno aplikace s mezerami (stejná mřížka jako ve skutečnosti)
-                            Rectangle {
-                                x: 8; y: card.modelData.m === 0 ? 20 : 30
-                                width: parent.width - 16
-                                height: parent.height - y - 8
-                                radius: 6
-                                color: "#2b2b2f"
-                            }
-                            // ostrov
-                            Rectangle {
-                                visible: card.modelData.m === 0
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                y: 0; width: 110; height: 14
-                                bottomLeftRadius: 8; bottomRightRadius: 8
-                                color: "#000000"
-                            }
-                            Rectangle {
-                                visible: card.modelData.m === 1
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                y: 8; width: 110; height: 14; radius: 7
-                                color: "#000000"
-                            }
-                            Repeater {
-                                model: card.modelData.m === 2 ? 3 : 0
-                                delegate: Rectangle {
-                                    required property int index
-                                    y: 8; height: 14; radius: 7; color: "#000000"
-                                    width: index === 1 ? 34 : 50
-                                    x: index === 0 ? 8
-                                     : index === 1 ? (scr.width - width) / 2
-                                     : scr.width - width - 8
-                                }
-                            }
-                        }
-
-                        Text {
-                            anchors { left: parent.left; leftMargin: 18; top: scr.bottom; topMargin: 12 }
-                            text: card.modelData.title
-                            color: view.sys.colFg
-                            font { family: view.sys.fontFam; pixelSize: view.fs }
-                        }
-                        Text {
-                            anchors { left: parent.left; leftMargin: 18; right: parent.right; rightMargin: 18
-                                      bottom: parent.bottom; bottomMargin: 12 }
-                            text: card.modelData.sub
-                            color: view.sys.colMuted
-                            elide: Text.ElideRight
-                            font { family: view.sys.fontFam; pixelSize: view.fs - 3 }
-                        }
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-                            onClicked: view.setIslandMode(card.modelData.m)
-                        }
-                    }
-                }
-            }
+            // ------------------------------------------------ island style
+            IslandStylePicker { sys: view.sys; cardHeight: 118 }
 
             // ------------------------------------------------ přepínače
             RowLayout {
