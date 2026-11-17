@@ -108,6 +108,7 @@ PanelWindow {
             property string vpnPreferred: ""
             property bool   mascotEnabled: true
             property bool   splitIsland: false
+            property bool   showOnboarding: true
             property bool   reduceMotion: false
             property int    animMove: 230      // размер и положение, мс
             property int    animFade: 200      // прозрачность и цвет, мс
@@ -426,7 +427,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 10, islandRadius: 0, splitIsland: false,
+        islandGap: 10, islandRadius: 0, splitIsland: false, showOnboarding: true,
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -1654,6 +1655,16 @@ PanelWindow {
     // Rozdělený ostrov (3 pilulky) vždy drží ostrov viditelný: popup je samostatná karta
     readonly property bool splitMode: cfg.splitIsland && !cfg.notchMode && !settingsMode && !pillSide
     readonly property bool keepVis: cfg.pillKeepVisible || (cfg.splitIsland && !cfg.notchMode)
+    // Uvítací okno (OnboardingView): při každém spuštění Panacea, jde vypnout
+    property bool onboardingOpen: false
+    Process {
+        id: onboardCheck
+        command: ["sh", "-c", "f=\"${XDG_RUNTIME_DIR:-/tmp}/panacea-onboarding-shown\"; [ -e \"$f\" ] || { : > \"$f\"; echo first; }"]
+        stdout: StdioCollector {
+            onStreamFinished: { if (String(text).indexOf("first") >= 0 && root.cfg.showOnboarding) root.onboardingOpen = true; }
+        }
+    }
+    Timer { interval: 3500; running: true; onTriggered: onboardCheck.running = true }
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
@@ -4607,6 +4618,7 @@ PanelWindow {
             root.showWifiToast(ssid || "Wi-Fi Network", parseInt(quality) || 85, false);
         }
         function settings(): void { root.settingsTab = 0; root.togglePage("settings"); }
+        function onboarding(): void { root.onboardingOpen = !root.onboardingOpen; }
         // открыть окно настроек сразу на нужном разделе: удобно вешать на
         // сочетание клавиш и незаменимо при проверке самих настроек
         function settingsAt(tab: string): void {
@@ -4623,13 +4635,14 @@ PanelWindow {
         function weatherClose(): void { root.weatherDetailsOpen = false; }
         function smartClose(): string {
             if (!root.cfg.closePanaceaFirst) return "disabled";
-            var anyOpen = root.expanded || root.launchpadOpen || root.overviewOpen || root.wallsOpen || root.keysWindowOpen || root.whatsNewOpen || root.weatherDetailsOpen;
+            var anyOpen = root.expanded || root.launchpadOpen || root.overviewOpen || root.wallsOpen || root.keysWindowOpen || root.whatsNewOpen || root.weatherDetailsOpen || root.onboardingOpen;
             if (anyOpen) {
                 if (root.weatherDetailsOpen) root.weatherDetailsOpen = false;
                 else if (root.launchpadOpen) root.closeLaunchpad();
                 else if (root.overviewOpen) root.closeOverview();
                 else if (root.wallsOpen) root.closeWalls();
                 else if (root.keysWindowOpen) root.closeKeysWindow();
+                else if (root.onboardingOpen) root.onboardingOpen = false;
                 else if (root.whatsNewOpen) root.dismissWhatsNew();
                 else if (root.expanded) root.collapse();
                 return "closed_overlay";
@@ -7261,6 +7274,23 @@ PanelWindow {
     }
 }
 
+
+// Uvítací okno: samostatná vrstva přes vše, bere klávesnici.
+PanelWindow {
+    visible: root.onboardingOpen
+    anchors { top: true; bottom: true; left: true; right: true }
+    screen: root.screen
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: root.onboardingOpen ? WlrKeyboardFocus.Exclusive
+                                                     : WlrKeyboardFocus.None
+    Loader {
+        anchors.fill: parent
+        active: root.onboardingOpen
+        sourceComponent: OnboardingView { sys: root }
+    }
+}
 
 // Окно прогресса копирования и переноса. Отдельный слой, а не часть
 // проводника: операция переживает закрытие проводника, и следить за ней
