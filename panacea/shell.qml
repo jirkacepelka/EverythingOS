@@ -1670,6 +1670,55 @@ PanelWindow {
     Timer { id: gapTimer; interval: 200; onTriggered: gapApply.running = true }
     Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } }
     Timer { interval: 2500; running: true; onTriggered: gapApply.running = true }
+    // Přepínač oken Alt+Tab (AltTabView): seznam v pořadí posledního použití
+    property bool switcherOpen: false
+    property var switcherList: []
+    property int switcherIndex: 0
+    property int switcherDir: 1
+    property bool switcherCommitPending: false
+    function switcherStep(dir) {
+        if (root.switcherOpen) {
+            var n = root.switcherList.length;
+            root.switcherIndex = (root.switcherIndex + dir + n) % n;
+            switcherGuard.restart();
+        } else {
+            root.switcherDir = dir;
+            root.switcherCommitPending = false;
+            switcherQuery.running = true;
+        }
+    }
+    function switcherCommit() {
+        if (!root.switcherOpen) { root.switcherCommitPending = switcherQuery.running; return; }
+        var it = root.switcherList[root.switcherIndex];
+        root.switcherOpen = false;
+        switcherGuard.stop();
+        if (it) switcherFocus.focusAddr(it.a);
+    }
+    Process {
+        id: switcherQuery
+        command: ["sh", "-c", "hyprctl clients -j | jq -c '[.[]|select(.mapped and (.hidden|not))]|sort_by(.focusHistoryID)|map({a:.address,c:.class,t:.title})'"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                var l = [];
+                try { l = JSON.parse(String(text)); } catch (e) {}
+                if (l.length < 2) { root.switcherCommitPending = false; return; }
+                root.switcherList = l;
+                root.switcherIndex = root.switcherDir > 0 ? 1 : l.length - 1;
+                if (root.switcherCommitPending) { root.switcherCommitPending = false; root.switcherOpen = true; root.switcherCommit(); return; }
+                root.switcherOpen = true;
+                switcherGuard.restart();
+            }
+        }
+    }
+    Process {
+        id: switcherFocus
+        property string addr: ""
+        function focusAddr(a) { switcherFocus.addr = a; switcherFocus.running = true; }
+        command: ["sh", "-c", "hyprctl dispatch \"hl.dsp.focus({ window = 'address:$1' })\" >/dev/null 2>&1", "_", switcherFocus.addr]
+    }
+    // pojistka: kdyby se uvolnění Alt ztratilo, přepínač se po chvíli zavře
+    Timer { id: switcherGuard; interval: 8000; onTriggered: root.switcherOpen = false }
+
     property bool onboardingOpen: false
     // Režim úprav rozložení widgetů (přetahování myší)
     property bool widgetEdit: false
@@ -4634,6 +4683,9 @@ PanelWindow {
             root.showWifiToast(ssid || "Wi-Fi Network", parseInt(quality) || 85, false);
         }
         function settings(): void { root.settingsTab = 0; root.togglePage("settings"); }
+        function switcherNext(): void { root.switcherStep(1); }
+        function switcherPrev(): void { root.switcherStep(-1); }
+        function switcherDone(): void { root.switcherCommit(); }
         function onboarding(): void { root.onboardingOpen = !root.onboardingOpen; }
         function widgetsEdit(): void { root.widgetEdit = !root.widgetEdit; }
         function widgetsReset(): void { root.cfg.widgetPosJson = ""; root.saveCfg(); }
@@ -7292,6 +7344,19 @@ PanelWindow {
     }
 }
 
+
+// Přepínač oken Alt+Tab: vrstva uprostřed obrazovky, klávesnici nebere (drží se Alt).
+PanelWindow {
+    visible: root.switcherOpen
+    screen: root.screen
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    implicitWidth: switcherView.width
+    implicitHeight: switcherView.height
+    WlrLayershell.layer: WlrLayer.Overlay
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    AltTabView { id: switcherView; sys: root }
+}
 
 // Uvítací okno: samostatná vrstva přes vše, bere klávesnici.
 PanelWindow {
