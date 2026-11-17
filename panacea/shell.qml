@@ -4457,7 +4457,8 @@ PanelWindow {
     // scripts/progress-watch.py reports com.canonical.Unity.LauncherEntry (downloads, file
     // managers, many apps) and PackageKit installs; notifications with a "value" hint go
     // through the same function. Shown in the notch via the busy mechanism above. Programs
-    // that only talk to libflatpak in-process (Bazaar) publish nothing, so they can't be followed.
+    // that publish nothing (Bazaar/flatpak, Firefox downloads) are detected by file activity
+    // (indeterminate bar).
     property string extBusyId: ""
     function prettyApp(id) {
         var n = String(id).split("/").pop().replace(/\.desktop$/, "").split(".").pop().replace(/[-_]/g, " ");

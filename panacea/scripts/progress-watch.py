@@ -8,10 +8,10 @@ Sources:
     Telegram, Steam, many Qt/GTK apps use it.
   * org.freedesktop.PackageKit transactions (system bus): apt/dnf installs
     from software centers (Percentage / Status).
-Apps that talk to libflatpak in-process (e.g. Bazaar) publish neither, so they
-cannot be followed from outside.
+Flatpak jobs (Bazaar, flatpak CLI) publish nothing, so they are detected by activity
+in the ostree repo and shown with an unknown total.
 """
-import os, re, select, subprocess, sys, threading
+import os, re, select, subprocess, sys, threading, time
 
 def out(*a):
     print("\t".join(str(x) for x in a), flush=True)
@@ -66,6 +66,60 @@ def packagekit(block):
     elif "member=Finished" in block[0]:
         out(pid, "Installing packages", 100, 0)
 
+def flatpak_watch():
+    """libflatpak (Bazaar, `flatpak install`) publishes no progress, but it writes into the
+    ostree repo while it pulls/deploys: recent mtimes there mean "a Flatpak job is running".
+    The total is unknown, so the shell shows a slowly filling bar."""
+    repos = ["/var/lib/flatpak/repo", os.path.expanduser("~/.local/share/flatpak/repo")]
+    active = False
+    last_change = 0.0
+    while True:
+        newest = 0.0
+        for r in repos:
+            try:
+                newest = max(newest, os.stat(r).st_mtime)
+                newest = max(newest, os.stat(r + "/tmp").st_mtime)
+                with os.scandir(r + "/objects") as it:
+                    for e in it:
+                        newest = max(newest, e.stat().st_mtime)
+                with os.scandir(r + "/tmp") as it:
+                    for e in it:
+                        if e.name != "cache": newest = max(newest, e.stat().st_mtime)
+            except OSError:
+                pass
+        now = time.time()
+        if newest > last_change: last_change = newest
+        busy = now - last_change < 6
+        if busy and not active: out("flatpak", "Flatpak", -1, 1)
+        elif busy: out("flatpak", "Flatpak", -1, 1)
+        elif active: out("flatpak", "Flatpak", 100, 0)
+        active = busy
+        time.sleep(1)
+
+def download_watch():
+    """Firefox (and others) expose no progress API, but write the file as name.ext.part /
+    .crdownload while downloading. A growing partial file in ~/Downloads = a download."""
+    d = os.path.expanduser("~/Downloads")
+    exts = (".part", ".crdownload", ".download", ".opdownload")
+    active = False
+    while True:
+        busy = False
+        try:
+            now = time.time()
+            with os.scandir(d) as it:
+                for e in it:
+                    if e.name.endswith(exts) and now - e.stat().st_mtime < 4:
+                        busy = True
+                        break
+        except OSError:
+            pass
+        if busy: out("download", "Downloading", -1, 1)
+        elif active: out("download", "Downloading", 100, 0)
+        active = busy
+        time.sleep(1)
+
+threading.Thread(target=flatpak_watch, daemon=True).start()
+threading.Thread(target=download_watch, daemon=True).start()
 threading.Thread(target=monitor, daemon=True, args=("system",
     ["type='signal',sender='org.freedesktop.PackageKit'"], packagekit)).start()
 monitor("session", ["type='signal',interface='com.canonical.Unity.LauncherEntry'"], launcher)
