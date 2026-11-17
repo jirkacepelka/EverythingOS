@@ -767,7 +767,7 @@ Item {
 
     component VolCard: Rectangle {
         implicitWidth: 190
-        implicitHeight: 56
+        implicitHeight: view.android ? 46 : 56
         radius: view.tileR
         color: view.android ? "transparent" : Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
@@ -827,7 +827,7 @@ Item {
                 id: vol
                 Layout.fillWidth: true
                 Layout.fillHeight: view.android
-                Layout.preferredHeight: view.android ? 56 : 22
+                Layout.preferredHeight: view.android ? 46 : 22
                 iconAtEnd: view.android
 
                 readonly property var a: view.sys.sinkAudio
@@ -860,7 +860,7 @@ Item {
         property string bname: ""
 
         implicitWidth: 190
-        implicitHeight: 56
+        implicitHeight: view.android ? 46 : 56
         radius: view.tileR
         color: view.android ? "transparent" : Qt.rgba(1, 1, 1, 0.05)
         border.color: view.sys.colLine
@@ -900,7 +900,7 @@ Item {
                 id: brTrk
                 Layout.fillWidth: true
                 Layout.fillHeight: view.android
-                Layout.preferredHeight: view.android ? 56 : 22
+                Layout.preferredHeight: view.android ? 46 : 22
                 iconAtEnd: view.android
                 pos: Math.max(0, Math.min(1, brCard.bpct / 100))
                 icon: String.fromCodePoint(0xF00DD)   // солнце
@@ -1546,7 +1546,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
                     Layout.columnSpan: view.android ? 2 : 1
-                    Layout.preferredHeight: 56
+                    Layout.preferredHeight: view.android ? 46 : 56
                 }
             }
 
@@ -1576,7 +1576,7 @@ Item {
                         required property var modelData
                         Layout.fillWidth: true
                         Layout.preferredWidth: 1
-                        Layout.preferredHeight: 56
+                        Layout.preferredHeight: view.android ? 46 : 56
                         bid:  modelData.id
                         bpct: modelData.pct
                         bname: (view.sys.brightList || []).length > 1 ? modelData.name : ""
