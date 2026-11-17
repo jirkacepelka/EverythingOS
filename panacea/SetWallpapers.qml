@@ -29,8 +29,17 @@ ColumnLayout {
     }
     Process {
         id: pSet
-        onRunningChanged: if (!running) { page.applying = ""; refreshLater.restart(); }
+        onRunningChanged: {
+            if (running) return;
+            // the old-wallpaper snapshot that cross-fades into the new one must always be dropped,
+            // otherwise it stays on top of the whole desktop (looks like a frozen screen, hides widgets)
+            page.sys.endThemeFade();
+            page.applying = "";
+            refreshLater.restart();
+        }
     }
+    Timer { id: fadeGuard; interval: 6000; running: page.applying !== ""; onTriggered: { page.sys.endThemeFade(); page.applying = ""; } }
+    Component.onDestruction: page.sys.endThemeFade()
     Process { id: pDel; onRunningChanged: if (!running) refreshLater.restart() }
     // one refresh, a moment after the change, instead of one per event
     Timer { id: refreshLater; interval: 1200; onTriggered: page.sys.refreshWalls() }
