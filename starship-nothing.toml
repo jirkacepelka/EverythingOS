@@ -3,9 +3,9 @@ format = "$directory$git_branch$git_status$cmd_duration\n$character"
 
 [directory]
 style = "bold #ffffff"
-truncation_length = 3
-truncation_symbol = "…/"
-format = "[ $path]($style) "
+truncation_length = 0
+truncate_to_repo = false
+format = "[ ](#8a8a8a)[$path]($style) "
 
 [git_branch]
 symbol = " "

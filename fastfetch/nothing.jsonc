@@ -5,8 +5,8 @@
     "source": "~/.config/fastfetch/nothing-logo.txt",
     "padding": {
       "top": 0,
-      "left": 2,
-      "right": 9
+      "left": 1,
+      "right": 4
     },
     "color": {
       "1": "#ffffff",
@@ -54,6 +54,9 @@
         "at": "#D71921",
         "host": "white"
       }
+    },
+    {
+      "type": "break"
     },
     {
       "type": "os",
@@ -111,8 +114,11 @@
       "format": "{size-percentage-bar}  {size-used} / {size-total}"
     },
     {
+      "type": "break"
+    },
+    {
       "type": "custom",
-      "format": "{#38;2;64;64;64}{#38;2;215;25;33}\u25cf{#38;2;255;255;255} \u25cf  {#38;2;190;190;190}\u25cf  {#38;2;130;130;130}\u25cf  {#38;2;85;85;85}\u25cf  {#38;2;54;54;54}\u25cf",
+      "format": "{#38;2;215;25;33}\u25cf {#38;2;255;255;255}\u25cf {#38;2;190;190;190}\u25cf {#38;2;130;130;130}\u25cf {#38;2;85;85;85}\u25cf {#38;2;54;54;54}\u25cf",
       "key": " "
     }
   ]
