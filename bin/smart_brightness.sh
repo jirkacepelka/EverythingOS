@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Клавиши яркости. Вся работа — в ~/.config/panacea/scripts/brightness.sh:
+# Клавиши яркости. Вся работа — в ~/.config/everythingos/scripts/brightness.sh:
 # там же живёт выбор способа (внутренняя матрица или монитор по DDC/CI),
 # шаг с ускорением при удержании и уведомление пилюли.
 #
@@ -7,4 +7,4 @@
 # и он лежит в ~/.local/bin, то есть в PATH; настройки яркости при этом
 # принадлежат оболочке, а не системе, и дублировать логику в двух местах
 # означало бы чинить её дважды.
-exec "${XDG_CONFIG_HOME:-$HOME/.config}/panacea/scripts/brightness.sh" "$@"
+exec "${XDG_CONFIG_HOME:-$HOME/.config}/everythingos/scripts/brightness.sh" "$@"

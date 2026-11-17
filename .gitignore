@@ -2,7 +2,7 @@
 hypr/lua/binds_data.lua
 hypr/lua/monitors_data.lua
 hypr/lua/term_data.lua
-panacea/.vibrance
+everythingos/.vibrance
 
 # Локальное состояние
 fish/fish_variables
@@ -14,7 +14,7 @@ fish/fish_history
 .whatsnew
 .missingdeps
 .obsoletedeps
-panacea/.version
+everythingos/.version
 
 # Локальный кэш Graphify и конфигурация хуков конкретной машины
 .codex/

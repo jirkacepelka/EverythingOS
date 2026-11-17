@@ -15,10 +15,10 @@ hl.bind("SUPER + left",  hl.dsp.exec_cmd(fow .. " left"))
 hl.bind("SUPER + right", hl.dsp.exec_cmd(fow .. " right"))
 
 -- Samotný Super (stisk a pustit) otevře přehled ploch; psaní tam spustí hledání aplikací
-hl.bind("SUPER + Super_L", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/panacea ipc call pill overview"), { release = true })
+hl.bind("SUPER + Super_L", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/everythingos ipc call pill overview"), { release = true })
 
 -- Alt+Tab / Alt+Shift+Tab: vizuální přepínač oken; potvrzuje se pustěním Alt
-local PILL = "qs -c " .. HOME .. "/.config/panacea ipc call pill "
+local PILL = "qs -c " .. HOME .. "/.config/everythingos ipc call pill "
 hl.bind("ALT + Tab",         hl.dsp.exec_cmd(PILL .. "switcherNext"))
 hl.bind("ALT + SHIFT + Tab", hl.dsp.exec_cmd(PILL .. "switcherPrev"))
 for _, c in ipairs({ "ALT + Alt_L", "ALT + SHIFT + Alt_L", "SHIFT + Alt_L", "ALT + Alt_R", "ALT + SHIFT + Alt_R" }) do
@@ -26,7 +26,7 @@ for _, c in ipairs({ "ALT + Alt_L", "ALT + SHIFT + Alt_L", "SHIFT + Alt_L", "ALT
 end
 
 -- Super+Shift+D: režim úprav rozložení widgetů (přetahování myší)
-hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/panacea ipc call pill widgetsEdit"))
+hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/everythingos ipc call pill widgetsEdit"))
 
 -- Super+Ctrl+Left/Right: send the focused window to the previous/next workspace (and follow it)
 hl.bind("SUPER + CTRL + left",  hl.dsp.window.move({ workspace = "r-1" }))

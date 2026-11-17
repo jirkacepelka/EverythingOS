@@ -15,10 +15,10 @@
 # Hyprland давно лежит в lua/, а .conf никто не читает, так что скрипт
 # комментировал строки, которые ни на что не влияли, и хранил в них флаг.
 # В runtime-каталоге ему не место: режим должен пережить перезагрузку.
-STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/panacea"
+STATE_DIR="${XDG_STATE_HOME:-$HOME/.local/state}/everythingos"
 STATE="$STATE_DIR/battery-mode"
 LOG="${XDG_RUNTIME_DIR:-/tmp}/battery_mode.log"
-SHELL="qs -c $HOME/.config/panacea"
+SHELL="qs -c $HOME/.config/everythingos"
 
 # Текущий монитор: режим переставляет его на 120 Гц с VRR. Частоту не
 # опускаем — при VRR драйвер сам роняет её до 48 Гц на статичной картинке,

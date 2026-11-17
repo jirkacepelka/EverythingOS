@@ -203,7 +203,7 @@ FONT_PKG="ttf-jetbrains-mono-nerd"
 # Формат: пакет|версия, в которой он перестал быть нужен. Версия — не
 # украшение: список имеет смысл, только пока есть копии старше неё, а потом
 # сам превращается в тот же мусор, ради уборки которого заведён. Чтобы это
-# не держалось на чьей-то памяти, panacea/scripts/check.sh сверяет её с
+# не держалось на чьей-то памяти, everythingos/scripts/check.sh сверяет её с
 # текущей версией оболочки и напоминает выкинуть просроченное.
 OBSOLETE_PKGS=(
     # режим энергосбережения больше не подменяет оболочку вторым набором
@@ -677,9 +677,9 @@ backup() {
 # получал заводскую оболочку. Уносим своё в сторону до копирования и
 # возвращаем после. Список тот же, что в scripts/update.sh.
 KEEP_FILES=(
-    "panacea/settings.json"
-    "panacea/clipboard_pins.json"
-    "panacea/last_wifi_ssid"
+    "everythingos/settings.json"
+    "everythingos/clipboard_pins.json"
+    "everythingos/last_wifi_ssid"
     "hypr/lua/binds_data.lua"
     "hypr/lua/input_data.lua"
     "hypr/input_data.conf"
@@ -696,7 +696,7 @@ KEEP_FILES=(
     "hypr/lua/term_data.lua"
     # Цифровая интенсивность (digital vibrance): значение живёт здесь, из него
     # vibrance.sh restore пересобирает шейдер.
-    "panacea/.vibrance"
+    "everythingos/.vibrance"
     # Сам шейдер насыщенности. Репозиторий его не поставляет (он генерируется),
     # поэтому свежий hypr/ приезжает без него — а компоновщик до перезапуска
     # оболочки держит ссылку decoration:screen_shader на этот путь и ругается
@@ -738,9 +738,9 @@ KEEP_DIRS=(
     "fish/functions"
     "fish/conf.d"
     "fastfetch/custom"
-    "panacea/custom"
-    "panacea/scripts/custom"
-    "panacea/assets"
+    "everythingos/custom"
+    "everythingos/scripts/custom"
+    "everythingos/assets"
 )
 KEEP_STASH=""
 
@@ -786,7 +786,7 @@ keep_restore() {
     for f in "${KEEP_FILES[@]}"; do
         [ -e "$KEEP_STASH/$f" ] || [ -L "$KEEP_STASH/$f" ] || continue
         mkdir -p "$CONF/$(dirname "$f")"
-        if [ "$f" = "panacea/settings.json" ] && command -v jq >/dev/null 2>&1 && [ -f "$CONF/$f" ]; then
+        if [ "$f" = "everythingos/settings.json" ] && command -v jq >/dev/null 2>&1 && [ -f "$CONF/$f" ]; then
             local tmp_json
             tmp_json="$(mktemp)"
             if jq -s '.[0] * .[1]' "$CONF/$f" "$KEEP_STASH/$f" > "$tmp_json" 2>/dev/null; then
@@ -862,7 +862,7 @@ copy_into_config() {   # copy_into_config <dir-in-repo>
 install_configs() {
     mkdir -p "$CONF" "$HOME/.local/bin"
     keep_stash
-    for d in panacea hypr niri foot fish fastfetch nano; do
+    for d in everythingos hypr niri foot fish fastfetch nano; do
         if [ -d "$SRC/$d" ]; then
             copy_into_config "$d" || die "could not replace $d without losing its backup"
         fi
@@ -879,18 +879,18 @@ install_configs() {
         chmod +x "$HOME"/.local/bin/* 2>/dev/null
         ok "helper scripts → ~/.local/bin"
     fi
-    chmod +x "$CONF"/panacea/scripts/*.sh 2>/dev/null
-    chmod +x "$CONF"/panacea/scripts/*.py 2>/dev/null
+    chmod +x "$CONF"/everythingos/scripts/*.sh 2>/dev/null
+    chmod +x "$CONF"/everythingos/scripts/*.py 2>/dev/null
     chmod +x "$CONF"/hypr/scripts/*.sh 2>/dev/null
     chmod +x "$CONF"/niri/scripts/*.sh 2>/dev/null
     # Quickshell ищет конфигурации в ~/.config/quickshell/<имя>/shell.qml, и
     # без этой ссылки простое `qs` отвечает «не найдена конфигурация default»
     # — так и было у всех, кто пробовал запустить оболочку руками. Ссылка
-    # даёт штатное `qs -c panacea`, не перенося сам конфиг с привычного места.
+    # даёт штатное `qs -c everythingos`, не перенося сам конфиг с привычного места.
     mkdir -p "$CONF/quickshell"
-    if [ ! -e "$CONF/quickshell/panacea" ]; then
-        ln -sfn "$CONF/panacea" "$CONF/quickshell/panacea" \
-            && ok "qs -c panacea → $CONF/panacea"
+    if [ ! -e "$CONF/quickshell/everythingos" ]; then
+        ln -sfn "$CONF/everythingos" "$CONF/quickshell/everythingos" \
+            && ok "qs -c everythingos → $CONF/everythingos"
     fi
 
     # Терминал запускается сервером, а тот читает свой конфиг один раз, при
@@ -924,9 +924,9 @@ install_configs() {
     # нет, а в настройках сочетания есть — они молча не работают, и человек
     # видит заводские. Собираем его из settings.json, чтобы источником правды
     # остался один файл, а этот был всего лишь производным от него.
-    if [ ! -f "$CONF/hypr/lua/binds_data.lua" ] && [ -f "$CONF/panacea/settings.json" ]; then
-        if [ -x "$CONF/panacea/scripts/genbinds.sh" ]; then
-            "$CONF/panacea/scripts/genbinds.sh" >/dev/null 2>&1 \
+    if [ ! -f "$CONF/hypr/lua/binds_data.lua" ] && [ -f "$CONF/everythingos/settings.json" ]; then
+        if [ -x "$CONF/everythingos/scripts/genbinds.sh" ]; then
+            "$CONF/everythingos/scripts/genbinds.sh" >/dev/null 2>&1 \
                 && ok "keyboard shortcuts rebuilt from your settings"
         fi
     fi
@@ -936,37 +936,37 @@ install_configs() {
     # частоте обновления в момент создания первого окна, и на мониторе,
     # который поднялся в "preferred" (по HDMI это часто 60 Гц), анимации так и
     # останутся шестидесятикадровыми — на панели, давно ушедшей на 144.
-    if [ -x "$CONF/panacea/scripts/genmonitors.sh" ] && [ -f "$CONF/panacea/settings.json" ]; then
-        "$CONF/panacea/scripts/genmonitors.sh" >/dev/null 2>&1
+    if [ -x "$CONF/everythingos/scripts/genmonitors.sh" ] && [ -f "$CONF/everythingos/settings.json" ]; then
+        "$CONF/everythingos/scripts/genmonitors.sh" >/dev/null 2>&1
         [ -f "$CONF/hypr/lua/monitors_data.lua" ] \
             && ok "screen mode written into the compositor config"
     fi
 
-    if [ -x "$CONF/panacea/scripts/geninput.sh" ] && [ -f "$CONF/panacea/settings.json" ]; then
-        "$CONF/panacea/scripts/geninput.sh" >/dev/null 2>&1 \
+    if [ -x "$CONF/everythingos/scripts/geninput.sh" ] && [ -f "$CONF/everythingos/settings.json" ]; then
+        "$CONF/everythingos/scripts/geninput.sh" >/dev/null 2>&1 \
             && ok "keyboard layouts written into the compositor config"
     fi
 
     # Конфиг voxtype (голос → текст): кладём наш. Правый
     # Alt слушает Hyprland, а не сам voxtype, поэтому в нашем конфиге встроенный
     # хоткей выключен.
-    if [ -f "$CONF/panacea/scripts/voxtype.config.toml" ] && [ ! -f "$CONF/voxtype/config.toml" ]; then
+    if [ -f "$CONF/everythingos/scripts/voxtype.config.toml" ] && [ ! -f "$CONF/voxtype/config.toml" ]; then
         mkdir -p "$CONF/voxtype"
-        cp "$CONF/panacea/scripts/voxtype.config.toml" "$CONF/voxtype/config.toml" \
+        cp "$CONF/everythingos/scripts/voxtype.config.toml" "$CONF/voxtype/config.toml" \
             && ok "voxtype config written (voice-to-text on Right Alt, Russian, VAD, GPU)"
     fi
 
     # Install optional agent hooks without replacing existing agent settings.
-    if command -v python3 >/dev/null 2>&1 && [ -f "$CONF/panacea/scripts/setup-agent-hooks.py" ]; then
-        python3 "$CONF/panacea/scripts/setup-agent-hooks.py" || warn "agent hooks need manual setup"
+    if command -v python3 >/dev/null 2>&1 && [ -f "$CONF/everythingos/scripts/setup-agent-hooks.py" ]; then
+        python3 "$CONF/everythingos/scripts/setup-agent-hooks.py" || warn "agent hooks need manual setup"
     fi
 
     stamp_version
     personalize_paths
     # Суммы установленного: по ним следующее обновление поймёт, что человек
     # правил сам, и не затрёт это.
-    [ -x "$CONF/panacea/scripts/manifest.sh" ] \
-        && "$CONF/panacea/scripts/manifest.sh" write "$SRC" >/dev/null 2>&1
+    [ -x "$CONF/everythingos/scripts/manifest.sh" ] \
+        && "$CONF/everythingos/scripts/manifest.sh" write "$SRC" >/dev/null 2>&1
 }
 
 # Какую версию поставили. По этой отметке оболочка потом понимает, что на
@@ -974,12 +974,12 @@ install_configs() {
 # берём хеш прямо из него; из архива — спрашиваем конец ветки у GitHub.
 stamp_version() {
     local sha="" ver=""
-    if [ -f "$SRC/panacea/VERSION" ]; then
-        ver="$(tr -d ' \r\n' < "$SRC/panacea/VERSION")"
+    if [ -f "$SRC/everythingos/VERSION" ]; then
+        ver="$(tr -d ' \r\n' < "$SRC/everythingos/VERSION")"
     elif [ -f "$SRC/VERSION" ]; then
         ver="$(tr -d ' \r\n' < "$SRC/VERSION")"
-    elif [ -f "$SRC/panacea/shell.qml" ]; then
-        ver="$(grep -oP 'readonly property string version: "\K[^"]+' "$SRC/panacea/shell.qml" 2>/dev/null)"
+    elif [ -f "$SRC/everythingos/shell.qml" ]; then
+        ver="$(grep -oP 'readonly property string version: "\K[^"]+' "$SRC/everythingos/shell.qml" 2>/dev/null)"
     fi
 
     if [ -d "$SRC/.git" ] && command -v git >/dev/null 2>&1; then
@@ -989,13 +989,13 @@ stamp_version() {
         sha="$(git ls-remote https://github.com/EnsixD/Panacea.git main 2>/dev/null | cut -f1)"
     fi
 
-    [ -n "$ver" ] && printf '%s\n' "$ver" > "$CONF/panacea/VERSION"
+    [ -n "$ver" ] && printf '%s\n' "$ver" > "$CONF/everythingos/VERSION"
 
     if [ -n "$sha" ]; then
-        printf '%s\n' "$sha" > "$CONF/panacea/.version"
+        printf '%s\n' "$sha" > "$CONF/everythingos/.version"
         ok "version stamp ${ver:-${sha:0:7}}"
     elif [ -n "$ver" ]; then
-        printf '%s\n' "$ver" > "$CONF/panacea/.version"
+        printf '%s\n' "$ver" > "$CONF/everythingos/.version"
         ok "version stamp $ver"
     else
         warn "could not determine version — the shell will not offer updates"
@@ -1211,11 +1211,11 @@ install_sddm() {
     #
     # The same saved settings drive the compositor and the login screen.
     if command -v localectl >/dev/null 2>&1 && command -v jq >/dev/null 2>&1 \
-       && [ -f "$CONF/panacea/settings.json" ]; then
+       && [ -f "$CONF/everythingos/settings.json" ]; then
         local kbl kbv kbo
-        kbl="$(jq -r '.keyboardLayouts // "us,ru"' "$CONF/panacea/settings.json")"
-        kbv="$(jq -r '.keyboardVariants // ","' "$CONF/panacea/settings.json")"
-        kbo="$(jq -r '.keyboardOptions // "grp:alt_shift_toggle"' "$CONF/panacea/settings.json")"
+        kbl="$(jq -r '.keyboardLayouts // "us,ru"' "$CONF/everythingos/settings.json")"
+        kbv="$(jq -r '.keyboardVariants // ","' "$CONF/everythingos/settings.json")"
+        kbo="$(jq -r '.keyboardOptions // "grp:alt_shift_toggle"' "$CONF/everythingos/settings.json")"
         if [ -n "$kbl" ]; then
             $SUDO localectl set-x11-keymap "$kbl" "" "$kbv" "$kbo" 2>/dev/null \
                 && ok "login screen keyboard: $kbl${kbo:+ ($kbo)}" \
@@ -1464,7 +1464,7 @@ fi
 
 printf '\n%sPanacea%s — dotfiles installer\n' "$B" "$N"
 printf '%sfrom %s%s\n' "$DIM" "$SRC" "$N"
-[ -d "$SRC/panacea" ] || die "run this from inside the cloned repo"
+[ -d "$SRC/everythingos" ] || die "run this from inside the cloned repo"
 
 printf '\n%sThis overwrites ~/.config/hypr, the terminal configs and more.\nEverything replaced is backed up as *.bak-%s next to it.%s\n' "$WARN" "$STAMP" "$N"
 ask "Continue?" || { echo "Nothing done."; exit 0; }
@@ -1738,8 +1738,8 @@ else
 fi
 # Миниатюры обоев — в фоне: карусель показывает их мгновенно, а без прогрева
 # первое открытие читало бы исходники по 4K.
-[ -x "$CONF/panacea/scripts/thumbs.sh" ] \
-    && (setsid "$CONF/panacea/scripts/thumbs.sh" all >/dev/null 2>&1 &) \
+[ -x "$CONF/everythingos/scripts/thumbs.sh" ] \
+    && (setsid "$CONF/everythingos/scripts/thumbs.sh" all >/dev/null 2>&1 &) \
     && ok "wallpaper thumbnails warming up in the background"
 
 # Идёт обновление? Тогда перезапуск не наш.
@@ -1768,7 +1768,7 @@ elif command -v hyprctl >/dev/null 2>&1 && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-
     # таймера в 16 мс — 60 кадров на любом мониторе. Здесь она нужна отдельно:
     # оболочку после установки запускает этот скрипт, а не автозапуск, и до
     # следующего входа остров шёл бы рывками.
-    (setsid "$CONF/panacea/scripts/start.sh" >/dev/null 2>&1 &)
+    (setsid "$CONF/everythingos/scripts/start.sh" >/dev/null 2>&1 &)
     ok "reloaded Hyprland and started the pill"
 else
     warn "Hyprland isn't running here — everything comes up at next login"

@@ -128,7 +128,7 @@ subprojects.
 
 ## 4. NetworkManager / iwd conflict
 
-EverythingOS's Wi-Fi helper (`panacea/scripts/wifi.sh`) supports both **NetworkManager** (`nmcli`)
+EverythingOS's Wi-Fi helper (`everythingos/scripts/wifi.sh`) supports both **NetworkManager** (`nmcli`)
 and **iwd** (`iwctl`) with automatic runtime detection. On Ubuntu, Debian, Linux Mint and Fedora,
 it detects NetworkManager and manages Wi-Fi seamlessly using `nmcli`, keeping existing saved
 credentials and DHCP without requiring changes to the system network stack.
@@ -183,5 +183,5 @@ While adapting this, it turned out `hypr/lua/programs.lua` and some binds in
 `hypr/lua/keybindings.lua` (volume/brightness) contain paths hardcoded to the original install's
 home directory (`/home/ensi/...`). The `personalize_paths()` mechanism in `install.sh` fixes most
 of these during installation, but it's worth checking
-`grep -rn "/home/ensi" ~/.config/hypr ~/.config/panacea` after a fresh install, regardless of which
+`grep -rn "/home/ensi" ~/.config/hypr ~/.config/everythingos` after a fresh install, regardless of which
 distro you're on.

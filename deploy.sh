@@ -2,7 +2,7 @@
 # Nasadí fork do ~/.config (settings.json a fonts.conf se nepřepisují)
 set -e
 D=$(cd "$(dirname "$0")" && pwd)
-rsync -a --exclude settings.json --exclude fonts.conf --exclude '*.bak*' "$D/panacea/" "$HOME/.config/panacea/"
+rsync -a --exclude settings.json --exclude fonts.conf --exclude '*.bak*' "$D/everythingos/" "$HOME/.config/everythingos/"
 rsync -a "$D/hypr/custom/" "$HOME/.config/hypr/custom/"
 rsync -a "$D/hypr/lua/programs.lua" "$D/hypr/lua/workspaces.lua" "$D/hypr/lua/windowrules.lua" "$D/hypr/lua/keybindings.lua" "$D/hypr/lua/autostart.lua" "$HOME/.config/hypr/lua/"
 install -m644 "$D/hypr/theme.lua" "$HOME/.config/hypr/theme.lua"
@@ -20,7 +20,7 @@ for f in SpaceMono-Regular.ttf SpaceMono-Bold.ttf SpaceMono-OFL.txt; do
 done
 fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1 || true
 # SDDM theme sources + installer (installed to the system only via the Login settings / pkexec)
-rsync -a --delete "$D/sddm/" "$HOME/.config/panacea/sddm/"
-mkdir -p "$HOME/.config/panacea/sddm/fonts"
-cp -f "$D"/fonts/SpaceMono-*.ttf "$D/fonts/Doto-Variable.ttf" "$HOME/.config/panacea/sddm/fonts/"
+rsync -a --delete "$D/sddm/" "$HOME/.config/everythingos/sddm/"
+mkdir -p "$HOME/.config/everythingos/sddm/fonts"
+cp -f "$D"/fonts/SpaceMono-*.ttf "$D/fonts/Doto-Variable.ttf" "$HOME/.config/everythingos/sddm/fonts/"
 echo deployed

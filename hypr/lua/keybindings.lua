@@ -17,7 +17,7 @@ end
 
 -- Абсолютный путь по той же причине, что и у programs.bar: «~» доживает до
 -- qs как есть, если команду запускают не через шелл.
-local QS = "qs -c " .. os.getenv("HOME") .. "/.config/panacea ipc call pill "
+local QS = "qs -c " .. os.getenv("HOME") .. "/.config/everythingos ipc call pill "
 
 
 -- ---------------------------------------------------------------- пилюля
@@ -46,7 +46,7 @@ B("pillVault",    mainMod .. " + SHIFT + P",     hl.dsp.exec_cmd(QS .. "password
 -- на аварийные, а следом не поднимался и qs. Пусть в худшем случае отвалится
 -- только голосовой ввод, а остальные сочетания останутся на месте.
 pcall(function()
-    local VOX = os.getenv("HOME") .. "/.config/panacea/scripts/voxtype.sh"
+    local VOX = os.getenv("HOME") .. "/.config/everythingos/scripts/voxtype.sh"
     local combo = ov["voxDictate"]
     if combo == nil or combo == "" or combo == "Alt_R" or combo == "code:108" then
         hl.bind("code:108", hl.dsp.exec_cmd(VOX .. " start"), { description = "Voice to text", ignore_mods = true, locked = true })
@@ -59,7 +59,7 @@ end)
 
 -- Basic binds
 -- Буквы в Hyprland регистронезависимы: SUPER+f == SUPER+F
-local CLOSE = os.getenv("HOME") .. "/.config/panacea/scripts/smart_close.sh"
+local CLOSE = os.getenv("HOME") .. "/.config/everythingos/scripts/smart_close.sh"
 B("terminal",     mainMod .. " + T",         hl.dsp.exec_cmd(p.terminalNothing))
 B("terminalAlt",  mainMod .. " + Return",    hl.dsp.exec_cmd(p.terminal))
 B("closeWindow",  mainMod .. " + Q",         hl.dsp.exec_cmd(CLOSE))
@@ -179,5 +179,5 @@ B("lidOff", "switch:off:Lid Switch", hl.dsp.exec_cmd(p.lock), { locked = true })
 hl.define_submap("capture", function()
     -- аварийный выход, если панель почему-то не вернёт обычный режим
     hl.bind("SUPER + SHIFT + Escape",
-        hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/panacea/scripts/capture.sh off"))
+        hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/everythingos/scripts/capture.sh off"))
 end)

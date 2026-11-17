@@ -2,7 +2,7 @@
 # Установка обоев рабочего стола под композитором Niri для Panacea.
 
 CONF="${XDG_CONFIG_HOME:-$HOME/.config}"
-PANACEA_CFG="$CONF/panacea/settings.json"
+PANACEA_CFG="$CONF/everythingos/settings.json"
 HYPR_WALL="$CONF/hypr/wallpaper.conf"
 DEFAULT_WALL="$CONF/hypr/wallpaper/ember_stripes.jpg"
 

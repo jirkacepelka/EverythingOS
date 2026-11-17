@@ -56,7 +56,7 @@ one geometry, one palette and one animation timeline.
 | Wallpapers | `Super + Shift + T` | Full‑screen carousel with parallax previews, stills and live video |
 | Workspaces | `Super + Tab` | Live previews of every workspace, switch from the grid |
 | Launcher | `Super + A` | App search + calculator, recents first; also the agent panel and the other systems on the disk |
-| Launchpad | `Super + G` | Every app as a full-screen grid over the blurred desktop; drop an app on another to make a folder, right-click for the same actions. Layout lives in `~/.local/share/panacea/launchpad.json` |
+| Launchpad | `Super + G` | Every app as a full-screen grid over the blurred desktop; drop an app on another to make a folder, right-click for the same actions. Layout lives in `~/.local/share/everythingos/launchpad.json` |
 | Clipboard | `Super + V` | Smart clipboard: automatic detection of HEX colors (swatch preview & RGB/HSL copy), URLs (open in browser), files/images (thumbnails), and pinned snippets |
 | Files | `Super + E` | Bookmarks, disks, sorting, trash, context menu, drag between windows |
 | Media | opens a file | Images, GIFs, video — trim and crop |
@@ -110,7 +110,7 @@ is missing.
 
 **You can restart into another system from the launcher.** Open it, type
 `windows` — or whatever the system is called — and press Enter. There is no
-fixed list of two: `panacea/scripts/bootos.sh` finds what is actually there, so
+fixed list of two: `everythingos/scripts/bootos.sh` finds what is actually there, so
 three systems give three entries and one system gives none at all. Names are
 tidied for reading, so `Windows Boot Manager (on /dev/nvme0n1p1)` becomes
 `Windows`, while distributions keep their versions.
@@ -200,7 +200,7 @@ Flags: `--no-deps`, `--no-sddm`, `--no-grub`, `--no-services`, `--no-wallpapers`
 
 EverythingOS checks GitHub for new commits on its own and offers an **Update** button
 in *Settings → System*. If your copy predates that — it was installed before the
-updater existed, or `~/.config/panacea/.version` is missing — run the updater by
+updater existed, or `~/.config/everythingos/.version` is missing — run the updater by
 hand once:
 
 ```bash
@@ -209,12 +209,12 @@ curl -fsSL https://raw.githubusercontent.com/EnsixD/Panacea/main/panacea/scripts
 
 No reinstall, and nothing to do to Hyprland itself. The script clones the repo,
 carries your `settings.json`, your keybindings, your wallpapers and anything you
-put in `panacea/assets` across the install, reinstalls the configs, records the
+put in `everythingos/assets` across the install, reinstalls the configs, records the
 version and restarts the shell. Packages, the login theme and the boot theme are
 left alone — those are installed once. From then on updates arrive through the
 button.
 
-Prefer to do it by hand? Copy `panacea hypr foot fish fastfetch
+Prefer to do it by hand? Copy `everythingos hypr foot fish fastfetch
 nano` into `~/.config`, `nano/nanorc` to `~/.nanorc`, `bin/*` to
 `~/.local/bin`, then run `hypr/scripts/palette.sh`, `hypr/scripts/switch_theme.sh
 --restore` and `hyprctl reload`.
@@ -249,12 +249,12 @@ EverythingOS is designed so your personal tweaks — shell aliases, terminal fon
 | **Niri** | `~/.config/niri/custom/custom.kdl` (and `config.kdl`) | ✅ Yes |
 | **Fastfetch** | `~/.config/fastfetch/config.jsonc` or `custom.jsonc` | ✅ Yes |
 | **Nano** | `~/.nanorc` (existing file is never overwritten) | ✅ Yes |
-| **EverythingOS** | `~/.config/panacea/settings.json` (merged with defaults via `jq`) | ✅ Yes |
-| **Clipboard pins and Wi-Fi history** | `clipboard_pins.json` and `last_wifi_ssid` in `~/.config/panacea/` | ✅ Yes |
-| **Post-update hook** | `~/.config/panacea/custom/post-update.sh` (executed after update) | ✅ Yes |
+| **EverythingOS** | `~/.config/everythingos/settings.json` (merged with defaults via `jq`) | ✅ Yes |
+| **Clipboard pins and Wi-Fi history** | `clipboard_pins.json` and `last_wifi_ssid` in `~/.config/everythingos/` | ✅ Yes |
+| **Post-update hook** | `~/.config/everythingos/custom/post-update.sh` (executed after update) | ✅ Yes |
 
 As an extra safety net, the updater backs up modified configurations to `~/.config/<name>.bak-update` before applying changes and retains two earlier update snapshots.
-Files owned by the shell, such as `panacea/shell.qml` and
+Files owned by the shell, such as `everythingos/shell.qml` and
 `hypr/lua/keybindings.lua`, are replaced to deliver code updates. Put durable
 overrides in `settings.json` or the `custom/` directories above; a direct edit
 to an owned file remains in the `.bak-update` copy for manual recovery.
@@ -287,7 +287,7 @@ in `model = ` under `[whisper]` in `~/.config/voxtype/config.toml`.
 ## Layout
 
 ```
-panacea/   the pill: QML, scripts, settings.json
+everythingos/   the pill: QML, scripts, settings.json
 hypr/      Hyprland (Lua config, palette, wallpapers, scripts)
 wallpapers/ bundled collection of 300+ wallpapers
 niri/      Niri (config.kdl, custom overrides, scripts)
@@ -308,7 +308,7 @@ the running instance over its IPC rather than starting a second copy — and
 leaves the browser handling what belongs to a browser. Set them by hand with
 `xdg-mime default`, or skip the whole step by not running the installer.
 
-Shortcuts live in `panacea/settings.json` and compile into
+Shortcuts live in `everythingos/settings.json` and compile into
 `hypr/lua/binds_data.lua` from the settings panel; that generated file is
 gitignored, and without it the defaults in `keybindings.lua` apply. Every
 ordinary Hyprland shortcut, including workspace switching and window movement

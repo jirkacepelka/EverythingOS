@@ -16,13 +16,13 @@ programs.fileManagerTui = "footclient yazi" -- в терминале, на Super
 -- то есть ровно 60 кадров, каким бы ни был монитор: на 144 Гц раскрытие
 -- острова заметно ступенчатое. Threaded берёт такт от vsync и идёт на
 -- частоте экрана (на 144 Гц — 6.94 мс на кадр).
-programs.bar = os.getenv("HOME") .. "/.config/panacea/scripts/start.sh"   -- пилюля
+programs.bar = os.getenv("HOME") .. "/.config/everythingos/scripts/start.sh"   -- пилюля
 -- Скриншот области по стоп-кадру: скрипт замораживает экран снимком, а уже по
 -- нему идёт выделение. Иначе меню и подсказки закрываются раньше, чем успеешь
 -- обвести их рамкой. Путь абсолютный: exec без шелла тильду не раскрывает.
-programs.screenshot = os.getenv("HOME") .. "/.config/panacea/scripts/shot.sh"
+programs.screenshot = os.getenv("HOME") .. "/.config/everythingos/scripts/shot.sh"
 programs.browser = "flatpak run app.zen_browser.zen"
-programs.lock = os.getenv("HOME") .. "/.config/panacea/scripts/lock.sh"
+programs.lock = os.getenv("HOME") .. "/.config/everythingos/scripts/lock.sh"
 programs.note = "flatpak run md.obsidian.Obsidian"
 programs.fileManagerWin = "nautilus"
 

@@ -17,7 +17,7 @@
 
 LIVE_DIR="$HOME/.config/hypr/wallpaper/live"
 STATE="$HOME/.config/hypr/wallpaper.conf"
-THUMBS="${XDG_CACHE_HOME:-$HOME/.cache}/panacea/thumbs"
+THUMBS="${XDG_CACHE_HOME:-$HOME/.cache}/everythingos/thumbs"
 SWITCH="$(dirname "$0")/switch_theme.sh"
 
 mkdir -p "$LIVE_DIR"
