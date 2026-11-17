@@ -79,6 +79,8 @@ ColumnLayout {
             if (code === 0) { page.status = "Applied. Takes effect at the next login screen."; syncProc.running = true; }
             else if (code === 126 || code === 127) page.status = "Cancelled (no permission was given).";
             else page.status = "Failed: " + (rootErr.text.trim() || ("exit " + code));
+            // the island may have closed while the password dialog was up: say it in a notification too
+            Quickshell.execDetached(["notify-send", "-a", "EverythingOS", "Login", page.status]);
             page.refresh();
         }
     }
