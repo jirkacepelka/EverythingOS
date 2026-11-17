@@ -860,6 +860,32 @@ PanelWindow {
         pTermTheme.running = true;
     }
 
+    // Privileged SDDM helper (Settings > Login). Lives here, not in the page: the polkit
+    // prompt replaces the settings page in the island, which would kill a page-owned Process
+    // (and pkexec with it) before the password could be typed.
+    property bool loginRootBusy: false
+    property string loginRootStatus: ""
+    property int loginRootSeq: 0
+    Process {
+        id: pLoginRoot
+        stderr: StdioCollector { id: pLoginRootErr }
+        onExited: code => {
+            root.loginRootBusy = false;
+            if (code === 0) { root.loginRootStatus = "Applied. Takes effect at the next login screen."; root.syncLogin(); }
+            else if (code === 126 || code === 127) root.loginRootStatus = "Cancelled (no permission was given).";
+            else root.loginRootStatus = "Failed: " + (String(pLoginRootErr.text).trim() || ("exit " + code));
+            root.loginRootSeq++;
+            Quickshell.execDetached(["notify-send", "-a", "EverythingOS", "Login", root.loginRootStatus]);
+        }
+    }
+    function runLoginRoot(args) {
+        root.loginRootBusy = true;
+        root.loginRootStatus = "Waiting for confirmation…";
+        pLoginRoot.command = ["pkexec", Quickshell.env("HOME") + "/.config/panacea/sddm/install.sh"].concat(args);
+        pLoginRoot.running = false;
+        pLoginRoot.running = true;
+    }
+
     // EverythingOS SDDM theme: colors/font/wallpaper for the greeter (no-op until installed)
     Process { id: pLoginSync; command: [Quickshell.env("HOME") + "/.config/panacea/scripts/login-sync.sh"] }
     function syncLogin() { pLoginSync.running = false; pLoginSync.running = true; }

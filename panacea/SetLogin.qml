@@ -16,15 +16,14 @@ ColumnLayout {
     // snapshot of the SDDM setup (scripts/login-info.sh)
     property var info: ({ themes: [], sessions: [], users: [], current: "", autologinUser: "",
                           autologinSession: "", installed: false, confExists: false, stateWritable: false, me: "" })
-    property bool busy: false
-    property string status: ""
+    readonly property bool busy: page.sys.loginRootBusy
+    readonly property string status: page.sys.loginRootStatus
     // pending (not yet applied) choices
     property string themePick: ""
     property bool autoOn: false
     property string autoUser: ""
     property string autoSession: ""
 
-    readonly property string helper: Quickshell.env("HOME") + "/.config/panacea/sddm/install.sh"
     readonly property string syncCmd: page.sys.scriptDir + "/login-sync.sh"
 
     Layout.fillWidth: true
@@ -61,7 +60,7 @@ ColumnLayout {
                     page.autoUser = page.info.autologinUser || page.info.me;
                     page.autoSession = page.info.autologinSession
                         || (page.sessionsUnique().some(s => s.id === "hyprland.desktop") ? "hyprland.desktop" : "");
-                } catch (e) { page.status = "Could not read the SDDM setup"; }
+                } catch (e) { console.warn("login-info parse failed"); }
             }
         }
     }
@@ -69,27 +68,11 @@ ColumnLayout {
     Timer { id: syncTimer; interval: 500; onTriggered: { syncProc.running = false; syncProc.running = true; } }
     Process { id: syncProc; command: [page.syncCmd] }
 
-    // privileged helper through polkit: the user confirms in the system dialog
-    Process {
-        id: rootProc
-        stdout: StdioCollector { id: rootOut }
-        stderr: StdioCollector { id: rootErr }
-        onExited: code => {
-            page.busy = false;
-            if (code === 0) { page.status = "Applied. Takes effect at the next login screen."; syncProc.running = true; }
-            else if (code === 126 || code === 127) page.status = "Cancelled (no permission was given).";
-            else page.status = "Failed: " + (rootErr.text.trim() || ("exit " + code));
-            // the island may have closed while the password dialog was up: say it in a notification too
-            Quickshell.execDetached(["notify-send", "-a", "EverythingOS", "Login", page.status]);
-            page.refresh();
-        }
-    }
-    function runRoot(args) {
-        page.busy = true;
-        page.status = "Waiting for confirmation…";
-        rootProc.command = ["pkexec", page.helper].concat(args);
-        rootProc.running = false;
-        rootProc.running = true;
+    // privileged helper runs in the shell root (see shell.qml runLoginRoot)
+    function runRoot(args) { page.sys.runLoginRoot(args); }
+    Connections {
+        target: page.sys
+        function onLoginRootSeqChanged() { page.refresh(); }
     }
     function applySddm() {
         var theme = page.themePick || "everythingos";
