@@ -27,3 +27,7 @@ end
 
 -- Super+Shift+D: režim úprav rozložení widgetů (přetahování myší)
 hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/panacea ipc call pill widgetsEdit"))
+
+-- Super+Ctrl+Left/Right: send the focused window to the previous/next workspace (and follow it)
+hl.bind("SUPER + CTRL + left",  hl.dsp.window.move({ workspace = "r-1" }))
+hl.bind("SUPER + CTRL + right", hl.dsp.window.move({ workspace = "r+1" }))

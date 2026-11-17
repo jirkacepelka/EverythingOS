@@ -2126,7 +2126,7 @@ PanelWindow {
                 wayland: t.wayland,
                 geo: {
                     x: o.at[0], y: o.at[1], w: o.size[0], h: o.size[1],
-                    ws: o.workspace.id, cls: String(o.initialClass || o.class || "")
+                    ws: o.workspace.id, cls: String(o.initialClass || o.class || ""), addr: String(o.address || "")
                 }
             });
         }

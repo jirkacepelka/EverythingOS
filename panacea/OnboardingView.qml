@@ -153,6 +153,7 @@ FocusScope {
                         { k: "Super+F",    d: "Files" },
                         { k: "Super+B",    d: "Browser" },
                         { k: "Alt+Tab",    d: "Switch windows" },
+                        { k: "Super+Ctrl+←/→", d: "Move window to workspace" },
                         { k: "Super+I",    d: "Settings" },
                         { k: "Super+/",    d: "All shortcuts" }
                     ]

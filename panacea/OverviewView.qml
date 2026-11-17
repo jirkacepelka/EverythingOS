@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Hyprland
 import Quickshell.Wayland
 
@@ -117,6 +118,39 @@ FocusScope {
         view.sys.closeOverview();
     }
 
+    // ------------------------------------------------ drag a window to another workspace
+    // Drag a window preview onto another workspace card (or the "new workspace" zone at
+    // the bottom) to move the window there.
+    property var dragWin: null            // { addr, cls }
+    property real dragX: 0                // pointer in overview coordinates
+    property real dragY: 0
+    readonly property bool dragging: view.dragWin !== null
+    property int dropWs: 0                // workspace id under the pointer (0 = none)
+    readonly property int newWsId: {
+        var m = 0;
+        for (var i = 0; i < wsList.length; i++) m = Math.max(m, wsList[i].id);
+        return m + 1;
+    }
+    function moveWindow(addr, ws) {
+        moveProc.command = ["hyprctl", "dispatch", "hl.dsp.window.move({ workspace = " + ws
+                            + ", follow = false, window = 'address:" + addr + "' })"];
+        moveProc.running = true;
+    }
+    Process {
+        id: moveProc
+        onRunningChanged: if (!running) refreshTimer.restart()
+    }
+    Timer {
+        id: refreshTimer
+        interval: 250
+        onTriggered: { Hyprland.refreshWorkspaces(); Hyprland.refreshToplevels(); }
+    }
+    function endDrag() {
+        if (view.dragWin && view.dropWs > 0) view.moveWindow(view.dragWin.addr, view.dropWs);
+        view.dragWin = null;
+        view.dropWs = 0;
+    }
+
     // ------------------------------------------------------------ раскладка
     readonly property int columns: Math.min(3, Math.max(1, wsList.length))
     // Карточка занимает столько, сколько влезает: и по ширине, и по высоте —
@@ -163,15 +197,28 @@ FocusScope {
 
                     readonly property bool picked: view.current === card.index
                     readonly property bool live: view.sys.wsId === card.modelData.id
+                    readonly property bool dropHover: {
+                        if (!view.dragging) return false;
+                        var p = card.mapFromItem(view, view.dragX, view.dragY);
+                        return p.x >= 0 && p.y >= 0 && p.x <= card.width && p.y <= card.height
+                               && !(view.dragWin && winOwner(view.dragWin.addr) === card.modelData.id);
+                    }
+                    function winOwner(addr) {
+                        var l = view.sys.overviewToplevels || [];
+                        for (var i = 0; i < l.length; i++) if (String(l[i].geo.addr || "") === addr) return l[i].geo.ws;
+                        return -1;
+                    }
+                    onDropHoverChanged: if (dropHover) view.dropWs = card.modelData.id; else if (view.dropWs === card.modelData.id) view.dropWs = 0
 
                     Layout.preferredWidth: view.cardW
                     Layout.preferredHeight: view.cardH
                     radius: 16
                     color: Qt.rgba(0.06, 0.06, 0.07, 0.92)
-                    border.color: card.picked ? view.sys.colOn
+                    border.color: card.dropHover ? view.sys.colFg
+                                : card.picked ? view.sys.colOn
                                 : card.live ? Qt.rgba(1, 1, 1, 0.35)
                                             : Qt.rgba(1, 1, 1, 0.12)
-                    border.width: card.picked ? 2 : 1
+                    border.width: (card.picked || card.dropHover) ? 2 : 1
                     clip: true
                     Behavior on border.color { ColorAnimation { duration: 150 } }
 
@@ -231,6 +278,37 @@ FocusScope {
                                     layer.enabled: true
                                     layer.smooth: true
                                     layer.mipmap: true
+                                }
+
+                                // drag to move the window to another workspace
+                                MouseArea {
+                                    id: dragMa
+                                    anchors.fill: parent
+                                    z: 5
+                                    hoverEnabled: true
+                                    cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+                                    property point pressPos
+                                    property bool moved: false
+                                    onEntered: view.currentWs = card.modelData.id
+                                    onPressed: mouse => {
+                                        var p = dragMa.mapToItem(view, mouse.x, mouse.y);
+                                        dragMa.pressPos = Qt.point(p.x, p.y);
+                                        dragMa.moved = false;
+                                    }
+                                    onPositionChanged: mouse => {
+                                        if (!pressed) return;
+                                        var p = dragMa.mapToItem(view, mouse.x, mouse.y);
+                                        if (!dragMa.moved && Math.abs(p.x - dragMa.pressPos.x) + Math.abs(p.y - dragMa.pressPos.y) > 10) {
+                                            dragMa.moved = true;
+                                            view.dragWin = { addr: String(win.geo.addr || ""), cls: String(win.geo.cls || "") };
+                                        }
+                                        if (dragMa.moved) { view.dragX = p.x; view.dragY = p.y; }
+                                    }
+                                    onReleased: {
+                                        if (dragMa.moved) view.endDrag();
+                                        else view.pick(card.index);
+                                    }
+                                    onCanceled: { view.dragWin = null; view.dropWs = 0; }
                                 }
 
                                 // пока кадра нет — класс приложения текстом
@@ -315,5 +393,49 @@ FocusScope {
         opacity: view.searching ? 0.6 : 0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 160 } }
+    }
+
+    // drop zone: move the dragged window to a brand new workspace
+    Rectangle {
+        id: newZone
+        visible: view.dragging
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 60
+        width: 260; height: 46; radius: 23
+        readonly property bool hot: view.dragging && view.dragY > newZone.y - 10 && view.dragY < newZone.y + newZone.height + 10
+                                    && view.dragX > newZone.x && view.dragX < newZone.x + newZone.width
+        color: newZone.hot ? view.sys.colFg : Qt.rgba(0, 0, 0, 0.7)
+        border.width: 1
+        border.color: Qt.rgba(1, 1, 1, 0.3)
+        onHotChanged: if (hot) view.dropWs = view.newWsId; else if (view.dropWs === view.newWsId) view.dropWs = 0
+        Text {
+            anchors.centerIn: parent
+            text: "+ New workspace"
+            color: newZone.hot ? view.sys.colBg : view.sys.colFg
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+        }
+    }
+
+    // ghost following the pointer while dragging
+    Rectangle {
+        visible: view.dragging
+        z: 100
+        x: view.dragX - width / 2
+        y: view.dragY - height / 2
+        width: 150; height: 90; radius: 10
+        color: Qt.rgba(0.1, 0.1, 0.12, 0.92)
+        border.width: 2
+        border.color: view.sys.colFg
+        opacity: 0.9
+        Text {
+            anchors.centerIn: parent
+            width: parent.width - 16
+            horizontalAlignment: Text.AlignHCenter
+            elide: Text.ElideRight
+            text: view.dragWin ? view.dragWin.cls : ""
+            color: view.sys.colFg
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+        }
     }
 }
