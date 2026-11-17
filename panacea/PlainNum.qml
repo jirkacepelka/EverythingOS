@@ -20,7 +20,7 @@ Item {
     property color color: "#ffffff"
     property real charGap: 0
     // Rodina písma sjednocená s nastavením EverythingOS (Vzhled → Písmo).
-    property string family: "GoogleSansCode Nerd Font Propo"
+    property string family: ShellColors.family
 
     // Výška číslice ≈ 0.72 velikosti písma, proto se velikost přepočítává.
     readonly property real fontPx: Math.max(1, Math.round(dt.size / 0.72))

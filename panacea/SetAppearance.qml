@@ -293,6 +293,18 @@ ColumnLayout {
 
         SetPick {
             sys: page.sys
+            label: page.sys.tr("Шрифт")
+            options: page.sys.fontList
+            value: page.sys.cfg.fontBody || page.sys.cfg.fontFam
+            onPicked: id => {
+                page.sys.cfg.fontBody = id;
+                page.sys.cfg.fontDisplay = id;
+                page.sys.saveCfg();
+            }
+        }
+
+        SetPick {
+            sys: page.sys
             label: page.sys.tr("Шрифт текста")
             visible: page.detailsOpen
             options: page.sys.fontList
@@ -309,16 +321,6 @@ ColumnLayout {
             onPicked: id => { page.sys.cfg.fontDisplay = id; page.sys.saveCfg(); }
         }
 
-        // Значковый шрифт отдельно: подписи можно поставить любые, но иконки
-        // рисует только Nerd Font, и менять его вместе с текстовым нельзя.
-        SetPick {
-            sys: page.sys
-            label: page.sys.tr("Шрифт значков")
-            visible: page.detailsOpen
-            options: page.sys.fontList
-            value: page.sys.cfg.fontFam
-            onPicked: id => { page.sys.cfg.fontFam = id; page.sys.saveCfg(); }
-        }
     }
 
     // ------------------------------------------------------------- звуки

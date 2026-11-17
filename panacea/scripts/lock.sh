@@ -38,6 +38,17 @@ command -v quickshell >/dev/null 2>&1 || step "quickshell не найден в P
 # «basic», а он крутит анимации от таймера в 16 мс — 60 кадров на любом
 # мониторе. На экране блокировки это особенно заметно: там всё держится на
 # плавности появления.
+# Started from a compositor keybind the env lacks the shell's custom Qt:
+# borrow it from the running shell so quickshell can load.
+if [ -z "${LD_LIBRARY_PATH:-}" ]; then
+    spid=$(pgrep -f "quickshell.*panacea" | head -1)
+    if [ -n "$spid" ] && [ -r "/proc/$spid/environ" ]; then
+        for v in LD_LIBRARY_PATH QML2_IMPORT_PATH QT_PLUGIN_PATH; do
+            val=$(tr '\0' '\n' < "/proc/$spid/environ" | sed -n "s/^$v=//p" | head -1)
+            [ -n "$val" ] && export "$v=$val"
+        done
+    fi
+fi
 export QSG_RENDER_LOOP="${QSG_RENDER_LOOP:-threaded}"
 
 step "запускаю $QML"

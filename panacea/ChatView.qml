@@ -98,7 +98,7 @@ Item {
             Column {
                 anchors.centerIn: parent; width: parent.width - 30; spacing: 12
                 visible: !webLoader.active || webLoader.status === Loader.Error
-                Text { width: parent.width; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter; color: view.sys.colMuted; text: view.sys.tr("Встроенный браузер недоступен. Откройте сервис в обычном браузере.") }
+                Text { font.family: ShellColors.family; width: parent.width; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter; color: view.sys.colMuted; text: view.sys.tr("Встроенный браузер недоступен. Откройте сервис в обычном браузере.") }
                 Button { anchors.horizontalCenter: parent.horizontalCenter; text: view.sys.tr("Открыть") + " " + view.service; onClicked: Qt.openUrlExternally(view.services[view.service]) }
             }
         }
@@ -128,14 +128,14 @@ Item {
                         Text { id: message; x: 10; y: 10; width: parent.width - 20; text: modelData.content; color: view.sys.colFg; wrapMode: Text.Wrap; textFormat: Text.PlainText; font.pixelSize: view.sys.fontSize - 3 }
                     }
                 }
-                Text { visible: view.busy; text: view.sys.tr("Думаю…"); color: view.sys.colMuted }
+                Text { font.family: ShellColors.family; visible: view.busy; text: view.sys.tr("Думаю…"); color: view.sys.colMuted }
             }
             onContentHeightChanged: if (contentItem) contentItem.contentY = Math.max(0, contentHeight - availableHeight)
         }
         RowLayout {
             visible: view.service === "chat" && view.attachments.length > 0
             Layout.fillWidth: true
-            Text { Layout.fillWidth: true; text: view.sys.tr("Прикреплено файлов:") + " " + view.attachments.length; color: view.sys.colMuted }
+            Text { font.family: ShellColors.family; Layout.fillWidth: true; text: view.sys.tr("Прикреплено файлов:") + " " + view.attachments.length; color: view.sys.colMuted }
             Text { text: "×"; color: view.sys.colMuted; font.pixelSize: view.sys.fontSize - 3; MouseArea { anchors.fill: parent; anchors.margins: -5; onClicked: view.attachments = [] } }
         }
         Rectangle {

@@ -9,6 +9,8 @@ Singleton {
     property color fg: "#ffffff"
     property color bg: "#000000"
     property bool light: false
+    // UI font chosen in Settings (fallback for components without a reference to the shell)
+    property string family: "GoogleSansCode Nerd Font Propo"
 
     // foreground at a given opacity (replaces Qt.rgba(1, 1, 1, a))
     function fgA(a) { return Qt.rgba(fg.r, fg.g, fg.b, a); }

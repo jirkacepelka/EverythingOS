@@ -105,7 +105,7 @@ Item {
                 Text { Layout.fillWidth: true; text: view.sys.tr("VPN-клиент"); color: view.sys.colFg; font { family: view.sys.fontDisplay; pixelSize: 15; bold: false } }
                 Text { text: "↻"; color: view.sys.colMuted; font.pixelSize: 21; MouseArea { anchors.fill: parent; anchors.margins: -7; cursorShape: Qt.PointingHandCursor; onClicked: view.refresh() } }
             }
-            Text { Layout.fillWidth: true; text: view.error; visible: view.error.length > 0; wrapMode: Text.WordWrap; color: view.sys.colCrit }
+            Text { font.family: ShellColors.family; Layout.fillWidth: true; text: view.error; visible: view.error.length > 0; wrapMode: Text.WordWrap; color: view.sys.colCrit }
             Repeater {
                 model: view.apps
                 delegate: Choice {
@@ -118,7 +118,7 @@ Item {
                     onPicked: view.chooseClient(modelData.desktop)
                 }
             }
-            Text { visible: view.apps.length === 0; Layout.fillWidth: true; wrapMode: Text.WordWrap; text: view.sys.tr("VPN-приложения не найдены"); color: view.sys.colMuted }
+            Text { font.family: ShellColors.family; visible: view.apps.length === 0; Layout.fillWidth: true; wrapMode: Text.WordWrap; text: view.sys.tr("VPN-приложения не найдены"); color: view.sys.colMuted }
             Text { visible: view.profiles.length > 0; text: "NETWORKMANAGER"; color: view.sys.colMuted; font { family: view.sys.fontBody; pixelSize: 10; letterSpacing: 2 } }
             Repeater {
                 model: view.profiles

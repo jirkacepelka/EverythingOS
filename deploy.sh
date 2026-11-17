@@ -14,5 +14,9 @@ install -Dm644 "$D/fish/nothing-init.fish" "$HOME/.config/fish/nothing-init.fish
 # Doto (Google Fonts, SIL OFL): dot-matrix font offered in Settings -> Appearance -> fonts
 install -Dm644 "$D/fonts/Doto-Variable.ttf" "$HOME/.local/share/fonts/Doto-Variable.ttf"
 install -Dm644 "$D/fonts/Doto-OFL.txt" "$HOME/.local/share/fonts/Doto-OFL.txt"
+# Space Mono (Google Fonts, SIL OFL): legible Nothing-like monospace, full Czech coverage
+for f in SpaceMono-Regular.ttf SpaceMono-Bold.ttf SpaceMono-OFL.txt; do
+    install -Dm644 "$D/fonts/$f" "$HOME/.local/share/fonts/$f"
+done
 fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1 || true
 echo deployed

@@ -674,7 +674,7 @@ PanelWindow {
     Process {
         id: pFonts
         command: ["sh", "-c",
-            "{ fc-list :spacing=100 family; fc-list family | grep -i '^doto'; } | tr ',' '\\n' | sed 's/^ *//' | sort -u | grep -v '^$'"]
+            "{ fc-list :spacing=100 family; fc-list family | grep -i '^doto\|^space mono'; } | tr ',' '\\n' | sed 's/^ *//' | sort -u | grep -v '^$'"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -797,6 +797,13 @@ PanelWindow {
     // Здесь процесс живёт в корне оболочки, который не уничтожается никогда,
     // так что торопиться ему некуда.
     Process { id: pDetached }
+    // Power actions (lock, sleep, logout...) need the shell's own environment:
+    // a process spawned through the compositor inherits Hyprland's env, which
+    // lacks the custom Qt (LD_LIBRARY_PATH) that quickshell needs for lock.qml.
+    function runPower(cmd) {
+        Quickshell.execDetached(["sh", "-c", cmd]);
+    }
+
     function runDetached(cmd) {
         // Через компоновщик, а не своим Process.
         //
@@ -1473,6 +1480,7 @@ PanelWindow {
     Binding { target: ShellColors; property: "fg"; value: root.colFg }
     Binding { target: ShellColors; property: "bg"; value: root.colBg }
     Binding { target: ShellColors; property: "light"; value: root.lightMode }
+    Binding { target: ShellColors; property: "family"; value: root.fontFam }
     function setLightMode(on) {
         cfg.themeId = on ? "light" : "nothing";
         saveCfg();
@@ -1497,7 +1505,8 @@ PanelWindow {
     function tint(c) { return root.colFg; }
     // янтарный «на паузе» и «осторожно» — он встречается часто
     readonly property color colWarn: root.tint("#fbbf24")
-    readonly property string fontFam:  cfg.fontFam
+    // text font; glyphs missing in it (Nerd icons) fall back automatically
+    readonly property string fontFam:  cfg.fontBody || cfg.fontFam
     // текстовый шрифт и шрифт заголовков; пустое значение — общий fontFam
     readonly property string fontBody:    cfg.fontBody || cfg.fontFam
     readonly property string fontDisplay: cfg.fontDisplay || cfg.fontFam
@@ -8042,7 +8051,7 @@ LazyLoader {
                 width: 112; height: 34; radius: 17
                 color: modelData.accept ? root.colFg : ShellColors.fgA(0.09)
                 opacity: modelData.accept && chatPickerFiles.selectedCount === 0 ? 0.4 : 1
-                Text { anchors.centerIn: parent; text: modelData.text; color: modelData.accept ? root.colBg : root.colFg }
+                Text { font.family: ShellColors.family; anchors.centerIn: parent; text: modelData.text; color: modelData.accept ? root.colBg : root.colFg }
                 MouseArea { anchors.fill: parent; enabled: !modelData.accept || chatPickerFiles.selectedCount > 0; cursorShape: Qt.PointingHandCursor; onClicked: { if (modelData.accept) root.chatFilesPicked(chatPickerFiles.selectedPaths); root.chatFilePickerOpen = false; } }
             }
         }
