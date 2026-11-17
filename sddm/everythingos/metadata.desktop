@@ -1,0 +1,13 @@
+[SddmGreeterTheme]
+Name=EverythingOS
+Description=Nothing-style dot-matrix login screen for EverythingOS: follows the shell's dark/white mode, wallpaper and font
+Author=EverythingOS
+License=GPL-3.0-or-later
+Type=sddm-theme
+Version=1.0.0
+Screenshot=preview.png
+MainScript=Main.qml
+ConfigFile=theme.conf
+Theme-Id=everythingos
+Theme-API=2.0
+QtVersion=5

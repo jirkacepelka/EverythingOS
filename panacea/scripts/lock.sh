@@ -23,11 +23,10 @@ if pgrep -f "quickshell --path .*lock\.qml" >/dev/null; then
     exit 0
 fi
 
-wallpaper=$(grep -m1 '^\$wallpaper' "$HOME/.config/hypr/wallpaper.conf" 2>/dev/null \
-            | cut -d= -f2- | sed 's/^ *//; s/ *$//')
-wallpaper="${wallpaper/#\~/$HOME}"
+# Background: honours Settings > Login (wallpaper / custom image / black)
+wallpaper=$("$DIR/login-sync.sh" bg lock 2>/dev/null)
 
-if [ -n "$wallpaper" ] && [ "$wallpaper" != "black" ] && [ -f "$wallpaper" ]; then
+if [ -n "$wallpaper" ] && [ -f "$wallpaper" ]; then
     bg=$("$DIR/thumbs.sh" lockbg "$wallpaper" 2>/dev/null)
     [ -n "$bg" ] && export PANACEA_LOCK_BG="$bg"
 fi

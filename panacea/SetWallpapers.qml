@@ -24,7 +24,7 @@ ColumnLayout {
     function apply(path) {
         page.applying = path;
         page.sys.startThemeFade();
-        pSet.command = ["sh", "-c", page.sys.scriptDir + "/themes.sh set \"$1\"", "_", path];
+        pSet.command = ["sh", "-c", page.sys.scriptDir + "/themes.sh set \"$1\"; " + page.sys.scriptDir + "/login-sync.sh", "_", path];
         pSet.running = true;
     }
     Process {

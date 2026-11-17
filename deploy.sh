@@ -19,4 +19,8 @@ for f in SpaceMono-Regular.ttf SpaceMono-Bold.ttf SpaceMono-OFL.txt; do
     install -Dm644 "$D/fonts/$f" "$HOME/.local/share/fonts/$f"
 done
 fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1 || true
+# SDDM theme sources + installer (installed to the system only via the Login settings / pkexec)
+rsync -a --delete "$D/sddm/" "$HOME/.config/panacea/sddm/"
+mkdir -p "$HOME/.config/panacea/sddm/fonts"
+cp -f "$D"/fonts/SpaceMono-*.ttf "$D/fonts/Doto-Variable.ttf" "$HOME/.config/panacea/sddm/fonts/"
 echo deployed

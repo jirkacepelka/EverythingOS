@@ -128,6 +128,17 @@ PanelWindow {
             // ---------------------------------------------- Lock Screen
             property int    lockBlur: 32
             property string lockHint: ""
+            property string lockBgMode: "wallpaper"   // wallpaper | custom | black
+            property string lockBgPath: ""
+            property int    lockDim: 40
+            property bool   lockShowClock: true
+            // ---------------------------------------------- Login (SDDM greeter)
+            property string loginBgMode: "wallpaper"
+            property string loginBgPath: ""
+            property int    loginBlur: 16
+            property int    loginDim: 45
+            property bool   loginShowClock: true
+            property string loginHint: ""
 
             // ---------------------------------------------- Control Center
             // Порядок плиток быстрых настроек, заданный человеком.
@@ -444,7 +455,8 @@ PanelWindow {
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
         notifDnd: false, notifTimeout: 5000, notifCritTimeout: 0, notifPreview: true,
-        lockBlur: 32, lockHint: "",
+        lockBlur: 32, lockHint: "", lockBgMode: "wallpaper", lockBgPath: "", lockDim: 40, lockShowClock: true,
+        loginBgMode: "wallpaper", loginBgPath: "", loginBlur: 16, loginDim: 45, loginShowClock: true, loginHint: "",
         ccLayout: "", filesWindow: false, filesHidden: true, filesMode: "list",
         vaultCapture: true,
         vibrance: 50, mouseSens: 0, mouseRaw: false,
@@ -848,9 +860,13 @@ PanelWindow {
         pTermTheme.running = true;
     }
 
+    // EverythingOS SDDM theme: colors/font/wallpaper for the greeter (no-op until installed)
+    Process { id: pLoginSync; command: [Quickshell.env("HOME") + "/.config/panacea/scripts/login-sync.sh"] }
+    function syncLogin() { pLoginSync.running = false; pLoginSync.running = true; }
     function syncGreeterTheme() {
         pGreeterTheme.running = false;
         pGreeterTheme.running = true;
+        root.syncLogin();
     }
     onThemeChanged: {
         root.syncGreeterTheme();
@@ -1871,7 +1887,7 @@ PanelWindow {
     // full reset used by Settings: positions, hidden built-ins and added widgets
     function widgetsResetAll() { cfg.widgetItemsJson = "[]"; cfg.widgetHiddenJson = "[]"; cfg.widgetPosJson = ""; saveCfg(); }
     // open Settings on a given page id (order must match SettingsView.sections)
-    readonly property var settingsPageIds: ["bar","media","clock","look","wallpapers","weather","motion","launch","notif","cc","dock","lock","display","input","wifi","bluetooth","vpn","system"]
+    readonly property var settingsPageIds: ["bar","media","clock","look","wallpapers","weather","motion","launch","notif","cc","dock","lock","login","display","input","wifi","bluetooth","vpn","system"]
     function openSettingsPage(id) {
         var i = settingsPageIds.indexOf(id);
         settingsTab = i < 0 ? 0 : i;

@@ -61,6 +61,9 @@ Item {
         { id: "lock",    title: view.sys.tr("Экран блокировки"),    g: 0xF033E, page: "SetLock.qml",
           sub: view.sys.tr("Экран блокировки: что на нём видно и когда он появляется."),
           keys: "lock screen blur idle блокировка экран размытие" },
+        { id: "login",    title: "Login", g: 0xF0004, page: "SetLogin.qml",
+          sub: "SDDM login screen and lock screen: theme, background, autologin.",
+          keys: "login sddm greeter theme autologin session lock screen background wallpaper preview user přihlášení zámek tapeta вход" },
         { id: "display", title: view.sys.tr("Экран"),        g: 0xF0379, page: "SetDisplay.qml",
           sub: view.sys.tr("Разрешение, частота и масштаб подключённых экранов."),
           keys: "display monitor resolution refresh scale layout placement detect island "
@@ -92,6 +95,7 @@ Item {
         { id: "network", title: "Network", g: 0xF05A9, pages: ["wifi", "bluetooth"] },
         { id: "vpn", title: "VPN", g: 0xF0582, pages: ["vpn"] },
         { id: "security", title: view.sys.tr("Безопасность"), g: 0xF033E, pages: ["lock"] },
+        { id: "login", title: "Login", g: 0xF0004, pages: ["login"] },
         { id: "system", title: view.sys.tr("Система"), g: 0xF0493, pages: ["system"] }
     ]
 
