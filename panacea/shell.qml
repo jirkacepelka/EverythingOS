@@ -1666,6 +1666,8 @@ PanelWindow {
     // gaps), odstup ostrova od hrany a odsazení widgetů. Zapíše hypr/lua/gaps_data.lua
     // (platí i po restartu) a nastaví Hyprland za běhu.
     // Společné zaoblení (0 = výchozí) pro widgety, popupy a okna
+    // Window/popup corner radius shared with Hyprland rounding: pill radius
+    readonly property int winR: cfg.islandRadius > 0 ? Math.min(cfg.islandRadius, 24) : Math.round(cfg.pillH / 2)
     readonly property int shapeR: cfg.islandRadius > 0 ? cfg.islandRadius : 22
     readonly property color edgeColor: Qt.rgba(Qt.color(cfg.borderColor).r, Qt.color(cfg.borderColor).g, Qt.color(cfg.borderColor).b, cfg.borderAlpha / 100)
     readonly property int edgeW: cfg.borderWidth
@@ -5327,10 +5329,10 @@ PanelWindow {
         // Оторванная от кромки капсула круглая со всех сторон: срезать ей
         // углы не от чего, кромка её больше не держит.
         readonly property real edgeR: (root.settingsMode || !root.cfg.notchMode)
-                                      ? (root.cfg.islandRadius > 0 ? root.cfg.islandRadius : 26)
+                                      ? (root.cfg.islandRadius > 0 ? root.cfg.islandRadius : root.winR)
                                       : 0
         readonly property real freeR: (root.settingsMode || (root.expanded && !root.keepVis))
-                ? (root.cfg.islandRadius > 0 && !root.cfg.notchMode ? root.cfg.islandRadius : 26)
+                ? (root.cfg.islandRadius > 0 && !root.cfg.notchMode ? root.cfg.islandRadius : root.winR)
                 : (root.cfg.islandRadius > 0 && !root.cfg.notchMode
                    ? root.cfg.islandRadius : root.pillH / 2)
         topLeftRadius:     root.pillAtTop || root.pillAtLeft  ? edgeR : freeR
@@ -7200,7 +7202,7 @@ PanelWindow {
               ? capsule.y + capsule.height + panelGap
               : Math.max(12, Math.min(root.height - height - 12, capsule.y + (capsule.height - height) / 2))
 
-        radius: root.cfg.islandRadius > 0 ? root.cfg.islandRadius : 24
+        radius: root.cfg.islandRadius > 0 ? root.cfg.islandRadius : root.winR
         color: root.colBg
         border.width: root.edgeW
         border.color: root.edgeColor
