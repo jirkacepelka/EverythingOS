@@ -1,6 +1,8 @@
+local okGap, gd = pcall(require, "lua.gaps_data")
+local GAP = (okGap and type(gd) == "table" and gd.gap) or 16
 return {
-    gaps_in = 10,
-    gaps_out = 10,
+    gaps_in = GAP,
+    gaps_out = GAP,
     border_size = 1,
     -- Рамка активного окна. Красный конец прежнего градиента лез в кадр
     -- полосой под островом и спорил с чёрно-белой оболочкой; здесь он ничего

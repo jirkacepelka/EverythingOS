@@ -92,7 +92,7 @@ ColumnLayout {
             visible: page.detailsOpen
             enabled: !page.notch
             opacity: enabled ? 1 : 0.4
-            label: page.sys.tr("Отступ от края")
+            label: "Společný okraj (okna, ostrov, widgety)"
             from: 0; to: 48; step: 1
             value: page.sys.cfg.islandGap
             suffix: "px"

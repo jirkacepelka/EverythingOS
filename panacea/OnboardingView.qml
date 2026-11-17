@@ -220,6 +220,19 @@ FocusScope {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: { view.cfg.featWidgets = !view.cfg.featWidgets; view.sys.saveCfg(); }
                     }
+                    // úprava rozložení: zavře okno a zapne přetahování (Super+Shift+D)
+                    Rectangle {
+                        visible: parent.on
+                        anchors { right: parent.right; rightMargin: 14; verticalCenter: parent.verticalCenter }
+                        width: editTxt.implicitWidth + 24; height: 32; radius: 16
+                        color: Qt.rgba(1, 1, 1, 0.10)
+                        Text { id: editTxt; anchors.centerIn: parent; text: "Upravit rozložení"; color: view.sys.colFg
+                               font { family: view.sys.fontFam; pixelSize: view.fs - 3 } }
+                        MouseArea {
+                            anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                            onClicked: { view.sys.onboardingOpen = false; view.sys.widgetEdit = true; }
+                        }
+                    }
                 }
             }
 

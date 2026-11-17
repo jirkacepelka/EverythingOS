@@ -81,7 +81,7 @@ PanelWindow {
             property int    collapsedW: 260
             property int    expandedH: 620
             // отступ капсулы от кромки, когда режим выреза выключен
-            property int    islandGap: 10
+            property int    islandGap: 16
             // скругление капсулы вне режима выреза (0 — по половине высоты)
             property int    islandRadius: 0
 
@@ -109,6 +109,7 @@ PanelWindow {
             property bool   mascotEnabled: true
             property bool   splitIsland: false
             property bool   showOnboarding: true
+            property string widgetPosJson: ""
             property bool   reduceMotion: false
             property int    animMove: 230      // размер и положение, мс
             property int    animFade: 200      // прозрачность и цвет, мс
@@ -427,7 +428,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 10, islandRadius: 0, splitIsland: false, showOnboarding: true,
+        islandGap: 16, islandRadius: 0, splitIsland: false, showOnboarding: true, widgetPosJson: "",
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -1656,7 +1657,22 @@ PanelWindow {
     readonly property bool splitMode: cfg.splitIsland && !cfg.notchMode && !settingsMode && !pillSide
     readonly property bool keepVis: cfg.pillKeepVisible || (cfg.splitIsland && !cfg.notchMode)
     // Uvítací okno (OnboardingView): při každém spuštění Panacea, jde vypnout
+    // Společný okraj (cfg.islandGap): mezera oken od okrajů i mezi sebou (Hyprland
+    // gaps), odstup ostrova od hrany a odsazení widgetů. Zapíše hypr/lua/gaps_data.lua
+    // (platí i po restartu) a nastaví Hyprland za běhu.
+    Process {
+        id: gapApply
+        command: ["sh", "-c",
+                  "printf 'return { gap = %s }\\n' \"$1\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
+                  "hyprctl dispatch \"hl.config({ general = { gaps_in = $1, gaps_out = $1 } })\" >/dev/null 2>&1; true",
+                  "_", String(root.cfg.islandGap)]
+    }
+    Timer { id: gapTimer; interval: 200; onTriggered: gapApply.running = true }
+    Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } }
+    Timer { interval: 2500; running: true; onTriggered: gapApply.running = true }
     property bool onboardingOpen: false
+    // Režim úprav rozložení widgetů (přetahování myší)
+    property bool widgetEdit: false
     Process {
         id: onboardCheck
         command: ["sh", "-c", "f=\"${XDG_RUNTIME_DIR:-/tmp}/panacea-onboarding-shown\"; [ -e \"$f\" ] || { : > \"$f\"; echo first; }"]
@@ -4619,6 +4635,8 @@ PanelWindow {
         }
         function settings(): void { root.settingsTab = 0; root.togglePage("settings"); }
         function onboarding(): void { root.onboardingOpen = !root.onboardingOpen; }
+        function widgetsEdit(): void { root.widgetEdit = !root.widgetEdit; }
+        function widgetsReset(): void { root.cfg.widgetPosJson = ""; root.saveCfg(); }
         // открыть окно настроек сразу на нужном разделе: удобно вешать на
         // сочетание клавиш и незаменимо при проверке самих настроек
         function settingsAt(tab: string): void {
@@ -7606,29 +7624,34 @@ PanelWindow {
 
     visible: root.cfg.featWidgets
     screen: root.screen
-    anchors { top: true; left: true }
-    // Widgety stojí přesně na mřížce oken: okraj 10 px mezery + 1 px rámeček
-    // zleva a pod zónou ostrova shora. Nevyčnívají zpod oken.
-    readonly property int edgeInset: 11
+    anchors { top: true; left: true; right: true; bottom: true }
+    // Widgety stojí na mřížce oken: okraj 10 px mezery + 1 px rámeček zleva a
+    // pod zónou ostrova shora. Výchozí pozice, pak je uživatel přetahuje.
+    readonly property int edgeInset: root.cfg.islandGap + 1
     readonly property int topInset: ((root.cfg.pillOverlay || root.pillHidden) ? 0
-                                    : root.pillH + (root.cfg.notchMode ? 0 : root.cfg.islandGap)) + widgetsWin.edgeInset
-    implicitWidth:  widgets.implicitWidth + widgetsWin.edgeInset
-    implicitHeight: widgets.implicitHeight + widgetsWin.topInset
+                                    : root.pillH + (root.cfg.notchMode ? 0 : root.cfg.islandGap)) + root.cfg.islandGap + 1
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
     WlrLayershell.layer: WlrLayer.Bottom
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    mask: Region { item: widgets }
+    // vstup jen na kartách (a liště úprav), zbytek plochy zůstává volný
+    mask: Region {
+        item: widgets.cDate
+        Region { item: widgets.cClock;   intersection: Intersection.Combine }
+        Region { item: widgets.cWeather; intersection: Intersection.Combine }
+        Region { item: widgets.cRight;   intersection: Intersection.Combine }
+        Region { item: widgets.cProgress; intersection: Intersection.Combine }
+        Region { item: widgets.cMusic.visible ? widgets.cMusic : null; intersection: Intersection.Combine }
+        Region { item: widgets.cScratch.visible ? widgets.cScratch : null; intersection: Intersection.Combine }
+        Region { item: root.widgetEdit ? widgets.editBarItem : null; intersection: Intersection.Combine }
+    }
 
     WidgetsView {
         id: widgets
         sys: root
-        anchors.left: parent.left
-        anchors.top: parent.top
-        anchors.leftMargin: widgetsWin.edgeInset
-        // ниже острова: тот стоит по центру верхней кромки и до левого
-        // угла не достаёт, но запас нужен под его вогнутый уголок
-        anchors.topMargin: widgetsWin.topInset
+        anchors.fill: parent
+        originX: widgetsWin.edgeInset
+        originY: widgetsWin.topInset
     }
 }
 

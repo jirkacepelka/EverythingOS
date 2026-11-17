@@ -20,3 +20,6 @@ hl.bind("SUPER + Super_L", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/panacea
 -- Alt+Tab / Alt+Shift+Tab: přepínání oken (cyklus + zvednutí nad ostatní)
 hl.bind("ALT + Tab",         hl.dsp.window.cycle_next({}))
 hl.bind("ALT + SHIFT + Tab", hl.dsp.window.cycle_next({ next = false }))
+
+-- Super+Shift+D: režim úprav rozložení widgetů (přetahování myší)
+hl.bind("SUPER + SHIFT + D", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/panacea ipc call pill widgetsEdit"))

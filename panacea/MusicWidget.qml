@@ -13,12 +13,15 @@ Rectangle {
     property real position: 0
     readonly property real duration: player ? Math.max(0, player.length) : 0
     readonly property real progress: duration > 0 ? Math.max(0, Math.min(1, position / duration)) : 0
+    readonly property int fsCap:     sys ? sys.fontSize - 5 : 8
+    readonly property int fsBody:    sys ? sys.fontSize - 3 : 10
+    readonly property int fsLead:    sys ? sys.fontSize - 1 : 12
+    readonly property int fsDisplay: sys ? sys.fontSize + 9 : 22
     implicitWidth: 300
     implicitHeight: 180
     radius: 22
-    color: "#171719"
-    border.color: Qt.rgba(1, 1, 1, 0.08)
-    border.width: 1
+    color: sys ? sys.colBg : "#000000"
+    border.width: 0
 
     Timer {
         interval: 500; repeat: true
@@ -56,7 +59,7 @@ Rectangle {
             anchors.centerIn: parent
             text: button.glyph
             color: button.primary ? "#19191b" : "#f0f0f0"
-            font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: 15 }
+            font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsLead }
         }
         MouseArea {
             id: hit
@@ -125,7 +128,7 @@ Rectangle {
                     anchors.centerIn: parent
                     visible: art.status !== Image.Ready
                     text: "󰝚"; color: "#b0b0b4"
-                    font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: 22 }
+                    font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsDisplay }
                 }
                 Rectangle {
                     anchors.centerIn: parent
@@ -142,26 +145,26 @@ Rectangle {
         x: 28; y: 12; width: 164; height: 14
         text: card.playing ? "NOW PLAYING" : (card.hasTrack ? "PAUSED" : "NOTHING MUSIC")
         color: "#a8a8ad"
-        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.sys.fontSize - 3; bold: false; letterSpacing: 1.2 }
+        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsBody; bold: false; letterSpacing: 1.2 }
         elide: Text.ElideRight
     }
     Text {
         anchors.right: parent.right; anchors.rightMargin: 16; y: 12
         text: "33⅓ RPM"; color: "#66666c"
-        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.sys.fontSize - 3; letterSpacing: 0.5 }
+        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsBody; letterSpacing: 0.5 }
     }
     Rectangle { x: 15; y: 30; width: card.width - 30; height: 1; color: Qt.rgba(1, 1, 1, 0.08) }
     Text {
         x: 110; y: 40; width: card.width - 126; height: 22
         text: card.hasTrack ? card.player.trackTitle : (card.sys ? card.sys.tr("Нет музыки") : "No media")
         color: "#f5f5f5"; elide: Text.ElideRight
-        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.sys.fontSize - 3; bold: false }
+        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsBody; bold: false }
     }
     Text {
         x: 110; y: 63; width: card.width - 126; height: 17
         text: card.hasTrack ? (card.player.trackArtist || "") : (card.sys ? card.sys.tr("Запустите плеер") : "Start playing")
         color: "#a1a1a6"; elide: Text.ElideRight
-        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.sys.fontSize - 3 }
+        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsBody }
     }
     Rectangle {
         id: progressTrack
@@ -171,12 +174,12 @@ Rectangle {
     }
     Text {
         x: 110; y: 101; text: card.time(card.position); color: "#99999e"
-        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.sys.fontSize - 3 }
+        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsBody }
     }
     Text {
         anchors.right: parent.right; anchors.rightMargin: 16; y: 101
         text: card.time(card.duration); color: "#99999e"
-        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.sys.fontSize - 3 }
+        font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsBody }
     }
     RowLayout {
         x: 14; y: 137; width: card.width - 28; height: 30

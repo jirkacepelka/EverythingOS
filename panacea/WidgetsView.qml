@@ -37,8 +37,104 @@ Item {
     readonly property real gap: 12
     readonly property real fullW: view.col * 2 + view.gap
 
-    implicitWidth: view.fullW
-    implicitHeight: stack.implicitHeight
+    // Počátek oblasti widgetů (pod zónou ostrova, na mřížce oken); zadává shell
+    // Typografie: jedna rodina (sys.fontFam) + tečkové číslice (DotText); čtyři velikosti
+    readonly property int fsCap:     view.sys ? view.sys.fontSize - 5 : 8    // popisky
+    readonly property int fsBody:    view.sys ? view.sys.fontSize - 3 : 10   // běžný text
+    readonly property int fsLead:    view.sys ? view.sys.fontSize - 1 : 12   // zvýrazněný text
+    readonly property int fsDisplay: view.sys ? view.sys.fontSize + 9 : 22   // velká čísla
+    readonly property int cardRadius: 22
+    readonly property int cardPad: 14
+    property real originX: 11
+    property real originY: 59
+
+    // ---- Volné umístění widgetů ------------------------------------------
+    // Pozice (relativně k počátku) se ukládají jako JSON v cfg.widgetPosJson.
+    readonly property bool editing: view.sys ? Boolean(view.sys.widgetEdit) : false
+    readonly property real snap: 12
+    readonly property var sizes: ({
+        date: [view.col, 140], clock: [view.col, 140], weather: [view.col, 140],
+        right: [view.col, 140], progress: [view.fullW, 72], music: [view.fullW, 180],
+        scratch: [view.fullW, 140]
+    })
+    function defaults() {
+        var s = view.col + view.gap;
+        return { date: {x: 0, y: 0}, clock: {x: s, y: 0}, weather: {x: 0, y: 152},
+                 right: {x: s, y: 152}, progress: {x: 0, y: 304}, music: {x: 0, y: 388},
+                 scratch: {x: 0, y: 580} };
+    }
+    function loadPos() {
+        var d = view.defaults(), saved = {};
+        try { saved = JSON.parse((view.sys && view.sys.cfg && view.sys.cfg.widgetPosJson) || "{}"); } catch (e) {}
+        for (var k in saved) if (d[k] && saved[k] && isFinite(saved[k].x) && isFinite(saved[k].y)) d[k] = saved[k];
+        return d;
+    }
+    property var wpos: view.loadPos()
+    Connections {
+        target: view.sys ? view.sys.cfg : null
+        function onWidgetPosJsonChanged() { if (!view.editing) view.wpos = view.loadPos(); }
+    }
+    function wx(id) { return view.originX + view.wpos[id].x; }
+    function wy(id) { return view.originY + view.wpos[id].y; }
+    function movePos(id, x, y, commit) {
+        var sz = view.sizes[id];
+        var nx = Math.max(-view.originX, Math.min(view.width - view.originX - sz[0], x));
+        var ny = Math.max(-view.originY, Math.min(view.height - view.originY - sz[1], y));
+        if (commit) {
+            nx = Math.round(nx / view.snap) * view.snap;
+            ny = Math.round(ny / view.snap) * view.snap;
+        }
+        var n = {};
+        for (var k in view.wpos) n[k] = view.wpos[k];
+        n[id] = { x: nx, y: ny };
+        view.wpos = n;
+        if (commit && view.sys) { view.sys.cfg.widgetPosJson = JSON.stringify(n); view.sys.saveCfg(); }
+    }
+    function resetPos() {
+        view.wpos = view.defaults();
+        if (view.sys) { view.sys.cfg.widgetPosJson = ""; view.sys.saveCfg(); }
+    }
+
+    // Prvky pro vstupní masku okna (shell)
+    readonly property alias cDate: dateCard
+    readonly property alias cClock: clockCard
+    readonly property alias cWeather: mainWeatherCard
+    readonly property alias cRight: rightToggleCard
+    readonly property alias cProgress: progressCard
+    readonly property alias cMusic: musicCard
+    readonly property alias cScratch: scratchCard
+    readonly property alias editBarItem: editBar
+
+    component DragLayer: MouseArea {
+        id: dl
+        required property string wid
+        required property Item card
+        property real sx: 0
+        property real sy: 0
+        property point pp: Qt.point(0, 0)
+        x: dl.card.x; y: dl.card.y; width: dl.card.width; height: dl.card.height
+        visible: view.editing && dl.card.visible
+        enabled: visible
+        z: 100
+        cursorShape: pressed ? Qt.ClosedHandCursor : Qt.OpenHandCursor
+        onPressed: m => {
+            dl.pp = dl.mapToItem(view, m.x, m.y);
+            dl.sx = view.wpos[dl.wid].x; dl.sy = view.wpos[dl.wid].y;
+        }
+        onPositionChanged: m => {
+            if (!pressed) return;
+            var p = dl.mapToItem(view, m.x, m.y);
+            view.movePos(dl.wid, dl.sx + p.x - dl.pp.x, dl.sy + p.y - dl.pp.y, false);
+        }
+        onReleased: m => {
+            var p = dl.mapToItem(view, m.x, m.y);
+            view.movePos(dl.wid, dl.sx + p.x - dl.pp.x, dl.sy + p.y - dl.pp.y, true);
+        }
+        Rectangle {
+            anchors.fill: parent; radius: 22; color: Qt.rgba(1, 1, 1, dl.pressed ? 0.10 : 0.04)
+            border.color: Qt.rgba(1, 1, 1, 0.55); border.width: 1.5
+        }
+    }
 
     // Режимы карточек
     readonly property string clockMode: (view.sys && view.sys.cfg && view.sys.cfg.widgetClockMode) || "analog"
@@ -84,11 +180,11 @@ Item {
     }
 
     // Общий вид карточки: тёмная плашка со скруглением
+    // Stejné pozadí jako pilulky ostrova, bez okraje
     component Card: Rectangle {
-        radius: 22
-        color: Qt.rgba(0.09, 0.09, 0.09, 0.96)
-        border.color: Qt.rgba(1, 1, 1, 0.06)
-        border.width: 1
+        radius: view.cardRadius
+        color: view.sys ? view.sys.colBg : "#000000"
+        border.width: 0
     }
 
     // Точечное число
@@ -134,31 +230,25 @@ Item {
         elide: Text.ElideRight
         font {
             family: view.sys ? view.sys.fontFam : "sans-serif"
-            pixelSize: view.sys.fontSize - 3
+            pixelSize: view.fsBody
             capitalization: Font.AllUppercase
             letterSpacing: 1.1
         }
     }
 
-    ColumnLayout {
+    // Karty jsou volně umístěné (absolutní x/y z view.wpos), ne v layoutu.
+    Item {
         id: stack
-        width: view.fullW
-        spacing: view.gap
+        anchors.fill: parent
 
         // ------------------------------------------------------ Ряд 1: Дата и Часы
-        RowLayout {
-            Layout.preferredWidth: view.fullW
-            spacing: view.gap
+        Item {
 
             // Карточка даты (144x140)
             Card {
                 id: dateCard
-                Layout.preferredWidth: view.col
-                Layout.preferredHeight: 140
-                color: dateMa.containsMouse ? Qt.rgba(0.13, 0.13, 0.14, 0.98) : Qt.rgba(0.09, 0.09, 0.09, 0.96)
-                border.color: dateMa.containsMouse ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4) : Qt.rgba(1, 1, 1, 0.06)
-                Behavior on color { ColorAnimation { duration: 120 } }
-                Behavior on border.color { ColorAnimation { duration: 120 } }
+                x: view.wx("date"); y: view.wy("date")
+                width: view.col; height: 140
 
                 Num {
                     anchors.centerIn: parent
@@ -177,7 +267,7 @@ Item {
                     color: (view.sys && view.sys.weekend) ? view.sys.colCrit : (view.sys ? view.sys.colMuted : "#888888")
                     font {
                         family: view.sys ? view.sys.fontFam : "sans-serif"
-                        pixelSize: view.sys.fontSize - 3
+                        pixelSize: view.fsBody
                         bold: false
                     }
                 }
@@ -203,12 +293,8 @@ Item {
             // Карточка часов Nothing OS (144x140) — переключает аналоговые / цифровые
             Card {
                 id: clockCard
-                Layout.preferredWidth: view.col
-                Layout.preferredHeight: 140
-                color: clockMa.containsMouse ? Qt.rgba(0.13, 0.13, 0.14, 0.98) : Qt.rgba(0.09, 0.09, 0.09, 0.96)
-                border.color: clockMa.containsMouse ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4) : Qt.rgba(1, 1, 1, 0.06)
-                Behavior on color { ColorAnimation { duration: 120 } }
-                Behavior on border.color { ColorAnimation { duration: 120 } }
+                x: view.wx("clock"); y: view.wy("clock")
+                width: view.col; height: 140
 
                 // Режим аналоговых часов Nothing
                 Item {
@@ -403,20 +489,14 @@ Item {
         }
 
         // ------------------------------------------------------ Ряд 2: Погода / Система
-        RowLayout {
-            Layout.preferredWidth: view.fullW
-            spacing: view.gap
+        Item {
 
             // Главная карточка погоды (144x140) — клик открывает полное окно прогноза
             Card {
                 id: mainWeatherCard
-                Layout.preferredWidth: view.col
-                Layout.preferredHeight: 140
+                x: view.wx("weather"); y: view.wy("weather")
+                width: view.col; height: 140
                 Layout.alignment: Qt.AlignTop
-                color: wCardMa.containsMouse ? Qt.rgba(0.13, 0.13, 0.14, 0.98) : Qt.rgba(0.09, 0.09, 0.09, 0.96)
-                border.color: wCardMa.containsMouse ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4) : Qt.rgba(1, 1, 1, 0.06)
-                Behavior on color { ColorAnimation { duration: 120 } }
-                Behavior on border.color { ColorAnimation { duration: 120 } }
 
                 ColumnLayout {
                     anchors.centerIn: parent
@@ -426,7 +506,7 @@ Item {
                         Layout.alignment: Qt.AlignHCenter
                         text: (view.sys && view.sys.weatherReady) ? view.sys.weatherTemp + "°" : "--°"
                         color: view.sys ? view.sys.colFg : "#ffffff"
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26 }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsDisplay }
                     }
 
                     WIcon {
@@ -443,7 +523,7 @@ Item {
                         color: view.sys ? view.sys.colMuted : "#888888"
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody }
                     }
                 }
 
@@ -459,13 +539,9 @@ Item {
             // Правая карточка (144x140) — КЛИК ПЕРЕКЛЮЧАЕТ МЕЖДУ ПОГОДОЙ И СИСТЕМОЙ
             Card {
                 id: rightToggleCard
-                Layout.preferredWidth: view.col
-                Layout.preferredHeight: 140
+                x: view.wx("right"); y: view.wy("right")
+                width: view.col; height: 140
                 Layout.alignment: Qt.AlignTop
-                color: rightCardMa.containsMouse ? Qt.rgba(0.13, 0.13, 0.14, 0.98) : Qt.rgba(0.09, 0.09, 0.09, 0.96)
-                border.color: rightCardMa.containsMouse ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4) : Qt.rgba(1, 1, 1, 0.06)
-                Behavior on color { ColorAnimation { duration: 120 } }
-                Behavior on border.color { ColorAnimation { duration: 120 } }
 
                 // Режим: ПОДРОБНОСТИ ПОГОДЫ
                 Item {
@@ -506,14 +582,14 @@ Item {
                                     maximumLineCount: 2
                                     elide: Text.ElideRight
                                     lineHeight: 0.95
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody }
                                 }
 
                                 // Иконка-подсказка: клик переключит на монитор системы
                                 Text {
                                     text: "󰍛"
                                     color: view.sys ? view.sys.colMuted : "#888888"
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 13 }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsLead }
                                 }
                             }
                         }
@@ -539,13 +615,13 @@ Item {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: (view.sys && view.sys.weatherReady) ? (view.sys.weatherHumidity + "%") : "--"
                                         color: view.sys ? view.sys.colFg : "#ffffff"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody; bold: false }
                                     }
 
                                     Caption {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: view.sys ? view.sys.tr("Влажность") : "HUMIDITY"
-                                        font.pixelSize: 7
+                                        font.pixelSize: view.fsCap
                                         font.letterSpacing: 0.2
                                     }
                                 }
@@ -567,13 +643,13 @@ Item {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: (view.sys && view.sys.weatherReady) ? String(view.sys.weatherWind) : "--"
                                         color: view.sys ? view.sys.colFg : "#ffffff"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody; bold: false }
                                     }
 
                                     Caption {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: (view.sys ? view.sys.tr("Ветер") : "WIND") + " " + (view.sys ? view.sys.weatherWindUnit : "")
-                                        font.pixelSize: 7
+                                        font.pixelSize: view.fsCap
                                         font.letterSpacing: 0.2
                                     }
                                 }
@@ -604,7 +680,7 @@ Item {
                         // Иконка-подсказка: клик переключит на погоду
                         Text {
                             text: "󰖐"
-                            font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 12 }
+                            font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsLead }
                             color: view.sys ? view.sys.colMuted : "#888888"
                         }
                     }
@@ -694,9 +770,9 @@ Item {
                             Text {
                                 text: (view.sys && view.sys.loadMem >= 0) ? (view.sys.loadMem + "%") : "--%"
                                 color: view.sys ? view.sys.colFg : "#ffffff"
-                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
+                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody; bold: false }
                             }
-                            Caption { text: "RAM"; font.pixelSize: 8 }
+                            Caption { text: "RAM"; font.pixelSize: view.fsCap }
                         }
 
                         Item { Layout.fillWidth: true }
@@ -708,9 +784,9 @@ Item {
                                 Layout.alignment: Qt.AlignRight
                                 text: (view.sys && view.sys.loadDisk >= 0) ? (view.sys.loadDisk + "%") : "--%"
                                 color: view.sys ? view.sys.colCrit : "#d71921"
-                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
+                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody; bold: false }
                             }
-                            Caption { Layout.alignment: Qt.AlignRight; text: "SSD"; font.pixelSize: 8 }
+                            Caption { Layout.alignment: Qt.AlignRight; text: "SSD"; font.pixelSize: view.fsCap }
                         }
                     }
                 }
@@ -734,12 +810,8 @@ Item {
         // ------------------------------------------------------ Ряд 3: Life Bar / Day & Year Progress (300x72)
         Card {
             id: progressCard
-            Layout.preferredWidth: view.fullW
-            Layout.preferredHeight: 72
-            color: progMa.containsMouse ? Qt.rgba(0.13, 0.13, 0.14, 0.98) : Qt.rgba(0.09, 0.09, 0.09, 0.96)
-            border.color: progMa.containsMouse ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4) : Qt.rgba(1, 1, 1, 0.06)
-            Behavior on color { ColorAnimation { duration: 120 } }
-            Behavior on border.color { ColorAnimation { duration: 120 } }
+            x: view.wx("progress"); y: view.wy("progress")
+            width: view.fullW; height: 72
 
             ColumnLayout {
                 anchors.fill: parent
@@ -757,7 +829,7 @@ Item {
                               ? (view.sys ? view.sys.tr("ПРОГРЕСС ДНЯ") : "DAY PROGRESS")
                               : (view.sys ? view.sys.tr("ПРОГРЕСС ГОДА") : "YEAR PROGRESS")
                         font.bold: false
-                        font.pixelSize: 9
+                        font.pixelSize: view.fsCap
                         font.letterSpacing: 1.2
                         color: view.sys ? view.sys.colMuted : "#888888"
                     }
@@ -830,13 +902,13 @@ Item {
                         color: view.sys ? view.sys.colMuted : "#888888"
                         font {
                             family: view.sys ? view.sys.fontFam : "sans-serif"
-                            pixelSize: view.sys.fontSize - 3
+                            pixelSize: view.fsBody
                         }
                     }
 
                     Caption {
                         text: "󰔛 " + (view.progressMode === "day" ? "24H" : "365D")
-                        font.pixelSize: 8
+                        font.pixelSize: view.fsCap
                         color: view.sys ? Qt.rgba(view.sys.colFg.r, view.sys.colFg.g, view.sys.colFg.b, 0.4) : "#666666"
                     }
                 }
@@ -857,8 +929,9 @@ Item {
         }
 
         MusicWidget {
-            Layout.preferredWidth: view.fullW
-            Layout.preferredHeight: implicitHeight
+            id: musicCard
+            x: view.wx("music"); y: view.wy("music")
+            width: view.fullW; height: implicitHeight
             visible: view.sys && view.sys.cfg && view.sys.cfg.widgetMusic !== false
             sys: view.sys
         }
@@ -867,14 +940,8 @@ Item {
         Card {
             id: scratchCard
             visible: (view.sys && view.sys.cfg && view.sys.cfg.widgetScratchpad !== false)
-            Layout.preferredWidth: view.fullW
-            Layout.preferredHeight: 140
-            color: scratchMa.containsMouse || view.scratchpadActive ? Qt.rgba(0.13, 0.13, 0.14, 0.98) : Qt.rgba(0.09, 0.09, 0.09, 0.96)
-            border.color: view.scratchpadActive
-                          ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.6)
-                          : (scratchMa.containsMouse ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4) : Qt.rgba(1, 1, 1, 0.06))
-            Behavior on color { ColorAnimation { duration: 120 } }
-            Behavior on border.color { ColorAnimation { duration: 120 } }
+            x: view.wx("scratch"); y: view.wy("scratch")
+            width: view.fullW; height: 140
 
             readonly property string dataDir:
                 (Quickshell.env("XDG_DATA_HOME") || (Quickshell.env("HOME") + "/.local/share")) + "/panacea"
@@ -935,7 +1002,7 @@ Item {
                     Caption {
                         text: "SCRATCHPAD"
                         font.bold: false
-                        font.pixelSize: 8
+                        font.pixelSize: view.fsCap
                         font.letterSpacing: 1.1
                     }
 
@@ -946,7 +1013,7 @@ Item {
                         visible: scratchEdit.text.length > 0
                         text: "󰆏"
                         color: copyMa.containsMouse ? (view.sys ? view.sys.colFg : "#ffffff") : (view.sys ? view.sys.colMuted : "#888888")
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11 }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsLead }
                         MouseArea {
                             id: copyMa
                             anchors.fill: parent
@@ -967,7 +1034,7 @@ Item {
                         visible: scratchEdit.text.length > 0
                         text: "×"
                         color: clearMa.containsMouse ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colMuted : "#888888")
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody; bold: false }
                         MouseArea {
                             id: clearMa
                             anchors.fill: parent
@@ -983,7 +1050,7 @@ Item {
 
                     Caption {
                         text: scratchEdit.text.length + " " + (view.sys ? view.sys.tr("симв.") : "chars")
-                        font.pixelSize: 8
+                        font.pixelSize: view.fsCap
                     }
                 }
 
@@ -1021,7 +1088,7 @@ Item {
                             color: view.sys ? view.sys.colFg : "#ffffff"
                             font {
                                 family: view.sys ? view.sys.fontFam : "monospace"
-                                pixelSize: 11
+                                pixelSize: view.fsLead
                             }
 
                             onActiveFocusChanged: {
@@ -1047,7 +1114,7 @@ Item {
                         visible: scratchEdit.text.length === 0 && !scratchEdit.activeFocus
                         font {
                             family: view.sys ? view.sys.fontFam : "sans-serif"
-                            pixelSize: view.sys.fontSize - 3
+                            pixelSize: view.fsBody
                         }
                     }
 
@@ -1072,6 +1139,55 @@ Item {
                 onClicked: {
                     scratchEdit.forceActiveFocus();
                 }
+            }
+        }
+    }
+
+    DragLayer { wid: "date";     card: dateCard }
+    DragLayer { wid: "clock";    card: clockCard }
+    DragLayer { wid: "weather";  card: mainWeatherCard }
+    DragLayer { wid: "right";    card: rightToggleCard }
+    DragLayer { wid: "progress"; card: progressCard }
+    DragLayer { wid: "music";    card: musicCard }
+    DragLayer { wid: "scratch";  card: scratchCard }
+
+    // Lišta úprav rozložení
+    Rectangle {
+        id: editBar
+        visible: view.editing
+        z: 200
+        x: (view.width - width) / 2
+        y: view.height - height - 28
+        width: barRow.implicitWidth + 28; height: 46; radius: 23
+        color: view.sys ? view.sys.colBg : "#000"
+        border.color: Qt.rgba(1, 1, 1, 0.18); border.width: 1
+        Row {
+            id: barRow
+            anchors.centerIn: parent
+            spacing: 18
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Přetahuj widgety myší"
+                color: view.sys ? view.sys.colMuted : "#888"
+                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody }
+            }
+            Text {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Obnovit"
+                color: view.sys ? view.sys.colFg : "#fff"
+                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody }
+                MouseArea { anchors.fill: parent; anchors.margins: -8; cursorShape: Qt.PointingHandCursor; onClicked: view.resetPos() }
+            }
+            Rectangle {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 76; height: 30; radius: 15
+                color: view.sys ? view.sys.colFg : "#fff"
+                Text {
+                    anchors.centerIn: parent; text: "Hotovo"
+                    color: view.sys ? view.sys.colBg : "#000"
+                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.fsBody; weight: Font.DemiBold }
+                }
+                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.sys.widgetEdit = false }
             }
         }
     }
