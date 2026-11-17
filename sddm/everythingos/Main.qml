@@ -17,9 +17,9 @@ Rectangle {
     }
     readonly property color bg: lk("bg", "#000000")
     readonly property color fg: lk("fg", "#ffffff")
-    readonly property color accent: lk("accent", "#ffffff")
+    readonly property color accent: lk("accent", "#d71921")
     readonly property color muted: Qt.rgba(fg.r, fg.g, fg.b, 0.45)
-    readonly property color crit: "#d71921"
+    readonly property color crit: root.accent
     readonly property string fontFam: lk("font", "Space Mono")
     readonly property bool clock12: lk("clock12", false)
     readonly property bool showClock: lk("showClock", true)
@@ -159,12 +159,12 @@ Rectangle {
             id: go
             anchors { right: parent.right; rightMargin: 8; verticalCenter: parent.verticalCenter }
             width: 48; height: 48; radius: 24
-            color: pw.text.length ? root.fg : Qt.rgba(root.fg.r, root.fg.g, root.fg.b, 0.12)
+            color: pw.text.length ? root.accent : Qt.rgba(root.fg.r, root.fg.g, root.fg.b, 0.12)
             Behavior on color { ColorAnimation { duration: 160 } }
             Text {
                 anchors.centerIn: parent
                 text: root.busy ? "···" : "→"
-                color: pw.text.length ? root.bg : root.muted
+                color: pw.text.length ? "#ffffff" : root.muted
                 font { family: root.fontFam; pixelSize: 22 }
             }
             MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.submit() }
@@ -221,7 +221,7 @@ Rectangle {
                         anchors { right: parent.right; rightMargin: 16; verticalCenter: parent.verticalCenter }
                         visible: index === root.sessionIndex
                         text: "\u25CF"
-                        color: root.fg
+                        color: root.accent
                         font.pixelSize: 10
                     }
                     MouseArea {

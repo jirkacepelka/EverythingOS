@@ -42,12 +42,20 @@ import json, os, sys
 cfgp, state = sys.argv[1:3]
 try: c = json.load(open(cfgp))
 except Exception: c = {}
-themes = {"nothing": ("#000000", "#ffffff"), "light": ("#f2f2f2", "#0b0b0b")}
-bg, fg = themes.get(c.get("themeId", "nothing"), themes["nothing"])
+import re
+# palette comes from the shell's own table (Themes.js), not a copy
+themes = {}
+try:
+    js = open(os.path.expanduser("~/.config/panacea/Themes.js")).read()
+    for m in re.finditer(r'id: "(\w+)".*?bg: "(#\w+)", fg: "(#\w+)".*?crit: "(#\w+)"', js):
+        themes[m.group(1)] = (m.group(2), m.group(3), m.group(4))
+except Exception: pass
+themes.setdefault("nothing", ("#000000", "#ffffff", "#d71921"))
+bg, fg, crit = themes.get(c.get("themeId", "nothing"), themes["nothing"])
 font = c.get("fontBody") or c.get("fontFam") or "Space Mono"
 def q(s): return str(s).replace("\\", "\\\\").replace('"', '\\"')
 out = ('import QtQuick 2.15\nQtObject {\n'
-  f'  property color bg: "{bg}"\n  property color fg: "{fg}"\n  property color accent: "{fg}"\n'
+  f'  property color bg: "{bg}"\n  property color fg: "{fg}"\n  property color accent: "{crit}"\n'
   f'  property string font: "{q(font)}"\n'
   f'  property bool clock12: {"true" if c.get("clock12") else "false"}\n'
   f'  property bool showClock: {"true" if c.get("loginShowClock", True) else "false"}\n'

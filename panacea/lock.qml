@@ -232,7 +232,7 @@ ShellRoot {
                     Rectangle {
                         x: 8; anchors.verticalCenter: parent.verticalCenter
                         width: 48; height: 48; radius: 24
-                        color: root.errorText.length ? root.colCrit : root.colFg
+                        color: (root.errorText.length || root.checking) ? root.colCrit : root.colFg
                         Behavior on color { ColorAnimation { duration: 200 } }
                         Text {
                             anchors.centerIn: parent
