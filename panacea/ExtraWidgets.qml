@@ -19,7 +19,7 @@ Item {
         for (var i = 0; i < view.items.length; i++) {
             var t = cat.find(view.items[i].type);
             var m = 0;
-            if (t) r.push({ x: view.sys.widgetsOriginX + view.items[i].gx * 78, y: view.sys.widgetsOriginY + view.items[i].gy * 78, w: t.w, h: t.h });
+            if (t) r.push({ x: view.sys.widgetsOriginX + view.items[i].gx * view.sys.pitchX, y: view.sys.widgetsOriginY + view.items[i].gy * view.sys.pitchY, w: t.cw * view.sys.pitchX - 12, h: t.ch * view.sys.pitchY - 12 });
         }
         return r;
     }
@@ -34,12 +34,12 @@ Item {
             sys: view.sys
             required property var modelData
             readonly property var t: cat.find(card.modelData.type)
-            property real px: view.sys.widgetsOriginX + card.modelData.gx * 78
-            property real py: view.sys.widgetsOriginY + card.modelData.gy * 78
+            property real px: view.sys.widgetsOriginX + card.modelData.gx * view.sys.pitchX
+            property real py: view.sys.widgetsOriginY + card.modelData.gy * view.sys.pitchY
             visible: card.t !== null
             x: card.px; y: card.py
-            width: card.t ? card.t.w : 0
-            height: card.t ? card.t.h : 0
+            width: card.t ? card.t.cw * view.sys.pitchX - 12 : 0
+            height: card.t ? card.t.ch * view.sys.pitchY - 12 : 0
 
             WidgetBody {
                 anchors.fill: parent
@@ -68,8 +68,8 @@ Item {
                 }
                 onReleased: {
                     view.sys.moveWidget(card.modelData.id,
-                        Math.max(0, Math.round((card.px - view.sys.widgetsOriginX) / 78)),
-                        Math.max(0, Math.round((card.py - view.sys.widgetsOriginY) / 78)));
+                        Math.max(0, Math.round((card.px - view.sys.widgetsOriginX) / view.sys.pitchX)),
+                        Math.max(0, Math.round((card.py - view.sys.widgetsOriginY) / view.sys.pitchY)));
                 }
                 Rectangle {
                     anchors.fill: parent; radius: card.radius

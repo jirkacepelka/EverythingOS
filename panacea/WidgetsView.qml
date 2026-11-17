@@ -33,7 +33,9 @@ Item {
     }
 
     // Ширина колонки и просвет между карточками
-    readonly property real col: 144
+    // two grid cells wide / tall: the desktop grid is stretched to the screen (sys.pitchX / pitchY)
+    readonly property real col: view.sys ? 2 * view.sys.pitchX - 12 : 144
+    readonly property real row2: view.sys ? 2 * view.sys.pitchY - 12 : 140
     readonly property real gap: 12
     readonly property real fullW: view.col * 2 + view.gap
 
@@ -52,17 +54,17 @@ Item {
     // Pozice (relativně k počátku) se ukládají jako JSON v cfg.widgetPosJson.
     function isHidden(id) { return view.sys && view.sys.widgetHidden ? view.sys.widgetHidden.indexOf(id) >= 0 : false; }
     readonly property bool editing: view.sys ? Boolean(view.sys.widgetEdit) : false
-    readonly property real snap: 78   // desktop grid pitch (shared with the tray widgets)
+    readonly property real snap: view.sys ? view.sys.pitchX : 78   // desktop grid pitch (shared with the tray widgets)
     readonly property var sizes: ({
-        date: [view.col, 140], clock: [view.col, 140], weather: [view.col, 140],
-        right: [view.col, 140], progress: [view.fullW, 72], music: [view.fullW, 180],
-        scratch: [view.fullW, 140]
+        date: [view.col, view.row2], clock: [view.col, view.row2], weather: [view.col, view.row2],
+        right: [view.col, view.row2], progress: [view.fullW, 72], music: [view.fullW, 180],
+        scratch: [view.fullW, view.row2]
     })
     function defaults() {
-        var s = view.col + view.gap;
-        return { date: {x: 0, y: 0}, clock: {x: s, y: 0}, weather: {x: 0, y: 156},
-                 right: {x: s, y: 156}, progress: {x: 0, y: 312}, music: {x: 0, y: 390},
-                 scratch: {x: 0, y: 624} };
+        var px = view.sys ? view.sys.pitchX : 78, py = view.sys ? view.sys.pitchY : 78;
+        return { date: {x: 0, y: 0}, clock: {x: 2 * px, y: 0}, weather: {x: 0, y: 2 * py},
+                 right: {x: 2 * px, y: 2 * py}, progress: {x: 0, y: 4 * py}, music: {x: 0, y: 5 * py},
+                 scratch: {x: 0, y: 8 * py} };
     }
     function loadPos() {
         var d = view.defaults(), saved = {};
@@ -83,7 +85,7 @@ Item {
         var ny = Math.max(-view.originY, Math.min(view.height - view.originY - sz[1], y));
         if (commit) {
             nx = Math.round(nx / view.snap) * view.snap;
-            ny = Math.round(ny / view.snap) * view.snap;
+            ny = Math.round(ny / (view.sys ? view.sys.pitchY : view.snap)) * (view.sys ? view.sys.pitchY : view.snap);
         }
         var n = {};
         for (var k in view.wpos) n[k] = view.wpos[k];
@@ -231,7 +233,7 @@ Item {
                 id: dateCard
                 visible: !view.isHidden("date")
                 x: view.wx("date"); y: view.wy("date")
-                width: view.col; height: 140
+                width: view.col; height: view.row2
 
                 Num {
                     anchors.centerIn: parent
@@ -278,7 +280,7 @@ Item {
                 id: clockCard
                 visible: !view.isHidden("clock")
                 x: view.wx("clock"); y: view.wy("clock")
-                width: view.col; height: 140
+                width: view.col; height: view.row2
 
                 // Режим аналоговых часов Nothing
                 Item {
@@ -480,7 +482,7 @@ Item {
                 id: mainWeatherCard
                 visible: !view.isHidden("weather")
                 x: view.wx("weather"); y: view.wy("weather")
-                width: view.col; height: 140
+                width: view.col; height: view.row2
                 Layout.alignment: Qt.AlignTop
 
                 ColumnLayout {
@@ -526,7 +528,7 @@ Item {
                 id: rightToggleCard
                 visible: !view.isHidden("right")
                 x: view.wx("right"); y: view.wy("right")
-                width: view.col; height: 140
+                width: view.col; height: view.row2
                 Layout.alignment: Qt.AlignTop
 
                 // Режим: ПОДРОБНОСТИ ПОГОДЫ
@@ -928,7 +930,7 @@ Item {
             id: scratchCard
             visible: (view.sys && view.sys.cfg && view.sys.cfg.widgetScratchpad !== false) && !view.isHidden("scratch")
             x: view.wx("scratch"); y: view.wy("scratch")
-            width: view.fullW; height: 140
+            width: view.fullW; height: view.row2
 
             readonly property string dataDir:
                 (Quickshell.env("XDG_DATA_HOME") || (Quickshell.env("HOME") + "/.local/share")) + "/panacea"

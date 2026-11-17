@@ -1744,14 +1744,20 @@ PanelWindow {
     property bool widgetEdit: false
     // Widgets placed from the tray: [{ id, type, gx, gy }] in grid cells, stored as JSON in the config.
     // The desktop is a grid of square cells (pitch 78 px) starting at the widget origin.
-    readonly property int widgetPitch: 78
+    // The grid is stretched so the cells reach exactly to the right and bottom screen edges
+    readonly property real gridW: screen ? screen.width : 1920
+    readonly property real gridH: screen ? screen.height : 1080
+    readonly property int widgetCols: Math.max(1, Math.round((gridW - 2 * widgetsOriginX + 12) / 78))
+    readonly property int widgetRows: Math.max(1, Math.round((gridH - widgetsOriginY - (cfg.islandGap + 1) + 12) / 78))
+    readonly property real pitchX: (gridW - 2 * widgetsOriginX + 12) / widgetCols
+    readonly property real pitchY: (gridH - widgetsOriginY - (cfg.islandGap + 1) + 12) / widgetRows
     readonly property var widgetItems: {
         var out = [];
         try {
             var l = JSON.parse(cfg.widgetItemsJson || "[]");
             if (Array.isArray(l)) for (var i = 0; i < l.length; i++) {
                 var w = l[i];
-                if (w.gx === undefined) w = { id: w.id, type: w.type, gx: Math.max(0, Math.round((w.x - widgetsOriginX) / 78)), gy: Math.max(0, Math.round((w.y - widgetsOriginY) / 78)) };
+                if (w.gx === undefined) w = { id: w.id, type: w.type, gx: Math.max(0, Math.round((w.x - widgetsOriginX) / pitchX)), gy: Math.max(0, Math.round((w.y - widgetsOriginY) / pitchY)) };
                 out.push(w);
             }
         } catch (e) {}
@@ -1767,7 +1773,7 @@ PanelWindow {
             if (cards[i].visible) r.push({ x: cards[i].x, y: cards[i].y, w: cards[i].width, h: cards[i].height });
         for (var j = 0; j < widgetItems.length; j++) {
             var it = widgetItems[j], t = widgetCat.find(it.type);
-            if (t && it.id !== ignoreId) r.push({ x: widgetsOriginX + it.gx * 78, y: widgetsOriginY + it.gy * 78, w: t.w, h: t.h });
+            if (t && it.id !== ignoreId) r.push({ x: widgetsOriginX + it.gx * pitchX, y: widgetsOriginY + it.gy * pitchY, w: t.cw * pitchX - 12, h: t.ch * pitchY - 12 });
         }
         return r;
     }
@@ -1775,13 +1781,13 @@ PanelWindow {
     function widgetFreeSpot(type, gx, gy, ignoreId) {
         var t = widgetCat.find(type); if (!t) return { gx: gx, gy: gy };
         var rects = widgetRects(ignoreId);
-        var cols = Math.max(t.cw, Math.floor((width - 2 * widgetsOriginX + 12) / 78));
-        var rows = Math.max(t.ch, Math.floor((height - widgetsOriginY - 24) / 78));
+        var cols = widgetCols, rows = widgetRows;
+        var tw = t.cw * pitchX - 12, th = t.ch * pitchY - 12;
         function free(cx, cy) {
             if (cx < 0 || cy < 0 || cx + t.cw > cols || cy + t.ch > rows) return false;
-            var x = widgetsOriginX + cx * 78, y = widgetsOriginY + cy * 78;
+            var x = widgetsOriginX + cx * pitchX, y = widgetsOriginY + cy * pitchY;
             for (var i = 0; i < rects.length; i++)
-                if (x < rects[i].x + rects[i].w + 4 && x + t.w + 4 > rects[i].x && y < rects[i].y + rects[i].h + 4 && y + t.h + 4 > rects[i].y) return false;
+                if (x < rects[i].x + rects[i].w + 4 && x + tw + 4 > rects[i].x && y < rects[i].y + rects[i].h + 4 && y + th + 4 > rects[i].y) return false;
             return true;
         }
         gx = Math.max(0, Math.min(cols - t.cw, gx)); gy = Math.max(0, Math.min(rows - t.ch, gy));

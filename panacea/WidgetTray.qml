@@ -19,15 +19,17 @@ Item {
     // the desktop grid: square cells that widgets snap to (and, later, app icons)
     readonly property real ox: view.sys.widgetsOriginX
     readonly property real oy: view.sys.widgetsOriginY
-    readonly property int gcols: Math.max(1, Math.floor((view.width - 2 * view.ox + 12) / 78))
-    readonly property int grows: Math.max(1, Math.floor((view.height - view.oy - 24) / 78))
+    readonly property int gcols: view.sys.widgetCols
+    readonly property int grows: view.sys.widgetRows
+    readonly property real px: view.sys.pitchX
+    readonly property real py: view.sys.pitchY
     Repeater {
         model: view.gcols * view.grows
         Rectangle {
             required property int index
-            x: view.ox + (index % view.gcols) * 78
-            y: view.oy + Math.floor(index / view.gcols) * 78
-            width: 66; height: 66; radius: 10
+            x: view.ox + (index % view.gcols) * view.px
+            y: view.oy + Math.floor(index / view.gcols) * view.py
+            width: view.px - 12; height: view.py - 12; radius: 10
             color: "transparent"
             border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.07)
         }
@@ -39,8 +41,8 @@ Item {
         visible: false
         property var type: null
         z: 100
-        width: type ? type.w : 0
-        height: type ? type.h : 0
+        width: type ? type.cw * view.px - 12 : 0
+        height: type ? type.ch * view.py - 12 : 0
         radius: view.sys.shapeR
         color: view.sys.colBg
         opacity: 0.92
@@ -115,10 +117,10 @@ Item {
                             if (!moved && Math.abs(m.x - width / 2) + Math.abs(m.y - height / 2) < 24) return;
                             if (!moved) { moved = true; ghost.type = tile.modelData; ghost.visible = true; }
                             // the ghost snaps to the cell the widget would land on
-                            var gx = Math.max(0, Math.min(view.gcols - tile.modelData.cw, Math.round((p.x - ghost.width / 2 - view.ox) / 78)));
-                            var gy = Math.max(0, Math.min(view.grows - tile.modelData.ch, Math.round((p.y - ghost.height / 2 - view.oy) / 78)));
-                            ghost.x = view.ox + gx * 78;
-                            ghost.y = view.oy + gy * 78;
+                            var gx = Math.max(0, Math.min(view.gcols - tile.modelData.cw, Math.round((p.x - ghost.width / 2 - view.ox) / view.px)));
+                            var gy = Math.max(0, Math.min(view.grows - tile.modelData.ch, Math.round((p.y - ghost.height / 2 - view.oy) / view.py)));
+                            ghost.x = view.ox + gx * view.px;
+                            ghost.y = view.oy + gy * view.py;
                         }
                         onReleased: m => {
                             var p = tma.mapToItem(view, m.x, m.y);
@@ -126,7 +128,7 @@ Item {
                                 ghost.visible = false;
                                 if (p.y < bar.y - 10) {
                                     view.sys.addWidget(tile.modelData.id,
-                                        Math.round((ghost.x - view.ox) / 78), Math.round((ghost.y - view.oy) / 78));
+                                        Math.round((ghost.x - view.ox) / view.px), Math.round((ghost.y - view.oy) / view.py));
                                 }
                             }
                         }
