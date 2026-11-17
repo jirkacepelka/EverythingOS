@@ -1322,6 +1322,8 @@ Item {
             }
             Text {
                 objectName: "cc-empty"
+                Layout.row: 99
+                Layout.column: 0
                 visible: view.onlyMedia && !(view.sys.mediaActive && view.sys.cfg.featPlayer)
                 Layout.fillWidth: true
                 Layout.preferredHeight: 90
