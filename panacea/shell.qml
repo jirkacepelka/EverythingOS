@@ -7533,10 +7533,12 @@ LazyLoader {
         implicitHeight: dockBar.height + root.cfg.islandGap + 1 + 8
         exclusionMode: root.cfg.dockAutoHide ? ExclusionMode.Ignore : ExclusionMode.Normal
         exclusiveZone: root.cfg.dockAutoHide ? 0 : dockBar.height + root.cfg.islandGap + 1
-        WlrLayershell.layer: WlrLayer.Top
+        // Overlay, so the dock stays put above the workspace overview instead of hiding and
+        // reappearing (the overview has no dock copy of its own while this one is enabled)
+        WlrLayershell.layer: WlrLayer.Overlay
         WlrLayershell.namespace: "panacea-dock"
         WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-        visible: !root.fullscreenActive && !root.overviewOpen
+        visible: !root.fullscreenActive
 
         // Auto-hide only matters while the current workspace has windows;
         // on a bare desktop the dock stays visible.

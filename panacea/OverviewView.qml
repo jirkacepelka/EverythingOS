@@ -17,6 +17,17 @@ FocusScope {
     id: view
     property var sys
 
+    // Opening: the content fades and scales in once everything has been created, instead of
+    // popping in piece by piece; the heavy parts (widget snapshots) stop updating after a moment.
+    property bool opened: false
+    property bool settling: true
+    Timer { interval: 30; running: true; onTriggered: view.opened = true }
+    Timer { interval: 900; running: true; onTriggered: view.settling = false }
+    opacity: view.opened ? 1 : 0
+    scale: view.opened ? 1 : 0.97
+    Behavior on opacity { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+    Behavior on scale { NumberAnimation { duration: 260; easing.type: Easing.OutCubic } }
+
     // Без focus: true клавиатура остаётся у корня окна, и Enter в оверлее
     // просто никуда не приходил — стол не переключался.
     focus: true
@@ -30,16 +41,21 @@ FocusScope {
         paintCursor: false
         visible: false
         layer.enabled: view.sys.cfg.overviewBlur
+        layer.smooth: true
+        // blurred anyway: a quarter-resolution texture makes the blur several times cheaper
+        layer.textureSize: Qt.size(Math.max(1, width / 4), Math.max(1, height / 4))
     }
     MultiEffect {
         anchors.fill: parent
         source: bgShot
+        opacity: view.opened ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
         visible: view.sys.cfg.overviewBlur && bgShot.hasContent
         autoPaddingEnabled: false
         blurEnabled: true
-        blurMax: 64
+        blurMax: 32
         blur: 1.0
-        blurMultiplier: 1.2
+        blurMultiplier: 1.0
         saturation: 0.15
     }
 
@@ -288,7 +304,7 @@ FocusScope {
                             anchors.fill: parent
                             visible: view.sys.cfg.featWidgets
                             sourceItem: view.sys.cfg.featWidgets ? deskWidgets : null
-                            live: true
+                            live: view.settling
                             hideSource: true
                         }
                     }
@@ -473,7 +489,7 @@ FocusScope {
     // App dock inside the overview (Settings → Controls → Dock)
     DockBar {
         sys: view.sys
-        visible: view.sys.cfg.overviewDock && items.length > 0
+        visible: view.sys.cfg.overviewDock && !view.sys.cfg.dockEnabled && items.length > 0
         anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: view.sys.cfg.islandGap + 1 }
         onLaunched: view.sys.closeOverview()
     }
