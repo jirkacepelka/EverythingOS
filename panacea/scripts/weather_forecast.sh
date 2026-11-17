@@ -1,5 +1,5 @@
 #!/bin/bash
-# Детальный прогноз погоды (почасовой + на 7 дней) для Panacea
+# Детальный прогноз погоды (почасовой + на 7 дней) для EverythingOS
 #
 #   weather_forecast.sh KEY CITY UNITS LANG
 #

@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
-Name=Panacea — Viewer
-Name[ru]=Panacea — просмотр
+Name=EverythingOS — Viewer
+Name[ru]=EverythingOS — просмотр
 Comment=Images and video in the dynamic island, with trim and crop
 Comment[ru]=Изображения и видео в динамическом острове, с обрезкой и кадрированием
 Exec=qs -c @HOME@/.config/panacea ipc call pill media %f

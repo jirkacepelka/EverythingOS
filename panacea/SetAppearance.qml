@@ -65,7 +65,7 @@ ColumnLayout {
         Text {
             Layout.fillWidth: true
             visible: ["en", "ru", "tr"].indexOf(page.sys.languageCode) < 0
-            text: page.sys.tr("Для этого языка нет перевода интерфейса Panacea. Пока используется английский; запросите перевод через issue на GitHub.")
+            text: page.sys.tr("Для этого языка нет перевода интерфейса EverythingOS. Пока используется английский; запросите перевод через issue на GitHub.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
             font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }

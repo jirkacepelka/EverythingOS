@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
-// Uvítací okno: ukazuje se při každém spuštění Panacea (jde vypnout dole)
+// Uvítací okno: ukazuje se při každém spuštění EverythingOS (jde vypnout dole)
 // a dává základní nastavení vizuálně, s náhledy místo seznamu přepínačů.
 FocusScope {
     id: view
@@ -48,7 +48,7 @@ FocusScope {
             ColumnLayout {
                 spacing: 4
                 Text {
-                    text: "Welcome to Panacea"
+                    text: "Welcome to EverythingOS"
                     color: view.sys.colFg
                     font { family: view.sys.fontFam; pixelSize: view.fs + 12; weight: Font.Normal }
                 }

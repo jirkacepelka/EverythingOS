@@ -8,7 +8,7 @@ import Quickshell.Wayland
 
 // Одна точка, через которую вся оболочка разговаривает с компоновщиком.
 //
-// Panacea выросла на Hyprland, и до этого файла shell.qml звал `Hyprland.*`
+// EverythingOS выросла на Hyprland, и до этого файла shell.qml звал `Hyprland.*`
 // напрямую — а вместе с ним и OverviewView. Под niri ни один из этих
 // вызовов не работает: у Quickshell модуля для niri нет вовсе (есть только
 // Hyprland и I3), и весь IPC приходится вести самим.

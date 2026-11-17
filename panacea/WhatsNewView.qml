@@ -46,7 +46,7 @@ Item {
         "launchpad: page dots, wheel and arrows actually turn the page":
             "Launchpad: переключение страниц снова работает — по точкам внизу, колесом и стрелками лента действительно листается, а не только меняется точка",
         "system: one password for several minutes for all admin actions":
-            "Права администратора: часовой пояс, время, язык системы, тема экрана входа и перезагрузка в другую систему идут через системного помощника Panacea — пароль спрашивается один раз, и следующие несколько минут повторно не нужен. Обновление делает всё системное одним запросом и только если что-то изменилось",
+            "Права администратора: часовой пояс, время, язык системы, тема экрана входа и перезагрузка в другую систему идут через системного помощника EverythingOS — пароль спрашивается один раз, и следующие несколько минут повторно не нужен. Обновление делает всё системное одним запросом и только если что-то изменилось",
         "auth: keep the password field focused after a wrong password":
             "Запрос пароля: после неверного пароля поле снова в фокусе — повторная попытка больше не уходит в пустоту",
         "update: notify only on a higher version, download only what changed, keep your own edits":
@@ -522,7 +522,7 @@ Item {
                 Text {
                     Layout.fillWidth: true
                     horizontalAlignment: Text.AlignHCenter
-                    text: view.sys.tr("Panacea обновлена")
+                    text: view.sys.tr("EverythingOS обновлена")
                     color: view.sys.colFg
                     font { family: view.sys.fontDisplay; pixelSize: view.sys.fontSize + 8 }
                 }

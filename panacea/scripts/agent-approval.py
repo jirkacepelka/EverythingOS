@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Ask through Panacea; a closed/expired notification leaves the original prompt intact."""
+"""Ask through EverythingOS; a closed/expired notification leaves the original prompt intact."""
 import html
 import json
 import os
@@ -54,7 +54,7 @@ try:
     if tool not in ('Bash', 'shell_command', 'exec_command') or not text or len(text) > 75 or '\n' in text:
         sys.exit(0)
     body = html.escape(tool + ': ' + text)
-    result = subprocess.run(['notify-send', '--app-name', 'Panacea ' + agent,
+    result = subprocess.run(['notify-send', '--app-name', 'EverythingOS ' + agent,
         '--icon', 'dialog-question', '--urgency', 'normal', '--expire-time', '30000',
         '--action=panacea-allow=Разрешить', '--action=panacea-deny=Отклонить',
         agent + ': требуется подтверждение', body],

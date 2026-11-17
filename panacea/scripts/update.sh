@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Обновление Panacea из репозитория.
+# Обновление EverythingOS из репозитория.
 #
 #   update.sh check   — есть ли новая версия; печатает строки key=value
 #   update.sh apply   — скачать, поставить поверх и перезапустить оболочку
@@ -199,7 +199,7 @@ cmd_check() {
     echo "latest=$target_ver"
     echo "version=${cur_ver:-$active_ver}"
     echo "remote_version=${rem_ver:-$target_ver}"
-    echo "subject=${subject:-Panacea $target_ver}"
+    echo "subject=${subject:-EverythingOS $target_ver}"
 
     # Обновление — это только БОЛЕЕ ВЫСОКИЙ номер версии. Раньше при сбое
     # чтения версии с GitHub (таймаут, лимит запросов) проверка откатывалась
@@ -695,7 +695,7 @@ EOF
     echo "version=$sha"
 
     # A detached process still belongs to the service cgroup. Schedule the
-    # restart in a separate systemd unit so stopping Panacea cannot kill it.
+    # restart in a separate systemd unit so stopping EverythingOS cannot kill it.
     local restart_helper="$CONF/panacea/scripts/restart.sh"
     if have systemd-run && systemd-run --user --quiet --collect \
         --unit="panacea-update-restart-$$" --on-active=2s \

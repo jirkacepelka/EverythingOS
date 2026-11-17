@@ -18,7 +18,7 @@ ColumnLayout {
 
         SetToggle {
             sys: page.sys
-            label: page.sys.tr("Персонаж Panacea")
+            label: page.sys.tr("Персонаж EverythingOS")
             sub: page.sys.tr("Всегда виден в острове и иногда просыпается на 2,5 минуты.")
             on: page.sys.cfg.mascotEnabled
             onToggled: value => { page.sys.cfg.mascotEnabled = value; page.sys.saveCfg(); }

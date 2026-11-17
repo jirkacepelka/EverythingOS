@@ -57,7 +57,7 @@ PanelWindow {
             property bool   pillOverlay: false
             // Остров виден при раскрытии (панель открывается отдельной плавающей карточкой)
             property bool   pillKeepVisible: false
-            // Закрывать оверлей Panacea по Super+Q (иначе убивать фоновое окно)
+            // Закрывать оверлей EverythingOS по Super+Q (иначе убивать фоновое окно)
             property bool   closePanaceaFirst: true
 
             // Настройки мониторов из вкладки Display, JSON вида
@@ -1237,9 +1237,9 @@ PanelWindow {
     property int updNotifId: -1
     Process {
         id: pUpdNotify
-        command: ["notify-send", "-p", "-a", "Panacea", "-i",
+        command: ["notify-send", "-p", "-a", "EverythingOS", "-i",
                   Quickshell.env("HOME") + "/.config/panacea/assets/logo-128.png",
-                  root.tr("Доступно обновление Panacea"), root.updSubject]
+                  root.tr("Доступно обновление EverythingOS"), root.updSubject]
         stdout: StdioCollector {
             onStreamFinished: root.updNotifId = parseInt(String(text).trim()) || -1
         }
@@ -1628,7 +1628,7 @@ PanelWindow {
             if (d.country) { root.vpnCountry = d.country; root.vpnCountryName = d.name || ""; }
             if (root.vpnAnnouncement) {
                 var title = root.vpnAnnouncement === "up" ? root.tr("VPN подключён") : root.tr("VPN отключён");
-                vpnNotify.command = ["notify-send", "--app-name", "Panacea VPN", title,
+                vpnNotify.command = ["notify-send", "--app-name", "EverythingOS VPN", title,
                     d.country ? (String(d.name || d.country) + " · " + d.country) : root.tr("Регион недоступен")];
                 vpnNotify.running = true; root.vpnAnnouncement = "";
             }
@@ -1643,7 +1643,7 @@ PanelWindow {
                 else { root.vpnActiveIds = (d.profiles || []).filter(p => p.active).map(p => p.id); root.vpnConnected = root.vpnActiveIds.length > 0 || !!d.tunnelActive; }
                 root.announceVpnChange(d.action || root.vpnQuickAction);
             }
-            else { vpnNotify.command = ["notify-send", "--app-name", "Panacea VPN", root.tr("Ошибка VPN"), String(d.error || "")]; vpnNotify.running = true; }
+            else { vpnNotify.command = ["notify-send", "--app-name", "EverythingOS VPN", root.tr("Ошибка VPN"), String(d.error || "")]; vpnNotify.running = true; }
         } catch(e) {} } }
     }
     Process { id: vpnNotify }
@@ -1659,7 +1659,7 @@ PanelWindow {
     // Rozdělený ostrov (3 pilulky) vždy drží ostrov viditelný: popup je samostatná karta
     readonly property bool splitMode: cfg.splitIsland && !settingsMode && !pillSide
     readonly property bool keepVis: cfg.pillKeepVisible
-    // Uvítací okno (OnboardingView): při každém spuštění Panacea, jde vypnout
+    // Uvítací okno (OnboardingView): při každém spuštění EverythingOS, jde vypnout
     // Společný okraj (cfg.islandGap): mezera oken od okrajů i mezi sebou (Hyprland
     // gaps), odstup ostrova od hrany a odsazení widgetů. Zapíše hypr/lua/gaps_data.lua
     // (platí i po restartu) a nastaví Hyprland za běhu.
@@ -2320,7 +2320,7 @@ PanelWindow {
         // Значком берём сам снимок: уведомление показывает, что именно сняли,
         // и промах по рамке видно, не открывая файл.
         var name = String(path).split("/").pop();
-        pShotSay.command = ["notify-send", "-a", "Panacea", "-i", String(path),
+        pShotSay.command = ["notify-send", "-a", "EverythingOS", "-i", String(path),
                             "-h", "int:transient:1",
                             root.tr("Скриншот"),
                             root.tr("В буфере обмена") + " · " + name];
@@ -2330,7 +2330,7 @@ PanelWindow {
     }
 
     function sayToast(title, body) {
-        pShotSay.command = ["notify-send", "-a", "Panacea",
+        pShotSay.command = ["notify-send", "-a", "EverythingOS",
                             "-h", "int:transient:1",
                             String(title), String(body)];
         pShotSay.running = false;
@@ -2925,7 +2925,7 @@ PanelWindow {
     Process {
         running: root.keepAwake
         command: ["systemd-inhibit", "--what=idle:sleep:handle-lid-switch",
-                  "--who=Panacea", "--why=Keep awake", "sleep", "infinity"]
+                  "--who=EverythingOS", "--why=Keep awake", "sleep", "infinity"]
     }
 
     // ------------------------------------------------------- звук: устройства и приложения
@@ -3068,7 +3068,7 @@ PanelWindow {
 
         if (root.lastShotPath.length > 0 && n && (String(n.summary || "").indexOf("Скриншот") >= 0
                                               || String(n.summary || "").indexOf("Screenshot") >= 0
-                                              || (String(n.appName || "") === "Panacea" && String(n.image || "").indexOf(".png") >= 0))) {
+                                              || (String(n.appName || "") === "EverythingOS" && String(n.image || "").indexOf(".png") >= 0))) {
             var shotToOpen = root.lastShotPath;
             root.dismissToast();
             if (id >= 0) root.dropNotification(id);
@@ -3134,7 +3134,7 @@ PanelWindow {
                 events.unshift({title: sum, body: String(n.body || ""), app: app});
                 root.islandAgentEvents = events.slice(0, 20);
             }
-            var isTransient = (app === "Panacea"
+            var isTransient = (app === "EverythingOS"
                                || sum === root.tr("Скриншот")
                                || sum === "Скриншот"
                                || sum === "Screenshot"
@@ -3188,7 +3188,7 @@ PanelWindow {
     property double approvalToastEnd: 0
     property real approvalToastRemaining: 0
     readonly property bool approvalToast: notifCurrent !== null
-        && String(notifCurrent.appName || "").indexOf("Panacea ") === 0
+        && String(notifCurrent.appName || "").indexOf("EverythingOS ") === 0
         && (notifCurrent.actions || []).some(a => String(a.identifier) === "panacea-allow")
     Timer {
         interval: 80; repeat: true; running: root.approvalToast
@@ -3225,7 +3225,7 @@ PanelWindow {
         if (Date.now() - item.at > 60000) { root.pumpToasts(); return; }
 
         var n = item.notif;
-        var isApproval = String(n.appName || "").indexOf("Panacea ") === 0
+        var isApproval = String(n.appName || "").indexOf("EverythingOS ") === 0
             && (n.actions || []).some(a => String(a.identifier) === "panacea-allow");
         if (isApproval && Date.now() - item.at >= 30000) { n.dismiss(); root.pumpToasts(); return; }
         root.notifCurrent = n;
@@ -7735,7 +7735,7 @@ Instantiator {
     FloatingWindow {
         id: floatingwin
         required property var model
-        title: "Panacea · " + root.tr("Проводник")
+        title: "EverythingOS · " + root.tr("Проводник")
         color: root.colBg
         minimumSize.width: 720
         minimumSize.height: 460
@@ -7756,12 +7756,12 @@ Instantiator {
     }
 }
 
-// File selection uses the same floating file manager as the rest of Panacea.
+// File selection uses the same floating file manager as the rest of EverythingOS.
 LazyLoader {
     active: root.chatFilePickerOpen
     FloatingWindow {
     id: chatPickerWindow
-    title: "Panacea · " + root.tr("Выберите файл")
+    title: "EverythingOS · " + root.tr("Выберите файл")
     color: root.colBg
     minimumSize.width: 720; minimumSize.height: 500
     visible: true

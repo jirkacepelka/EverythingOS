@@ -234,7 +234,7 @@ ColumnLayout {
                     visible: text.length > 0
                     text: page.sys.updError.length ? page.sys.updErrorText
                         : page.sys.updateAvailable ? page.sys.updSubject
-                        : "Panacea " + page.sys.version
+                        : "EverythingOS " + page.sys.version
                           + (page.sys.updCurrent.length
                              ? " · " + page.sys.tr("сборка") + " " + page.sys.updCurrent.substring(0, 7) : "")
                     color: page.sys.updError.length ? page.sys.colCrit : page.sys.colMuted
@@ -443,7 +443,7 @@ ColumnLayout {
         }
 
         // Показания системные, а не оболочкины: в них попадают браузер,
-        // мессенджеры и всё остальное. Сколько занимает сама Panacea —
+        // мессенджеры и всё остальное. Сколько занимает сама EverythingOS —
         // отдельной строкой ниже, иначе шесть гигабайт читаются как её вина.
         Meter {
             label: page.sys.tr("Оперативная память системы")
@@ -491,7 +491,7 @@ ColumnLayout {
                 font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             }
             Text {
-                text: "Panacea: " + page.selfMb.toFixed(0) + " MiB"
+                text: "EverythingOS: " + page.selfMb.toFixed(0) + " MiB"
                 color: page.sys.colMuted
                 font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             }
@@ -585,7 +585,7 @@ ColumnLayout {
         Fact { k: page.sys.tr("Видео");      v: page.gpuName }
         Fact { k: page.sys.tr("Имя машины"); v: page.host }
         Fact { k: page.sys.tr("Аптайм");     v: page.uptime }
-        Fact { k: page.sys.tr("Оболочка");   v: "Panacea " + page.sys.version }
+        Fact { k: page.sys.tr("Оболочка");   v: "EverythingOS " + page.sys.version }
     }
 
     // ------------------------------------------------------------- сброс

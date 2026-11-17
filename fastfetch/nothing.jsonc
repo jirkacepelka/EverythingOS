@@ -1,0 +1,31 @@
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "file",
+        "source": "~/.config/fastfetch/nothing-logo.txt",
+        "padding": { "top": 1, "left": 1, "right": 4 },
+        "color": { "1": "white", "2": "#D71921" }
+    },
+    "display": {
+        "separator": "  ",
+        "color": { "keys": "#808080", "title": "white", "separator": "#D71921" },
+        "key": { "type": "string", "width": 8 }
+    },
+    "modules": [
+        { "type": "title", "color": { "user": "white", "at": "#D71921", "host": "white" } },
+        { "type": "custom", "format": "────────────────────────", "outputColor": "#404040" },
+        { "type": "os",       "key": "OS" },
+        { "type": "kernel",   "key": "KERNEL" },
+        { "type": "uptime",   "key": "UPTIME" },
+        { "type": "packages", "key": "PKGS", "format": "{dpkg} dpkg · {flatpak-user} flatpak" },
+        { "type": "shell",    "key": "SHELL" },
+        { "type": "wm",       "key": "WM" },
+        { "type": "terminal", "key": "TERM" },
+        { "type": "cpu",      "key": "CPU", "format": "{1}" },
+        { "type": "gpu",      "key": "GPU", "format": "{2}" },
+        { "type": "memory",   "key": "MEM", "format": "{1} / {2} ({3})" },
+        { "type": "disk",     "key": "DISK", "folders": "/", "format": "{1} / {2} ({3})" },
+        "break",
+        { "type": "custom", "format": "{#31}●{#}{#37} ● ● ● ● ● ● ●{#}", "key": " " }
+    ]
+}

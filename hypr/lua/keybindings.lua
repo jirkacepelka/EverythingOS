@@ -60,7 +60,7 @@ end)
 -- Basic binds
 -- Буквы в Hyprland регистронезависимы: SUPER+f == SUPER+F
 local CLOSE = os.getenv("HOME") .. "/.config/panacea/scripts/smart_close.sh"
-B("terminal",     mainMod .. " + T",         hl.dsp.exec_cmd(p.terminal))
+B("terminal",     mainMod .. " + T",         hl.dsp.exec_cmd(p.terminalNothing))
 B("terminalAlt",  mainMod .. " + Return",    hl.dsp.exec_cmd(p.terminal))
 B("closeWindow",  mainMod .. " + Q",         hl.dsp.exec_cmd(CLOSE))
 B("browser",      mainMod .. " + B",         hl.dsp.exec_cmd(p.browser))

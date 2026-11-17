@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add Panacea approval hooks without replacing existing agent settings."""
+"""Add EverythingOS approval hooks without replacing existing agent settings."""
 import json
 import os
 from pathlib import Path
@@ -27,7 +27,7 @@ def update(path, agent):
         os.chmod(temp, 0o600)
         os.replace(temp, path)
     except (OSError, ValueError, TypeError, AttributeError) as error:
-        print(f'Panacea: could not configure {agent} approval hooks: {error}')
+        print(f'EverythingOS: could not configure {agent} approval hooks: {error}')
 
 update(home / '.claude/settings.json', 'Claude')
 update(Path(os.environ.get('CODEX_HOME', home / '.codex')) / 'hooks.json', 'Codex')

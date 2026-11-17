@@ -54,9 +54,9 @@ ColumnLayout {
 
         SetToggle {
             sys: page.sys
-            label: page.sys.tr("Закрывать окна Panacea по Super+Q")
+            label: page.sys.tr("Закрывать окна EverythingOS по Super+Q")
             visible: page.detailsOpen
-            sub: page.sys.tr("При открытых панелях или настройках Panacea нажатие Super+Q закрывает оверлей. Выключить — Super+Q всегда закрывает активное приложение на фоне.")
+            sub: page.sys.tr("При открытых панелях или настройках EverythingOS нажатие Super+Q закрывает оверлей. Выключить — Super+Q всегда закрывает активное приложение на фоне.")
             on: page.sys.cfg.closePanaceaFirst
             onToggled: value => { page.sys.cfg.closePanaceaFirst = value; page.sys.saveCfg(); }
         }

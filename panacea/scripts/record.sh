@@ -116,7 +116,7 @@ case "$1" in
 
         WF_REC=$(find_recorder) || {
             echo "no-recorder" >&2
-            command -v notify-send >/dev/null 2>&1 && notify-send -a Panacea \
+            command -v notify-send >/dev/null 2>&1 && notify-send -a EverythingOS \
                 -u critical "Запись недоступна" "wf-recorder не установлен"
             exit 1
         }
@@ -207,7 +207,7 @@ case "$1" in
             # что видно и из quick settings, а не только на странице записи.
             err=$(tail -2 "$STATE_DIR/record.log" 2>/dev/null | tr '\n' ' ')
             command -v notify-send >/dev/null 2>&1 && \
-                notify-send -a Panacea -u critical "Запись не началась" "$err"
+                notify-send -a EverythingOS -u critical "Запись не началась" "$err"
             exit 1
         fi
 

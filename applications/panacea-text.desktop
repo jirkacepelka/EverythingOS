@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
-Name=Panacea — Editor
-Name[ru]=Panacea — редактор
+Name=EverythingOS — Editor
+Name[ru]=EverythingOS — редактор
 Comment=nano in foot, with the configuration shipped by the shell
 Comment[ru]=nano в foot, с конфигурацией из оболочки
 Exec=footclient nano %f

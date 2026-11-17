@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="assets/panacea-readme-banner.png" width="860" alt="Panacea Shell: a monochrome banner with a liquid capsule mascot">
+<img src="assets/panacea-readme-banner.png" width="860" alt="EverythingOS Shell: a monochrome banner with a liquid capsule mascot">
 
-# Panacea Shell
+# EverythingOS Shell
 
 **A desktop around one island**
 
@@ -17,7 +17,7 @@
 
 <div align="center">
 
-<img src="docs/img/desktop.png" width="860" alt="Panacea island opened over the desktop">
+<img src="docs/img/desktop.png" width="860" alt="EverythingOS island opened over the desktop">
 
 
 </div>
@@ -37,11 +37,11 @@ its text letter under letter, so nothing has to be read with a tilted head.
 
 ### Calendar
 
-<img src="docs/img/calendar.png" width="540" alt="Panacea calendar panel">
+<img src="docs/img/calendar.png" width="540" alt="EverythingOS calendar panel">
 
 ### Power menu
 
-<img src="docs/img/power.png" width="540" alt="Panacea power menu">
+<img src="docs/img/power.png" width="540" alt="EverythingOS power menu">
 
 ## Pages
 
@@ -88,7 +88,7 @@ refresh rate, scale, orientation, VRR, multi‑monitor arrangement, brightness a
 digital vibrance), *Mouse* and *System*.
 
 <div align="center">
-<img src="docs/img/settings.png" width="860" alt="Panacea settings window">
+<img src="docs/img/settings.png" width="860" alt="EverythingOS settings window">
 </div>
 
 ## Dual boot
@@ -168,7 +168,7 @@ reason; `systemctl --user unmask dunst.service` puts one back.
 
 > [!NOTE]
 > **Experimental Niri Support**
-> Panacea features dual-compositor support: while **Hyprland** is the default, fully supported compositor, preliminary integration for the **[Niri](https://github.com/YaLTeR/niri)** scrollable-tiling compositor is now available in `niri/`. The shell automatically detects Niri at launch via `$NIRI_SOCKET` and switches its IPC hooks accordingly.
+> EverythingOS features dual-compositor support: while **Hyprland** is the default, fully supported compositor, preliminary integration for the **[Niri](https://github.com/YaLTeR/niri)** scrollable-tiling compositor is now available in `niri/`. The shell automatically detects Niri at launch via `$NIRI_SOCKET` and switches its IPC hooks accordingly.
 > *Notice:* Niri support is experimental and actively being refined. Certain features (such as layer blur, screen shaders, and specific gesture transitions) are Hyprland-specific, and you may encounter minor edge cases or glitches under Niri. If you use Niri, your personal overrides belong in `~/.config/niri/custom/custom.kdl` so they are preserved across updates.
 
 > [!WARNING]
@@ -179,7 +179,7 @@ reason; `systemctl --user unmask dunst.service` puts one back.
 
 ```bash
 git clone https://github.com/EnsixD/Panacea.git
-cd Panacea
+cd EverythingOS
 ./install.sh
 ```
 
@@ -198,7 +198,7 @@ Flags: `--no-deps`, `--no-sddm`, `--no-grub`, `--no-services`, `--no-wallpapers`
 
 ### Updating
 
-Panacea checks GitHub for new commits on its own and offers an **Update** button
+EverythingOS checks GitHub for new commits on its own and offers an **Update** button
 in *Settings → System*. If your copy predates that — it was installed before the
 updater existed, or `~/.config/panacea/.version` is missing — run the updater by
 hand once:
@@ -225,21 +225,21 @@ read Lua configs: they would otherwise come up bare — no bindings, no pill, no
 way to open a terminal. It carries only the essentials and makes no attempt to
 mirror `lua/`; if something is missing there, the answer is to update Hyprland.
 
-Networking supports both **NetworkManager** (`nmcli`, standard on Fedora / Ubuntu) and **iwd** (`iwctl`, common on minimal Arch). Panacea detects the active daemon automatically — no manual configuration required. Power profiles go through `power-profiles-daemon` over D‑Bus.
+Networking supports both **NetworkManager** (`nmcli`, standard on Fedora / Ubuntu) and **iwd** (`iwctl`, common on minimal Arch). EverythingOS detects the active daemon automatically — no manual configuration required. Power profiles go through `power-profiles-daemon` over D‑Bus.
 Everything resolves `$HOME` at runtime — no hardcoded paths.
 
 ### Language
 
-Choose a system locale in **Settings → Appearance**. Panacea's interface has
+Choose a system locale in **Settings → Appearance**. EverythingOS's interface has
 built-in Russian, English and Turkish translations. For any other system
-locale, the Panacea interface uses English while applications use the selected
+locale, the EverythingOS interface uses English while applications use the selected
 locale after the next login. There is no online translation service or API key.
 If you would like another interface language, please open a GitHub issue with
 the language and locale code so it can be added to the built-in translations.
 
 ### Customising and keeping changes across updates
 
-Panacea is designed so your personal tweaks — shell aliases, terminal fonts, window rules, keybindings — survive all updates without conflicts or overwrites:
+EverythingOS is designed so your personal tweaks — shell aliases, terminal fonts, window rules, keybindings — survive all updates without conflicts or overwrites:
 
 | Component | Where your custom settings live | Kept on update? |
 |---|---|:---:|
@@ -249,7 +249,7 @@ Panacea is designed so your personal tweaks — shell aliases, terminal fonts, w
 | **Niri** | `~/.config/niri/custom/custom.kdl` (and `config.kdl`) | ✅ Yes |
 | **Fastfetch** | `~/.config/fastfetch/config.jsonc` or `custom.jsonc` | ✅ Yes |
 | **Nano** | `~/.nanorc` (existing file is never overwritten) | ✅ Yes |
-| **Panacea** | `~/.config/panacea/settings.json` (merged with defaults via `jq`) | ✅ Yes |
+| **EverythingOS** | `~/.config/panacea/settings.json` (merged with defaults via `jq`) | ✅ Yes |
 | **Clipboard pins and Wi-Fi history** | `clipboard_pins.json` and `last_wifi_ssid` in `~/.config/panacea/` | ✅ Yes |
 | **Post-update hook** | `~/.config/panacea/custom/post-update.sh` (executed after update) | ✅ Yes |
 

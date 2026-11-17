@@ -1,8 +1,8 @@
-# Ubuntu / Debian compatibility notes for Panacea
+# Ubuntu / Debian compatibility notes for EverythingOS
 
 *Note: parts of this write-up were drafted with AI assistance while working through the setup.*
 
-Panacea targets and is tested on Arch Linux. This document collects the adjustments needed to run
+EverythingOS targets and is tested on Arch Linux. This document collects the adjustments needed to run
 it on an Ubuntu/Debian base (tested on Ubuntu 24.04 / Linux Mint 22.3). This isn't an attempt at
 official support, just a reference for anyone trying the same path.
 
@@ -91,7 +91,7 @@ the wrong version.
 
 ## 2. foot in the repos is too old
 
-Panacea's theme uses `[colors-dark]` (a color-scheme-aware section) and `cursor.blink-rate`,
+EverythingOS's theme uses `[colors-dark]` (a color-scheme-aware section) and `cursor.blink-rate`,
 features not present in `foot` 1.16.2 (the version shipped in Ubuntu 24.04). Symptom: the terminal
 opens with config parsing errors and falls back to default font/colors.
 
@@ -128,7 +128,7 @@ subprojects.
 
 ## 4. NetworkManager / iwd conflict
 
-Panacea's Wi-Fi helper (`panacea/scripts/wifi.sh`) supports both **NetworkManager** (`nmcli`)
+EverythingOS's Wi-Fi helper (`panacea/scripts/wifi.sh`) supports both **NetworkManager** (`nmcli`)
 and **iwd** (`iwctl`) with automatic runtime detection. On Ubuntu, Debian, Linux Mint and Fedora,
 it detects NetworkManager and manages Wi-Fi seamlessly using `nmcli`, keeping existing saved
 credentials and DHCP without requiring changes to the system network stack.

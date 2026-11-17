@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Application
 Version=1.0
-Name=Panacea — Files
-Name[ru]=Panacea — проводник
+Name=EverythingOS — Files
+Name[ru]=EverythingOS — проводник
 Comment=The file manager built into the shell
 Comment[ru]=Проводник, встроенный в оболочку
 Exec=qs -c @HOME@/.config/panacea ipc call pill filesAt %f

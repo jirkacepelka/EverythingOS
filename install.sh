@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Panacea dotfiles installer.
+# EverythingOS dotfiles installer.
 #
 # Installs everything: the Quickshell pill, the Hyprland Lua config, the
 # terminals, the shell, fastfetch — the whole rice. Nothing is optional here;
@@ -196,7 +196,7 @@ EXTRA_PKGS=(
             os-prober)
 FONT_PKG="ttf-jetbrains-mono-nerd"
 
-# Пакеты, которые Panacea ставила раньше и больше не использует. Установщик
+# Пакеты, которые EverythingOS ставила раньше и больше не использует. Установщик
 # их не трогает: человек мог поставить waybar или tofi для себя, и удалять
 # чужое за него — не дело обновления. Оно только называет их, а решает он.
 #
@@ -1501,7 +1501,7 @@ if [ "$DO_WALLS" = "1" ]; then
 fi
 
 if [ "$DO_GRUB" = "1" ] && [ -d /boot/grub ]; then
-    if ask "Install the Panacea GRUB theme? (writes to /boot, needs root)"; then
+    if ask "Install the EverythingOS GRUB theme? (writes to /boot, needs root)"; then
         step "Installing the boot theme"; install_grub
     fi
 fi
@@ -1522,7 +1522,7 @@ if [ "$DO_SERVICES" = "1" ] || [ "$DO_SDDM" = "1" ]; then
 fi
 
 if [ "$DO_SDDM" = "1" ] && command -v sddm >/dev/null 2>&1; then
-    if ask "Also install the Panacea SDDM login theme? (replaces your current login screen, needs root)"; then
+    if ask "Also install the EverythingOS SDDM login theme? (replaces your current login screen, needs root)"; then
         step "Installing the login theme"; install_sddm
     fi
 fi

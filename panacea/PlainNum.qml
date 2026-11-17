@@ -19,7 +19,7 @@ Item {
     property real gapRatio: 0.22
     property color color: "#ffffff"
     property real charGap: 0
-    // Rodina písma sjednocená s nastavením Panacea (Vzhled → Písmo).
+    // Rodina písma sjednocená s nastavením EverythingOS (Vzhled → Písmo).
     property string family: "GoogleSansCode Nerd Font Propo"
 
     // Výška číslice ≈ 0.72 velikosti písma, proto se velikost přepočítává.

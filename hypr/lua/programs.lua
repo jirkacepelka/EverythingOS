@@ -5,6 +5,8 @@ local programs = {}
 -- разъезжаются с системой молча — так здесь уже висели меню и повермену
 -- на скриптах, которых нет в репозитории.
 programs.terminal = "footclient"
+-- Super+T: Nothing-style terminal (black, red dot, fastfetch with dot-matrix logo)
+programs.terminalNothing = "foot -c " .. os.getenv("HOME") .. "/.config/foot/nothing.ini -e fish -C 'source ~/.config/fish/nothing-init.fish'"
 programs.fileManagerTui = "footclient yazi" -- в терминале, на Super+Shift+E
 -- Путь абсолютный, без «~»: exec без шелла тильду не раскрывает, и остров
 -- молча не запускался — после входа оставался чёрный экран.
