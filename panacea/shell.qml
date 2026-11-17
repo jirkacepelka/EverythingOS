@@ -199,6 +199,8 @@ PanelWindow {
             property bool   btShowUnnamed: false
             property bool   overviewBlur: true
             property bool   overviewDock: false
+            property bool   dockEnabled: false
+            property bool   dockAutoHide: true
             property string dockPinned: "[\"app.zen_browser.zen\",\"org.gnome.Nautilus\",\"foot\",\"com.anthropic.Claude\"]"
             property bool   featClipboard: true
             property bool   featNotifications: true
@@ -435,7 +437,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 16, islandRadius: 0, splitIsland: false, btShowUnnamed: false, overviewBlur: true, overviewDock: false, dockPinned: "[\"app.zen_browser.zen\",\"org.gnome.Nautilus\",\"foot\",\"com.anthropic.Claude\"]", showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2", borderAlpha: 55,
+        islandGap: 16, islandRadius: 0, splitIsland: false, btShowUnnamed: false, overviewBlur: true, overviewDock: false, dockEnabled: false, dockAutoHide: true, dockPinned: "[\"app.zen_browser.zen\",\"org.gnome.Nautilus\",\"foot\",\"com.anthropic.Claude\"]", showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2", borderAlpha: 55,
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -2379,6 +2381,14 @@ PanelWindow {
         path: Quickshell.env("HOME") + "/.config/hypr/wallpaper.conf"
         blockLoading: true
     }
+
+    // Current wallpaper file path (from hypr/wallpaper.conf), used by the workspace overview cards
+    function currentWallPath() {
+        var m = /^\$wallpaper\s*=\s*(.+)$/m.exec(curWallFile.text() || "");
+        return m ? String(m[1]).trim() : "";
+    }
+    readonly property real widgetsOriginX: widgetsWin.edgeInset
+    readonly property real widgetsOriginY: widgetsWin.topInset
 
     function startThemeFade() {
         var m = /^\$wallpaper\s*=\s*(.+)$/m.exec(curWallFile.text() || "");
@@ -7352,6 +7362,59 @@ LazyLoader {
         OverviewView {
             anchors.fill: parent
             sys: root
+        }
+    }
+}
+
+
+// Dock aplikací: samostatné okno u dolní hrany (Settings → Controls → Dock).
+// Stejné odsazení od okraje, zaoblení a pozadí jako ostrov a okna.
+// S automatickým skrytím sjede pod hranu a vrátí se najetím na dolní okraj.
+LazyLoader {
+    active: root.cfg.dockEnabled
+
+    PanelWindow {
+        id: dockWin
+        screen: root.screen
+        anchors { bottom: true; left: true; right: true }
+        color: "transparent"
+        implicitHeight: dockBar.height + root.cfg.islandGap + 1 + 8
+        exclusionMode: root.cfg.dockAutoHide ? ExclusionMode.Ignore : ExclusionMode.Normal
+        exclusiveZone: root.cfg.dockAutoHide ? 0 : dockBar.height + root.cfg.islandGap + 1
+        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.namespace: "panacea-dock"
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+        visible: !root.fullscreenActive && !root.overviewOpen
+
+        readonly property bool shown: !root.cfg.dockAutoHide || dockHover.hovered || stripHover.hovered || hideDelay.running
+        Timer { id: hideDelay; interval: 450 }
+        Connections {
+            target: dockHover
+            function onHoveredChanged() { if (!dockHover.hovered) hideDelay.restart(); }
+        }
+
+        mask: Region {
+            item: dockBar
+            Region { item: root.cfg.dockAutoHide ? strip : null; intersection: Intersection.Combine }
+        }
+
+        // hover zone on the bottom edge that brings a hidden dock back
+        Item {
+            id: strip
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 560; height: 4
+            HoverHandler { id: stripHover }
+        }
+
+        DockBar {
+            id: dockBar
+            sys: root
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: dockWin.shown ? root.cfg.islandGap + 1 : -(height + 4)
+            Behavior on anchors.bottomMargin { NumberAnimation { duration: root.noMotion ? 0 : 220; easing.type: Easing.OutCubic } }
+            HoverHandler { id: dockHover }
         }
     }
 }

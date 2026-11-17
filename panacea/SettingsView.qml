@@ -52,6 +52,9 @@ Item {
         { id: "cc",      title: view.sys.tr("Быстрые настройки"), g: 0xF062E, page: "SetControlCenter.qml",
           sub: view.sys.tr("Раскладка быстрых настроек — плитки переставляются мышью."),
           keys: "quick settings tiles layout wifi bluetooth плитки быстрые" },
+        { id: "dock",    title: "Dock", g: 0xF0E2D, page: "SetDock.qml",
+          sub: "App dock: pinned apps, auto-hide and where it shows.",
+          keys: "dock apps launcher taskbar pinned autohide panel dok aplikace lišta" },
         { id: "lock",    title: view.sys.tr("Экран блокировки"),    g: 0xF033E, page: "SetLock.qml",
           sub: view.sys.tr("Экран блокировки: что на нём видно и когда он появляется."),
           keys: "lock screen blur idle блокировка экран размытие" },
@@ -81,7 +84,7 @@ Item {
     readonly property var groups: [
         { id: "island", title: view.sys.tr("Остров"), g: 0xF12E1, pages: ["bar", "media", "clock"] },
         { id: "appearance", title: view.sys.tr("Оформление"), g: 0xF03D8, pages: ["look", "weather", "motion"] },
-        { id: "controls", title: view.sys.tr("Управление"), g: 0xF062E, pages: ["cc", "launch", "notif"] },
+        { id: "controls", title: view.sys.tr("Управление"), g: 0xF062E, pages: ["cc", "dock", "launch", "notif"] },
         { id: "devices", title: view.sys.tr("Устройства"), g: 0xF0379, pages: ["display", "input"] },
         { id: "network", title: "Network", g: 0xF05A9, pages: ["wifi", "bluetooth"] },
         { id: "vpn", title: "VPN", g: 0xF0582, pages: ["vpn"] },
