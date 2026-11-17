@@ -1674,8 +1674,8 @@ PanelWindow {
         command: ["sh", "-c",
                   "g=$1; w=$2; c=${3#\\#}; r=$4; al=$5; a=$(printf '%02x' $((al*255/100))); ia=$(printf '%02x' $((al*255/200))); " +
                   "printf 'return { gap = %s, bw = %s, bc = \"%s\", rd = %s, ba = %s }\\n' \"$g\" \"$w\" \"$c\" \"$r\" \"$al\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
-                  "hyprctl dispatch \"hl.config({ decoration = { rounding = $r }, general = { gaps_in = $((g / 2)), gaps_out = $g, border_size = $w, col = { active_border = 'rgba(${c}${a})', inactive_border = 'rgba(${c}${ia})' } } })\" >/dev/null 2>&1; true",
-                  "_", String(root.cfg.islandGap), String(root.cfg.borderWidth), String(root.cfg.borderColor), String(root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, 24) : 12), String(root.cfg.borderAlpha)]
+                  "hyprctl dispatch \"hl.config({ decoration = { rounding = $r, rounding_power = 2.0 }, general = { gaps_in = $((g / 2)), gaps_out = $g, border_size = $w, col = { active_border = 'rgba(${c}${a})', inactive_border = 'rgba(${c}${ia})' } } })\" >/dev/null 2>&1; true",
+                  "_", String(root.cfg.islandGap), String(root.cfg.borderWidth), String(root.cfg.borderColor), String(root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, 24) : Math.round(root.cfg.pillH / 2)), String(root.cfg.borderAlpha)]
     }
     Timer { id: gapTimer; interval: 200; onTriggered: gapApply.running = true }
     Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } function onBorderWidthChanged() { gapTimer.restart(); } function onBorderColorChanged() { gapTimer.restart(); } function onIslandRadiusChanged() { gapTimer.restart(); } function onBorderAlphaChanged() { gapTimer.restart(); } }
