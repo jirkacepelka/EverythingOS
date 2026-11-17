@@ -16,3 +16,7 @@ hl.bind("SUPER + right", hl.dsp.exec_cmd(fow .. " right"))
 
 -- Samotný Super (stisk a pustit) otevře přehled ploch; psaní tam spustí hledání aplikací
 hl.bind("SUPER + Super_L", hl.dsp.exec_cmd("qs -c " .. HOME .. "/.config/panacea ipc call pill overview"), { release = true })
+
+-- Alt+Tab / Alt+Shift+Tab: přepínání oken (cyklus + zvednutí nad ostatní)
+hl.bind("ALT + Tab",         hl.dsp.window.cycle_next({}))
+hl.bind("ALT + SHIFT + Tab", hl.dsp.window.cycle_next({ next = false }))

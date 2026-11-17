@@ -63,7 +63,7 @@ local CLOSE = os.getenv("HOME") .. "/.config/panacea/scripts/smart_close.sh"
 B("terminal",     mainMod .. " + T",         hl.dsp.exec_cmd(p.terminal))
 B("terminalAlt",  mainMod .. " + Return",    hl.dsp.exec_cmd(p.terminal))
 B("closeWindow",  mainMod .. " + Q",         hl.dsp.exec_cmd(CLOSE))
-B("browser",      mainMod .. " + F",         hl.dsp.exec_cmd(p.browser))
+B("browser",      mainMod .. " + B",         hl.dsp.exec_cmd(p.browser))
 B("fullscreen",   mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen())
 B("exitHypr",     mainMod .. " + SHIFT + M", hl.dsp.exit())
 B("lockScreen",   mainMod .. " + L",         hl.dsp.exec_cmd(p.lock))
@@ -76,6 +76,7 @@ B("floatCenter", mainMod .. " + SHIFT + Space", function()
     hl.dispatch(hl.dsp.window.resize({ x = 800, y = 600, relative = false }))
     hl.dispatch(hl.dsp.window.center())
 end)
+B("fileManagerWin", mainMod .. " + F",     hl.dsp.exec_cmd(p.fileManagerWin))
 B("fileManager",  mainMod .. " + E",         hl.dsp.exec_cmd(QS .. "files"))
 B("fileManagerTui", mainMod .. " + SHIFT + E", hl.dsp.exec_cmd(p.fileManagerTui))
 B("toggleSplit",  mainMod .. " + J",         hl.dsp.layout("togglesplit"))
@@ -134,7 +135,7 @@ B("resizeUp", "ALT + up",    hl.dsp.window.resize({ x = 0,   y = -30, relative =
 B("resizeDown", "ALT + down",  hl.dsp.window.resize({ x = 0,   y = 30,  relative = true }), { repeating = true })
 
 -- Workspaces
-B("emptyWorkspace", mainMod .. " + Space",   hl.dsp.focus({ workspace = "empty" }))
+B("emptyWorkspace", mainMod .. " + Space",   hl.dsp.exec_cmd(QS .. "launcher"))
 for i = 1, 10 do
     local key = i % 10
     B("workspace" .. i, mainMod .. " + " .. key, hl.dsp.focus({ workspace = i}))

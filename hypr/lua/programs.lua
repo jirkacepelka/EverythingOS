@@ -19,8 +19,9 @@ programs.bar = os.getenv("HOME") .. "/.config/panacea/scripts/start.sh"   -- п�
 -- нему идёт выделение. Иначе меню и подсказки закрываются раньше, чем успеешь
 -- обвести их рамкой. Путь абсолютный: exec без шелла тильду не раскрывает.
 programs.screenshot = os.getenv("HOME") .. "/.config/panacea/scripts/shot.sh"
-programs.browser = "firefox"
+programs.browser = "flatpak run app.zen_browser.zen"
 programs.lock = os.getenv("HOME") .. "/.config/panacea/scripts/lock.sh"
-programs.note = "obsidian"
+programs.note = "flatpak run md.obsidian.Obsidian"
+programs.fileManagerWin = "nautilus"
 
 return programs
