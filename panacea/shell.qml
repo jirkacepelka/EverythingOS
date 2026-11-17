@@ -2514,6 +2514,9 @@ PanelWindow {
         id: curWallFile
         path: Quickshell.env("HOME") + "/.config/hypr/wallpaper.conf"
         blockLoading: true
+        // follow wallpaper changes: the overview cards read the current wallpaper from here
+        watchChanges: true
+        onFileChanged: reload()
     }
 
     // Current wallpaper file path (from hypr/wallpaper.conf), used by the workspace overview cards
