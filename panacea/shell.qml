@@ -1821,7 +1821,7 @@ PanelWindow {
     // full reset used by Settings: positions, hidden built-ins and added widgets
     function widgetsResetAll() { cfg.widgetItemsJson = "[]"; cfg.widgetHiddenJson = "[]"; cfg.widgetPosJson = ""; saveCfg(); }
     // open Settings on a given page id (order must match SettingsView.sections)
-    readonly property var settingsPageIds: ["bar","media","clock","look","wallpapers","widgets","weather","motion","launch","notif","cc","dock","lock","display","input","wifi","bluetooth","vpn","system"]
+    readonly property var settingsPageIds: ["bar","media","clock","look","wallpapers","weather","motion","launch","notif","cc","dock","lock","display","input","wifi","bluetooth","vpn","system"]
     function openSettingsPage(id) {
         var i = settingsPageIds.indexOf(id);
         settingsTab = i < 0 ? 0 : i;
@@ -8092,7 +8092,6 @@ PanelWindow {
             Repeater {
                 model: [
                     { t: "Edit widgets",     a: "edit" },
-                    { t: "Widget settings",  a: "widgets" },
                     { t: "Wallpapers",       a: "wallpapers" },
                     { t: "Dock",             a: "dock" },
                     { t: "Display settings", a: "display" },
@@ -8221,7 +8220,10 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.namespace: "panacea-widget-editor"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-    mask: Region { item: trayView.bar }
+    mask: Region {
+        item: trayView.bar
+        Region { item: trayView.optionsOpen ? trayView.panel : null; intersection: Intersection.Combine }
+    }
     WidgetTray { id: trayView; anchors.fill: parent; sys: root }
 }
 

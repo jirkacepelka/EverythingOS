@@ -179,20 +179,7 @@ ColumnLayout {
         }
     }
 
-    SetCard {
-        sys: page.sys
-
-        SetLabel { sys: page.sys; text: "Desktop widgets" }
-        Text {
-            Layout.fillWidth: true
-            text: "Layout, built-in cards and modes now have their own page."
-            color: page.sys.colMuted
-            wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
-        }
-        RowLayout {
-            Layout.fillWidth: true
-            SetButton { sys: page.sys; text: "Widget settings…"; primary: true; onClicked: page.sys.openSettingsPage("widgets") }
+    SetButton { sys: page.sys; text: "Widget settings…"; primary: true; onClicked: page.sys.openSettingsPage("widgets") }
             Item { Layout.fillWidth: true }
         }
     }
