@@ -1577,7 +1577,7 @@ PanelWindow {
         // панель закрылась — показываем карточки, накопившиеся за это время
         if (!expanded) toastPump.restart();
     }
-    onPageChanged:     { morphing = true; morphTimer.restart() }
+    onPageChanged:     { morphing = true; morphTimer.restart(); if (centerPages.indexOf(page) >= 0) lastCenter = page }
     // Держим дольше самой анимации: высота страницы приходит с задержкой
     // в кадр-другой, и без запаса второй шаг ехал бы по «быстрой» кривой.
     Timer { id: morphTimer; interval: root.animMs + 140; onTriggered: root.morphing = false }
@@ -1658,7 +1658,7 @@ PanelWindow {
     property var islandAgentEvents: []
     // Rozdělený ostrov (3 pilulky) vždy drží ostrov viditelný: popup je samostatná karta
     readonly property bool splitMode: cfg.splitIsland && !cfg.notchMode && !settingsMode && !pillSide
-    readonly property bool keepVis: cfg.pillKeepVisible || (cfg.splitIsland && !cfg.notchMode)
+    readonly property bool keepVis: cfg.pillKeepVisible
     // Uvítací okno (OnboardingView): při každém spuštění Panacea, jde vypnout
     // Společný okraj (cfg.islandGap): mezera oken od okrajů i mezi sebou (Hyprland
     // gaps), odstup ostrova od hrany a odsazení widgetů. Zapíše hypr/lua/gaps_data.lua
@@ -1738,6 +1738,14 @@ PanelWindow {
         }
     }
     Timer { interval: 3500; running: true; onTriggered: onboardCheck.running = true }
+    // Pilulky: pravé stránky (kontrolní centrum, notifikace, VPN…) se otevírají
+    // vpravo, středové (hudba, chat, kalendář) uprostřed
+    readonly property var rightPages: ["main", "notif", "vpn", "audio", "power", "record", "wifi", "bt"]
+    readonly property bool splitRight: splitMode && rightPages.indexOf(page) >= 0
+    readonly property var centerPages: ["music", "chat", "cal"]
+    readonly property bool splitCenter: splitMode && centerPages.indexOf(page) >= 0
+    property string lastCenter: "music"
+    readonly property bool tabbedPage: page === "main" || page === "chat" || page === "vpn" || splitCenter
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
@@ -1870,6 +1878,7 @@ PanelWindow {
     // Один обработчик на сигнал: QML второго не допускает, поэтому всё, что
     // должно случиться при запуске, собрано здесь.
     Component.onCompleted: {
+        root.wsDots = root.wsList.concat([(root.wsList.length ? Math.max.apply(null, root.wsList) : 0) + 1]);
         fsProbe.restart();
         syncGreeterLocale();
         monReplayTimer.restart();
@@ -3757,6 +3766,9 @@ PanelWindow {
         }
         root.wsList = a;
     }
+    // Tečky: existující plochy + jedna navíc vpravo (ukazuje, že lze jít dál)
+    property var wsDots: []
+    onWsListChanged: root.wsDots = root.wsList.concat([(root.wsList.length ? Math.max.apply(null, root.wsList) : 0) + 1])
 
     // -------------------------------------------------- раскладка клавиатуры
     property string kbLayout: Compositor.keyboardLayout
@@ -5061,6 +5073,10 @@ PanelWindow {
         anchors.left:   root.pillAtLeft   ? parent.left   : undefined
         anchors.right:  root.pillAtRight  ? parent.right  : undefined
         anchors.horizontalCenter: root.pillSide ? undefined : parent.horizontalCenter
+        // Pilulky: pravé stránky ukotvit vpravo (okraj = společná mezera)
+        anchors.horizontalCenterOffset: (root.splitRight && root.expanded && !root.keepVis)
+                                        ? Math.round((root.width - width) / 2 - (freeGap + 1)) : 0
+        Behavior on anchors.horizontalCenterOffset { NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
         anchors.verticalCenter:   root.pillSide ? parent.verticalCenter : undefined
 
         // у кромки — 0, в режиме настроек — по центру экрана
@@ -5167,7 +5183,7 @@ PanelWindow {
         function applyContentH() {
             var it = contentLoader.item;
             if (!it || it.implicitHeight <= 40) return;
-            var target = it.implicitHeight + ((root.page === "main" || root.page === "chat" || root.page === "vpn") && !root.settingsMode ? 75 : 30);
+            var target = it.implicitHeight + (root.tabbedPage && !root.settingsMode ? 75 : 30);
             // Мелкие колебания раскладки цель не двигают. Высота идёт через
             // Behavior, а тот на каждое изменение цели начинает анимацию
             // заново — с текущей точки и на полную длительность. Пока страница
@@ -5344,7 +5360,7 @@ PanelWindow {
             var m = midPill.mapToItem(null, 0, 0).x;
             var r = rightPill.mapToItem(null, 0, 0).x;
             if (sceneX >= r) return "main";
-            if (sceneX >= m) return "cal";
+            if (sceneX >= m) return root.lastCenter;
             return "";
         }
         function openPanel(sceneX) {
@@ -6213,6 +6229,24 @@ PanelWindow {
             // klikací jsou jen pilulky (viz capsuleRegion).
             readonly property bool splitOn: root.splitMode && nothingCapsule.visible
             readonly property real splitPad: 18
+            // Index sekcí středového popupu (hudba · chat · kalendář), vidět i zavřený
+            Row {
+                id: midDots
+                visible: nothingCapsule.splitOn
+                x: nClock.x + nClock.width + 10
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 5
+                Repeater {
+                    model: root.centerPages
+                    Rectangle {
+                        required property string modelData
+                        width: root.lastCenter === modelData ? 12 : 5; height: 5; radius: 2.5
+                        color: root.colFg
+                        opacity: root.lastCenter === modelData ? 1 : 0.3
+                        Behavior on width { NumberAnimation { duration: root.animFast } }
+                    }
+                }
+            }
             Rectangle {
                 id: leftPill
                 z: -1; visible: nothingCapsule.splitOn
@@ -6225,8 +6259,8 @@ PanelWindow {
                 id: midPill
                 z: -1; visible: nothingCapsule.splitOn
                 border.width: root.edgeW; border.color: root.edgeColor
-                x: nClock.x - nothingCapsule.splitPad
-                width: nClock.width + 2 * nothingCapsule.splitPad
+                x: nClock.x - nothingCapsule.splitPad - 42
+                width: nClock.width + 2 * nothingCapsule.splitPad + 84
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
             }
             Rectangle {
@@ -6289,7 +6323,7 @@ PanelWindow {
                 // открытии четвёртого стола весь остров переставлялся. Пока
                 // столов не больше пяти, теперь не меняется ничего.
                 Item {
-                    Layout.preferredWidth: Math.max(wsRow.implicitWidth, nothingCapsule.wsReserve)
+                    Layout.preferredWidth: wsRow.implicitWidth
                     Layout.preferredHeight: 6
                     Layout.alignment: Qt.AlignVCenter
 
@@ -6300,11 +6334,12 @@ PanelWindow {
                         spacing: nLeft.spacing
 
                 Repeater {
-                    model: root.wsList
+                    model: root.wsDots
 
                     Rectangle {
                         required property var modelData
                         readonly property bool here: modelData === root.wsId
+                        readonly property bool extra: root.wsList.indexOf(modelData) < 0
                         // Ширину держим своим свойством: Behavior не вешается
                         // на присоединённые Layout.*, а растекание точки в
                         // полосу без анимации — просто подмена картинки.
@@ -6322,7 +6357,7 @@ PanelWindow {
                         Layout.alignment: Qt.AlignVCenter
                         radius: 3
                         color: root.colFg
-                        opacity: here ? 1 : (wsMa.containsMouse ? 0.6 : 0.3)
+                        opacity: here ? 1 : (wsMa.containsMouse ? 0.6 : (extra ? 0.14 : 0.3))
 
                         Behavior on len {
                             enabled: settled
@@ -6818,9 +6853,9 @@ PanelWindow {
             anchors.leftMargin: 16
             z: 65
             spacing: 6
-            visible: root.expanded && !root.settingsMode && (root.page === "main" || root.page === "chat" || root.page === "vpn")
+            visible: root.expanded && !root.settingsMode && root.tabbedPage
             Repeater {
-                model: [{page:"main", title:root.tr("Главная"), icon:0xF02DC}, {page:"chat", title:root.tr("Чат"), icon:0xF0181}]
+                model: root.splitCenter ? [{page:"music", title:"Hudba"}, {page:"chat", title:root.tr("Чат")}, {page:"cal", title:"Kalendář"}] : (root.splitMode ? [{page:"main", title:root.tr("Главная")}] : [{page:"main", title:root.tr("Главная"), icon:0xF02DC}, {page:"chat", title:root.tr("Чат")}])
                 delegate: Rectangle {
                     required property var modelData
                     width: root.page === modelData.page ? tabText.implicitWidth + 48 : 40
@@ -6828,7 +6863,7 @@ PanelWindow {
                     color: root.page === modelData.page ? Qt.rgba(1,1,1,0.12) : "transparent"
                     Row {
                         anchors.centerIn: parent; spacing: 8
-                        IslandTabIcon { anchors.verticalCenter: parent.verticalCenter; width: 19; height: 19; kind: modelData.page === "main" ? "home" : "chat"; tint: root.page === modelData.page ? root.colFg : root.colMuted }
+                        IslandTabIcon { anchors.verticalCenter: parent.verticalCenter; width: 19; height: 19; kind: modelData.page === "main" ? "home" : (modelData.page === "music" ? "music" : (modelData.page === "cal" ? "cal" : "chat")); tint: root.page === modelData.page ? root.colFg : root.colMuted }
                         Text { id: tabText; anchors.verticalCenter: parent.verticalCenter; visible: root.page === modelData.page; text: modelData.title; color: root.colFg; font { family: root.fontBody; pixelSize: root.fontSize - 3; bold: false } }
                     }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { root.page = modelData.page; root.holdOpen = modelData.page === "chat"; } }
@@ -6842,7 +6877,7 @@ PanelWindow {
             anchors.top: parent.top; anchors.topMargin: 12
             anchors.right: parent.right; anchors.rightMargin: 18
             z: 65; width: 34; height: 34; radius: 17
-            visible: root.expanded && !root.settingsMode && (root.page === "main" || root.page === "chat" || root.page === "vpn")
+            visible: root.expanded && !root.settingsMode && root.tabbedPage
             color: root.vpnConnected ? root.colFg : (root.page === "vpn" ? Qt.rgba(1,1,1,0.12) : "transparent")
             Behavior on color { ColorAnimation { duration: root.animFast } }
             Text { anchors.centerIn: parent; text: root.vpnBusy ? "···" : root.vpnCountry; color: root.vpnConnected ? root.colBg : root.colFg; font { family: root.fontBody; pixelSize: root.fontSize - 3; bold: false } }
@@ -6866,7 +6901,7 @@ PanelWindow {
             z: 10
             parent: (root.keepVis && !root.settingsMode && (root.expanded || detachedPanel.opacity > 0.005)) ? detachedPanel : capsule
             anchors.top: parent ? parent.top : undefined
-            anchors.topMargin: (root.page === "main" || root.page === "chat" || root.page === "vpn") && !root.settingsMode ? 55 : 15
+            anchors.topMargin: root.tabbedPage && !root.settingsMode ? 55 : 15
             anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
             // Ширина берётся у ЦЕЛЕВОЙ панели, а не у анимируемой капсулы:
             // иначе содержимое переливалось по ширине на каждом кадре
@@ -6918,6 +6953,7 @@ PanelWindow {
                            : root.page === "power"    ? powerComp
                            : root.page === "notif"    ? notifComp
                            : root.page === "audio"    ? audioComp
+                           : root.page === "music"    ? musicComp
                            : root.page === "cal"      ? calComp
                            : root.page === "record"   ? recordComp
                            : root.page === "files"    ? filesComp
@@ -6940,6 +6976,7 @@ PanelWindow {
         Component { id: notifComp;    NotificationsView { sys: root } }
         Component { id: audioComp;    AudioView { sys: root } }
         Component { id: calComp;      CalendarView { sys: root } }
+        Component { id: musicComp;    Item { implicitHeight: 190; MusicWidget { x: 0; y: 0; width: parent.width; height: 180; sys: root } } }
         Component { id: recordComp;   RecordView { sys: root } }
         Component { id: filesComp;    FilesView { sys: root } }
         Component { id: mediaComp;    MediaView { sys: root } }
@@ -7029,7 +7066,7 @@ PanelWindow {
            ? (root.pillAtLeft  ? capsule.x + capsule.width + panelGap
               : root.pillAtRight ? capsule.x - width - panelGap
               : Math.max(12, Math.min(root.width - width - 12, capsule.x + (capsule.width - width) / 2)))
-           : root.splitMode && root.page === "main"
+           : root.splitRight
               ? capsule.x + capsule.width - width
            : Math.max(12, Math.min(root.width - width - 12, capsule.x + (capsule.width - width) / 2))
 
