@@ -1757,7 +1757,7 @@ PanelWindow {
             var l = JSON.parse(cfg.widgetItemsJson || "[]");
             if (Array.isArray(l)) for (var i = 0; i < l.length; i++) {
                 var w = l[i];
-                if (w.gx === undefined) w = { id: w.id, type: w.type, gx: Math.max(0, Math.round((w.x - widgetsOriginX) / pitchX)), gy: Math.max(0, Math.round((w.y - widgetsOriginY) / pitchY)) };
+                if (w.gx === undefined) w = { id: w.id, type: w.type, cw: w.cw, ch: w.ch, gx: Math.max(0, Math.round((w.x - widgetsOriginX) / pitchX)), gy: Math.max(0, Math.round((w.y - widgetsOriginY) / pitchY)) };
                 out.push(w);
             }
         } catch (e) {}
@@ -1765,6 +1765,11 @@ PanelWindow {
     }
     WidgetCatalog { id: widgetCat }
     function saveWidgetItems(l) { cfg.widgetItemsJson = JSON.stringify(l); saveCfg(); }
+    // span (in cells) of a placed widget: its own size, or the default of its type
+    function widgetSpan(it) {
+        var t = widgetCat.find(it.type);
+        return { cw: it.cw || (t ? t.cw : 1), ch: it.ch || (t ? t.ch : 1) };
+    }
     // rectangles (px, absolute) already taken on the desktop: built-in widgets and placed ones
     function widgetRects(ignoreId) {
         var r = [];
@@ -1772,29 +1777,32 @@ PanelWindow {
         for (var i = 0; i < cards.length; i++)
             if (cards[i].visible) r.push({ x: cards[i].x, y: cards[i].y, w: cards[i].width, h: cards[i].height });
         for (var j = 0; j < widgetItems.length; j++) {
-            var it = widgetItems[j], t = widgetCat.find(it.type);
-            if (t && it.id !== ignoreId) r.push({ x: widgetsOriginX + it.gx * pitchX, y: widgetsOriginY + it.gy * pitchY, w: t.cw * pitchX - 12, h: t.ch * pitchY - 12 });
+            var it = widgetItems[j];
+            if (it.id === ignoreId || !widgetCat.find(it.type)) continue;
+            var sp = widgetSpan(it);
+            r.push({ x: widgetsOriginX + it.gx * pitchX, y: widgetsOriginY + it.gy * pitchY, w: sp.cw * pitchX - 12, h: sp.ch * pitchY - 12 });
         }
         return r;
     }
-    // nearest free cell position to (gx, gy) for a widget of this type
-    function widgetFreeSpot(type, gx, gy, ignoreId) {
-        var t = widgetCat.find(type); if (!t) return { gx: gx, gy: gy };
+    // does a widget with this span fit exactly at (gx, gy) without touching anything else?
+    function widgetFits(gx, gy, cw, ch, ignoreId) {
+        if (gx < 0 || gy < 0 || gx + cw > widgetCols || gy + ch > widgetRows) return false;
         var rects = widgetRects(ignoreId);
-        var cols = widgetCols, rows = widgetRows;
-        var tw = t.cw * pitchX - 12, th = t.ch * pitchY - 12;
-        function free(cx, cy) {
-            if (cx < 0 || cy < 0 || cx + t.cw > cols || cy + t.ch > rows) return false;
-            var x = widgetsOriginX + cx * pitchX, y = widgetsOriginY + cy * pitchY;
-            for (var i = 0; i < rects.length; i++)
-                if (x < rects[i].x + rects[i].w + 4 && x + tw + 4 > rects[i].x && y < rects[i].y + rects[i].h + 4 && y + th + 4 > rects[i].y) return false;
-            return true;
-        }
-        gx = Math.max(0, Math.min(cols - t.cw, gx)); gy = Math.max(0, Math.min(rows - t.ch, gy));
-        if (free(gx, gy)) return { gx: gx, gy: gy };
+        var x = widgetsOriginX + gx * pitchX, y = widgetsOriginY + gy * pitchY;
+        var w = cw * pitchX - 12, h = ch * pitchY - 12;
+        for (var i = 0; i < rects.length; i++)
+            if (x < rects[i].x + rects[i].w + 4 && x + w + 4 > rects[i].x && y < rects[i].y + rects[i].h + 4 && y + h + 4 > rects[i].y) return false;
+        return true;
+    }
+    // nearest free cell position to (gx, gy) for a widget of this type / span
+    function widgetFreeSpot(type, gx, gy, ignoreId, cw, ch) {
+        var t = widgetCat.find(type); if (!t) return { gx: gx, gy: gy };
+        cw = cw || t.cw; ch = ch || t.ch;
+        gx = Math.max(0, Math.min(widgetCols - cw, gx)); gy = Math.max(0, Math.min(widgetRows - ch, gy));
+        if (widgetFits(gx, gy, cw, ch, ignoreId)) return { gx: gx, gy: gy };
         var best = null, bd = 1e9;
-        for (var cy = 0; cy < rows; cy++) for (var cx = 0; cx < cols; cx++) {
-            if (!free(cx, cy)) continue;
+        for (var cy = 0; cy + ch <= widgetRows; cy++) for (var cx = 0; cx + cw <= widgetCols; cx++) {
+            if (!widgetFits(cx, cy, cw, ch, ignoreId)) continue;
             var d = (cx - gx) * (cx - gx) + (cy - gy) * (cy - gy);
             if (d < bd) { bd = d; best = { gx: cx, gy: cy }; }
         }
@@ -1809,10 +1817,24 @@ PanelWindow {
     function moveWidget(id, gx, gy) {
         var l = widgetItems.slice();
         for (var i = 0; i < l.length; i++) if (l[i].id === id) {
-            var p = widgetFreeSpot(l[i].type, gx, gy, id);
-            l[i] = { id: id, type: l[i].type, gx: p.gx, gy: p.gy };
+            var sp = widgetSpan(l[i]);
+            var p = widgetFreeSpot(l[i].type, gx, gy, id, sp.cw, sp.ch);
+            l[i] = { id: id, type: l[i].type, gx: p.gx, gy: p.gy, cw: l[i].cw, ch: l[i].ch };
         }
         saveWidgetItems(l);
+    }
+    // Android-style resize: the span is clamped to the limits of the widget type and only
+    // applied when the new area is free (otherwise the widget keeps its old size)
+    function resizeWidget(id, gx, gy, cw, ch) {
+        var l = widgetItems.slice();
+        for (var i = 0; i < l.length; i++) if (l[i].id === id) {
+            var t = widgetCat.find(l[i].type); if (!t) return;
+            cw = Math.max(t.minW, Math.min(t.maxW, cw)); ch = Math.max(t.minH, Math.min(t.maxH, ch));
+            if (!widgetFits(gx, gy, cw, ch, id)) return;
+            l[i] = { id: id, type: l[i].type, gx: gx, gy: gy, cw: cw, ch: ch };
+            saveWidgetItems(l);
+            return;
+        }
     }
     function removeWidget(id) {
         saveWidgetItems(widgetItems.filter(function (w) { return w.id !== id; }));

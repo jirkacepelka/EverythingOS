@@ -16,8 +16,23 @@ Item {
 
     function two(n) { return ("0" + n).slice(-2); }
 
+    // Bodies with a fixed design are laid out at their design size and scaled uniformly to the card
+    // (like Android widgets they stay legible when resized); the rest reflow to the card size.
+    readonly property var designs: ({
+        battery:   { w: 144, h: 144 },
+        date:      { w: 144, h: 144 },
+        weather:   { w: 144, h: 144 },
+        clockDot:  { w: 300, h: 144 },
+        clockFlip: { w: 300, h: 144 },
+        calendar:  { w: 300, h: 222 }
+    })
+    readonly property var design: designs[root.type] || null
+
     Loader {
-        anchors.fill: parent
+        anchors.centerIn: parent
+        width: root.design ? root.design.w : root.width
+        height: root.design ? root.design.h : root.height
+        scale: root.design ? Math.min(root.width / root.design.w, root.height / root.design.h) : 1
         sourceComponent: {
             switch (root.type) {
             case "volume": return volumeBody;
@@ -42,7 +57,7 @@ Item {
     component DotBar: Item {
         id: bar
         property real value: 0
-        property int count: 16
+        property int count: Math.max(8, Math.floor(width / 16))
         property bool locked: false
         signal moved(real v)
         readonly property real d: Math.min(height, (width - (count - 1) * 4) / count)
