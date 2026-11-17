@@ -75,9 +75,9 @@ Item {
                     color: view.service === modelData.id ? Qt.rgba(1,1,1,0.12) : "transparent"
                     Row {
                         anchors.centerIn: parent; spacing: 6
-                        Text { anchors.verticalCenter: parent.verticalCenter; visible: modelData.id === "chat"; text: "✦"; color: view.service === modelData.id ? view.sys.colFg : view.sys.colMuted; font.pixelSize: 16 }
+                        Text { anchors.verticalCenter: parent.verticalCenter; visible: modelData.id === "chat"; text: "✦"; color: view.service === modelData.id ? view.sys.colFg : view.sys.colMuted; font.pixelSize: view.sys.fontSize - 3 }
                         Glyph { anchors.verticalCenter: parent.verticalCenter; visible: modelData.id !== "chat"; glyph: String.fromCodePoint(modelData.glyph); fontFam: view.sys.fontFam; size: 16; color: view.service === modelData.id ? view.sys.colFg : view.sys.colMuted }
-                        Text { id: serviceName; anchors.verticalCenter: parent.verticalCenter; text: modelData.name; color: view.sys.colFg; font { family: view.sys.fontBody; pixelSize: 11; bold: true } }
+                        Text { id: serviceName; anchors.verticalCenter: parent.verticalCenter; text: modelData.name; color: view.sys.colFg; font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3; bold: false } }
                     }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.service = modelData.id }
                 }
@@ -116,7 +116,7 @@ Item {
                         required property var modelData
                         width: parent.width; height: eventText.implicitHeight + 20; radius: 12
                         color: Qt.rgba(1,1,1,0.06)
-                        Text { id: eventText; x: 10; y: 10; width: parent.width - 20; text: modelData.app + ": " + modelData.title + (modelData.body ? "\n" + modelData.body : ""); color: view.sys.colFg; wrapMode: Text.Wrap; textFormat: Text.PlainText; font.pixelSize: 12 }
+                        Text { id: eventText; x: 10; y: 10; width: parent.width - 20; text: modelData.app + ": " + modelData.title + (modelData.body ? "\n" + modelData.body : ""); color: view.sys.colFg; wrapMode: Text.Wrap; textFormat: Text.PlainText; font.pixelSize: view.sys.fontSize - 3 }
                     }
                 }
                 Repeater {
@@ -125,7 +125,7 @@ Item {
                         required property var modelData
                         width: parent.width; height: message.implicitHeight + 20; radius: 12
                         color: modelData.role === "user" ? Qt.rgba(1,1,1,0.1) : Qt.rgba(1,1,1,0.04)
-                        Text { id: message; x: 10; y: 10; width: parent.width - 20; text: modelData.content; color: view.sys.colFg; wrapMode: Text.Wrap; textFormat: Text.PlainText; font.pixelSize: 13 }
+                        Text { id: message; x: 10; y: 10; width: parent.width - 20; text: modelData.content; color: view.sys.colFg; wrapMode: Text.Wrap; textFormat: Text.PlainText; font.pixelSize: view.sys.fontSize - 3 }
                     }
                 }
                 Text { visible: view.busy; text: view.sys.tr("Думаю…"); color: view.sys.colMuted }
@@ -136,7 +136,7 @@ Item {
             visible: view.service === "chat" && view.attachments.length > 0
             Layout.fillWidth: true
             Text { Layout.fillWidth: true; text: view.sys.tr("Прикреплено файлов:") + " " + view.attachments.length; color: view.sys.colMuted }
-            Text { text: "×"; color: view.sys.colMuted; font.pixelSize: 18; MouseArea { anchors.fill: parent; anchors.margins: -5; onClicked: view.attachments = [] } }
+            Text { text: "×"; color: view.sys.colMuted; font.pixelSize: view.sys.fontSize - 3; MouseArea { anchors.fill: parent; anchors.margins: -5; onClicked: view.attachments = [] } }
         }
         Rectangle {
             Layout.fillWidth: true
@@ -173,13 +173,13 @@ Item {
                                 else if ((event.modifiers & Qt.ControlModifier) && (event.key === Qt.Key_Return || event.key === Qt.Key_Enter)) { view.send(); event.accepted = true; }
                             }
                         }
-                        Text { anchors.verticalCenter: parent.verticalCenter; visible: !input.text; text: view.sys.tr("Сообщение…"); color: view.sys.colMuted; font { family: view.sys.fontBody; pixelSize: 13 } }
+                        Text { anchors.verticalCenter: parent.verticalCenter; visible: !input.text; text: view.sys.tr("Сообщение…"); color: view.sys.colMuted; font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3 } }
                     }
                 }
                 Rectangle {
                     Layout.preferredWidth: 36; Layout.preferredHeight: 36; radius: 18
                     color: !view.busy && (input.text.trim().length || view.attachments.length) ? view.sys.colFg : Qt.rgba(1,1,1,0.09)
-                    Text { anchors.centerIn: parent; text: "↑"; color: !view.busy && (input.text.trim().length || view.attachments.length) ? view.sys.colBg : view.sys.colMuted; font { pixelSize: 21; bold: true } }
+                    Text { anchors.centerIn: parent; text: "↑"; color: !view.busy && (input.text.trim().length || view.attachments.length) ? view.sys.colBg : view.sys.colMuted; font { pixelSize: view.sys.fontSize - 3; bold: false } }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; enabled: !view.busy && (input.text.trim().length || view.attachments.length) > 0; onClicked: view.send() }
                 }
             }
@@ -191,7 +191,7 @@ Item {
         spacing: 8
         visible: view.service === "chat" && view.sys.islandChatMessages.length === 0 && view.visibleEvents.length === 0 && !view.busy && !view.pickerOpen
         Text { anchors.horizontalCenter: parent.horizontalCenter; text: "✦"; color: view.sys.colFg; font.pixelSize: 28 }
-        Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: view.sys.tr("Спросите что угодно"); color: view.sys.colFg; font { family: view.sys.fontDisplay; pixelSize: 19; bold: true } }
-        Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.WordWrap; text: view.sys.tr("Добавьте адрес API, модель и ключ в настройках лаунчера."); color: view.sys.colMuted; font.pixelSize: 12 }
+        Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; text: view.sys.tr("Спросите что угодно"); color: view.sys.colFg; font { family: view.sys.fontDisplay; pixelSize: view.sys.fontSize - 3; bold: false } }
+        Text { width: parent.width; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.WordWrap; text: view.sys.tr("Добавьте адрес API, модель и ключ в настройках лаунчера."); color: view.sys.colMuted; font.pixelSize: view.sys.fontSize - 3 }
     }
 }

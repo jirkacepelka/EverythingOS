@@ -17,6 +17,6 @@ Text {
         pixelSize: cap.sys.fontSize - 5
         letterSpacing: 1.4
         capitalization: Font.AllUppercase
-        bold: true
+        bold: false
     }
 }

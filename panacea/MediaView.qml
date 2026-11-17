@@ -258,7 +258,7 @@ FocusScope {
         border.width: 1
         Behavior on color { ColorAnimation { duration: 140 } }
         scale: ibMa.pressed ? 0.92 : 1.0
-        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         Glyph {
             anchors.fill: parent
@@ -305,7 +305,7 @@ FocusScope {
                     text: view.fileName
                     color: view.sys.colFg
                     elide: Text.ElideMiddle
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 2; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -348,7 +348,7 @@ FocusScope {
                         id: cropText
                         text: view.sys.tr("Кроп")
                         color: view.sys.colFg
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                     }
                 }
                 MouseArea {
@@ -638,7 +638,7 @@ FocusScope {
                     selectByMouse: true
                     wrapMode: TextEdit.Wrap
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     background: null
                 }
             }
@@ -796,7 +796,7 @@ FocusScope {
                 Text {
                     text: view.fmt(view.trimIn) + " — " + view.fmt(view.trimOut)
                     color: view.sys.colOn
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
             }
         }
@@ -810,8 +810,8 @@ FocusScope {
                 text: view.sys.tr("Куда")
                 color: view.sys.colMuted
                 font {
-                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4
-                    bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                    bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
                 }
             }
             Chip {
@@ -852,7 +852,7 @@ FocusScope {
                     Text {
                         text: "󰚞"
                         color: view.sys.colOn
-                        font { family: view.sys.fontFam; pixelSize: 15 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                     Text {
                         id: ocrText
@@ -862,7 +862,7 @@ FocusScope {
                                  ? view.sys.tr("Текст из области")
                                  : view.sys.tr("Распознать текст"))
                         color: view.sys.colFg
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                     }
                 }
 
@@ -909,7 +909,7 @@ FocusScope {
                                  : view.sys.tr("Сохранить кусок"))
                               : view.sys.tr("Сохранить область")
                         color: view.sys.colFg
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                     }
                 }
 

@@ -143,14 +143,14 @@ Item {
             Text {
                 text: view.sys.tr("Агенты")
                 color: view.sys.colFg
-                font { family: view.sys.fontDisplay; pixelSize: view.sys.fontSize + 1; bold: true }
+                font { family: view.sys.fontDisplay; pixelSize: view.sys.fontSize - 3; bold: false }
             }
             Item { Layout.fillWidth: true }
             Text {
                 visible: view.loaded && view.agents.length > 0
                 text: view.agents.length
                 color: view.sys.colMuted
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
 
@@ -186,13 +186,13 @@ Item {
                         Text {
                             text: card.modelData.name || ""
                             color: view.sys.colFg
-                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                         }
                         Text {
                             visible: String(card.modelData.version || "").length > 0
                             text: card.modelData.version || ""
                             color: view.sys.colMuted
-                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         }
                         Item { Layout.fillWidth: true }
 
@@ -209,7 +209,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: card.modelData.plan || ""
                                 color: view.sys.colOn
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                         }
                     }
@@ -231,13 +231,13 @@ Item {
                                 Text {
                                     text: view.limitLabel(lim.modelData.kind)
                                     color: view.sys.colFg
-                                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                                 }
                                 Item { Layout.fillWidth: true }
                                 Text {
                                     text: Math.round(lim.modelData.percent) + "%"
                                     color: view.barColor(lim.modelData.percent, lim.modelData.severity)
-                                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4; bold: true }
+                                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                                 }
                             }
 
@@ -264,7 +264,7 @@ Item {
                                 visible: text.length > 0
                                 text: view.untilText(lim.modelData.resetsAt)
                                 color: view.sys.colMuted
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 6 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
                     }
@@ -295,7 +295,7 @@ Item {
                               : view.sys.tr("Данных пока нет — появятся, когда агент поработает")
                         color: view.sys.colMuted
                         wrapMode: Text.WordWrap
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
 
                     // Когда цифры в последний раз обновлял сам агент. Важно:
@@ -308,7 +308,7 @@ Item {
                                  && String(view.agoText(card.modelData.fetchedAt)).length > 0
                         text: view.sys.tr("данные агента от") + " " + view.agoText(card.modelData.fetchedAt)
                         color: view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 6 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
             }
@@ -321,7 +321,7 @@ Item {
             text: view.sys.tr("Ни одного агента не найдено")
             color: view.sys.colMuted
             horizontalAlignment: Text.AlignHCenter
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

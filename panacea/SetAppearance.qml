@@ -59,7 +59,7 @@ ColumnLayout {
                      : page.sys.tr("Оболочка переключается сразу. Приложения и меню — после перезахода: язык они читают при входе."))
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
         Text {
             Layout.fillWidth: true
@@ -67,7 +67,7 @@ ColumnLayout {
             text: page.sys.tr("Для этого языка нет перевода интерфейса Panacea. Пока используется английский; запросите перевод через issue на GitHub.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 
@@ -146,7 +146,7 @@ ColumnLayout {
             text: page.sys.tr("Впишите ключ и город во вкладке Weather, иначе карточка погоды останется пустой.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 
@@ -191,7 +191,7 @@ ColumnLayout {
             text: page.sys.tr("1.00 — сплошной фон. Действует сразу; если нет — терминал держит свои настройки с прошлого входа, и его серверу нужен перезапуск.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         RowLayout {
@@ -212,7 +212,7 @@ ColumnLayout {
             text: page.sys.tr("Открытые окна терминала при этом закроются: они работают от того же сервера.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 
@@ -330,7 +330,7 @@ ColumnLayout {
                         Text {
                             text: sndBtn.modelData.label
                             color: sndMa.containsMouse ? page.sys.colFg : page.sys.colMuted
-                            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                             elide: Text.ElideRight
                         }
                     }

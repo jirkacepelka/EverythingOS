@@ -160,7 +160,7 @@ ColumnLayout {
             text: page.sys.tr("Пока время синхронизируется по сети, ручная правка ничего не изменит — выключите синхронизацию выше.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         RowLayout {
@@ -186,7 +186,7 @@ ColumnLayout {
                     selectByMouse: true
                     text: page.draft
                     onTextChanged: page.draft = text
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                     Component.onCompleted: text = Qt.formatDateTime(new Date(), "yyyy-MM-dd hh:mm")
 
                     Text {
@@ -233,7 +233,7 @@ ColumnLayout {
             visible: page.note.length > 0
             text: page.note
             color: page.sys.colMuted
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 }

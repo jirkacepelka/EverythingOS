@@ -177,18 +177,18 @@ ColumnLayout {
                 Text {
                     text: "github.com/EnsixD"
                     color: page.sys.colFg
-                    font { family: page.sys.fontDisplay; pixelSize: page.sys.fontSize + 1 }
+                    font { family: page.sys.fontDisplay; pixelSize: page.sys.fontSize - 3 }
                 }
                 Text {
                     text: page.sys.tr("Автор оболочки — профиль на GitHub")
                     color: page.sys.colMuted
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
             }
             Text {
                 text: String.fromCodePoint(0xF0327)   // стрелка наружу
                 color: page.sys.colMuted
-                font { family: page.sys.fontFam; pixelSize: page.sys.fontSize }
+                font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3 }
             }
         }
 
@@ -227,7 +227,7 @@ ColumnLayout {
                           : page.sys.tr("Проверка…")
                     color: page.sys.updateAvailable ? page.sys.colOn : page.sys.colFg
                     wrapMode: Text.WordWrap
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 1 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -239,7 +239,7 @@ ColumnLayout {
                              ? " · " + page.sys.tr("сборка") + " " + page.sys.updCurrent.substring(0, 7) : "")
                     color: page.sys.updError.length ? page.sys.colCrit : page.sys.colMuted
                     wrapMode: Text.WordWrap
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
             }
 
@@ -325,7 +325,7 @@ ColumnLayout {
                     anchors.centerIn: parent
                     text: page.sys.updBusy ? page.sys.tr("Идёт…") : page.sys.tr("Обновить")
                     color: page.sys.colFg
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3; bold: true }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3; bold: false }
                 }
                 MouseArea {
                     id: updMa
@@ -378,12 +378,12 @@ ColumnLayout {
                     text: page.stepName(page.sys.updStep)
                     color: page.sys.colMuted
                     elide: Text.ElideRight
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
                 Text {
                     text: Math.max(1, page.sys.updProgress) + "%"
                     color: page.sys.colMuted
-                    font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 4 }
+                    font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3 }
                 }
             }
         }
@@ -393,7 +393,7 @@ ColumnLayout {
             text: page.sys.tr("Настройки, сочетания клавиш и обои остаются на месте: перед установкой они уносятся в сторону и возвращаются после.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 
@@ -419,12 +419,12 @@ ColumnLayout {
                     Layout.fillWidth: true
                     text: label
                     color: page.sys.colFg
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
                 Text {
                     text: value
                     color: page.sys.colMuted
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
             }
             Rectangle {
@@ -605,7 +605,7 @@ ColumnLayout {
                       : page.sys.tr("Вернуть все настройки к заводским. Сочетания клавиш останутся как есть.")
                 color: page.armed ? page.sys.colCrit : page.sys.colMuted
                 wrapMode: Text.WordWrap
-                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             }
 
             Rectangle {

@@ -181,7 +181,7 @@ Item {
             FontMetrics {
                 id: navMetric
                 font.family: view.sys.fontBody
-                font.pixelSize: view.sys.fontSize - 1
+                font.pixelSize: view.sys.fontSize - 3
             }
 
             // Вложенный в RowLayout слой по умолчанию растягивается сам —
@@ -210,7 +210,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                     text: String.fromCodePoint(0xF0349)
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
 
                 TextInput {
@@ -224,7 +224,7 @@ Item {
                     clip: true
                     selectByMouse: true
                     selectionColor: Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4)
-                    font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3 }
                     onTextChanged: view.query = text
                     // Enter открывает первый подошедший раздел
                     onAccepted: {
@@ -305,7 +305,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: String.fromCodePoint(navItem.modelData.g)
                                 color: navItem.active ? view.sys.colOn : view.sys.colMuted
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 1 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
 
@@ -314,7 +314,7 @@ Item {
                             text: navItem.modelData.title
                             color: navItem.active ? view.sys.colFg : view.sys.colMuted
                             elide: Text.ElideRight
-                            font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 1 }
+                            font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3 }
                         }
                     }
 
@@ -399,7 +399,7 @@ Item {
                             anchors.centerIn: parent
                             text: pageTab.modelData.title
                             color: pageTab.selected ? view.sys.colFg : view.sys.colMuted
-                            font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 2 }
+                            font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3 }
                         }
                         MouseArea {
                             anchors.fill: parent

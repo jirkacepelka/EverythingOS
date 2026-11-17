@@ -24,6 +24,14 @@ FocusScope {
     // посчитанный в onCompleted, указывал не туда — оверлей открывался
     // с выделенным вторым столом вместо текущего.
     property int currentWs: 0
+
+    // Hledání aplikací uvnitř přehledu
+    // Psaní otevře launcher v notchi (stejný jako Super+A); přehled jen ztmavne
+    readonly property bool searching: view.sys.launcherOpen
+    Connections {
+        target: view.sys
+        function onLauncherOpenChanged() { if (!view.sys.launcherOpen) view.forceActiveFocus(); }
+    }
     readonly property int current: {
         for (var i = 0; i < wsList.length; i++)
             if (wsList[i].id === view.currentWs) return i;
@@ -90,6 +98,13 @@ FocusScope {
                 return;
             }
         }
+        // psaní písmen = hledání aplikací přímo v přehledu (jako v GNOME)
+        var mods = event.modifiers & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier);
+        if (!mods && event.text.length === 1 && event.text.charCodeAt(0) > 32) {
+            view.sys.launcherPrefill = event.text;
+            view.sys.openLauncher();
+            event.accepted = true;
+        }
     }
 
     // ------------------------------------------------------------- выбор
@@ -126,8 +141,8 @@ FocusScope {
             text: view.sys.tr("Рабочие столы")
             color: Qt.rgba(1, 1, 1, 0.55)
             font {
-                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2
-                bold: true; capitalization: Font.AllUppercase; letterSpacing: 2
+                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                bold: false; capitalization: Font.AllUppercase; letterSpacing: 2
             }
         }
 
@@ -162,7 +177,7 @@ FocusScope {
 
                     scale: card.picked ? 1.04 : 1.0
                     Behavior on scale {
-                        NumberAnimation { duration: 170; easing.type: Easing.OutBack }
+                        NumberAnimation { duration: 170; easing.type: Easing.OutBack; easing.overshoot: 0.8 }
                     }
 
                     // ---------------------------------------- окна стола
@@ -228,7 +243,7 @@ FocusScope {
                                     elide: Text.ElideRight
                                     width: parent.width - 12
                                     horizontalAlignment: Text.AlignHCenter
-                                    font { family: view.sys.fontFam; pixelSize: 11 }
+                                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                                 }
                             }
                         }
@@ -256,7 +271,7 @@ FocusScope {
                             text: card.modelData.name
                             color: "#ffffff"
                             font {
-                                family: view.sys.fontFam; pixelSize: 12
+                                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
                                 bold: card.picked || card.live
                             }
                         }
@@ -287,8 +302,18 @@ FocusScope {
             Layout.alignment: Qt.AlignHCenter
             text: view.sys.tr("Стрелки — выбрать · Enter — перейти · Esc — закрыть")
             color: Qt.rgba(1, 1, 1, 0.30)
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 
+
+    // Ztmavení ploch při hledání: černá vrstva přes ně, plochy zůstávají plně
+    // neprůhledné (jen tmavší), nic se přes ně nepropíjí.
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
+        opacity: view.searching ? 0.6 : 0
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: 160 } }
+    }
 }

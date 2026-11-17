@@ -66,7 +66,7 @@ ColumnLayout {
             text: page.sys.tr("Возьмите блок и перетащите — панель встанет в этом порядке после «Применить».")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         // Сама панель во всю свою ширину. Если места в окне меньше, чем
@@ -139,7 +139,7 @@ ColumnLayout {
                             visible: gripMa.containsMouse || grip.held
                             text: String.fromCodePoint(0xF01DD)   // ручка перетаскивания
                             color: page.sys.colFg
-                            font { family: page.sys.fontFam; pixelSize: page.sys.fontSize }
+                            font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3 }
                         }
                     }
 

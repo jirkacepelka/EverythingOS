@@ -47,17 +47,17 @@ Item {
             Rectangle {
                 Layout.preferredWidth: 42; Layout.preferredHeight: 42; radius: 21
                 color: card.chosen ? card.sys.colFg : "#292a2d"
-                Text { anchors.centerIn: parent; text: card.mark; color: card.chosen ? card.sys.colBg : card.sys.colFg; font { family: card.sys.fontDisplay; pixelSize: 15; bold: true } }
+                Text { anchors.centerIn: parent; text: card.mark; color: card.chosen ? card.sys.colBg : card.sys.colFg; font { family: card.sys.fontDisplay; pixelSize: 15; bold: false } }
             }
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 4
-                Text { Layout.fillWidth: true; text: card.title; color: card.sys.colFg; elide: Text.ElideRight; font { family: card.sys.fontBody; pixelSize: 14; bold: true } }
+                Text { Layout.fillWidth: true; text: card.title; color: card.sys.colFg; elide: Text.ElideRight; font { family: card.sys.fontBody; pixelSize: 14; bold: false } }
                 Text { Layout.fillWidth: true; text: card.subtitle; color: card.sys.colMuted; elide: Text.ElideRight; font { family: card.sys.fontBody; pixelSize: 10 } }
             }
             Rectangle {
                 Layout.preferredWidth: 22; Layout.preferredHeight: 22; radius: 11
                 color: card.chosen ? card.sys.colFg : "transparent"; border.width: 1; border.color: card.chosen ? card.sys.colFg : "#55575c"
-                Text { anchors.centerIn: parent; text: card.chosen ? "✓" : ""; color: card.sys.colBg; font { pixelSize: 12; bold: true } }
+                Text { anchors.centerIn: parent; text: card.chosen ? "✓" : ""; color: card.sys.colBg; font { pixelSize: 12; bold: false } }
             }
         }
         MouseArea { id: mouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; enabled: !card.sys.vpnBusy; onClicked: card.picked() }
@@ -82,7 +82,7 @@ Item {
                         spacing: 12
                         Rectangle {
                             width: 42; height: 42; radius: 21; color: view.sys.vpnConnected ? view.sys.colFg : "#303135"
-                            Text { anchors.centerIn: parent; text: view.sys.vpnCountry; color: view.sys.vpnConnected ? view.sys.colBg : view.sys.colFg; font { family: view.sys.fontDisplay; pixelSize: 15; bold: true } }
+                            Text { anchors.centerIn: parent; text: view.sys.vpnCountry; color: view.sys.vpnConnected ? view.sys.colBg : view.sys.colFg; font { family: view.sys.fontDisplay; pixelSize: 15; bold: false } }
                         }
                         Text { anchors.verticalCenter: parent.verticalCenter; text: view.sys.vpnBusy ? view.sys.tr("Ожидание ответа клиента…") : (view.sys.vpnConnected ? view.sys.tr("Подключено") : view.sys.tr("Отключено")); color: view.sys.colFg; font { family: view.sys.fontBody; pixelSize: 11 } }
                     }
@@ -102,7 +102,7 @@ Item {
             }
             RowLayout {
                 Layout.fillWidth: true
-                Text { Layout.fillWidth: true; text: view.sys.tr("VPN-клиент"); color: view.sys.colFg; font { family: view.sys.fontDisplay; pixelSize: 15; bold: true } }
+                Text { Layout.fillWidth: true; text: view.sys.tr("VPN-клиент"); color: view.sys.colFg; font { family: view.sys.fontDisplay; pixelSize: 15; bold: false } }
                 Text { text: "↻"; color: view.sys.colMuted; font.pixelSize: 21; MouseArea { anchors.fill: parent; anchors.margins: -7; cursorShape: Qt.PointingHandCursor; onClicked: view.refresh() } }
             }
             Text { Layout.fillWidth: true; text: view.error; visible: view.error.length > 0; wrapMode: Text.WordWrap; color: view.sys.colCrit }

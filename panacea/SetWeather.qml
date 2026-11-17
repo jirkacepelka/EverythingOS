@@ -73,7 +73,7 @@ ColumnLayout {
                 // Показываем сразу целиком, без пробегающего последнего
                 // знака: ключ вставляют из буфера, а не набирают руками.
                 passwordMaskDelay: 0
-                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 onEditingFinished: {
                     page.sys.cfg.weatherKey = text.trim();
                     page.sys.saveCfg();
@@ -117,7 +117,7 @@ ColumnLayout {
             text: page.sys.tr("Заводится на openweathermap.org — бесплатно. Новый ключ начинает отвечать не сразу, обычно через час-другой.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         // Сказано прямо: ключ лежит в settings.json как есть. Человек вправе
@@ -127,7 +127,7 @@ ColumnLayout {
             text: page.sys.tr("Хранится в settings.json открытым текстом.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 
@@ -153,7 +153,7 @@ ColumnLayout {
                 clip: true
                 selectByMouse: true
                 text: page.sys.cfg.weatherCity
-                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 onEditingFinished: {
                     page.sys.cfg.weatherCity = text.trim();
                     page.sys.saveCfg();
@@ -177,7 +177,7 @@ ColumnLayout {
             text: page.sys.tr("Годится и почтовый индекс — сплошные цифры оболочка отличает от названия сама и без страны считает российскими. Одинаковых названий на свете много: если нашёлся не тот город, допишите через запятую страну — Moscow,RU. По названию сервис ищет надёжнее, чем по индексу.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         // Отдельно от настольных виджетов: остров виден всегда, а стол
@@ -228,7 +228,7 @@ ColumnLayout {
                       : page.sys.tr("Ещё не спрашивали")
             color: page.sys.weatherErr.length ? page.sys.colCrit : page.sys.colFg
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         Text {
@@ -240,7 +240,7 @@ ColumnLayout {
                   + page.sys.tr("Ощущается как") + " " + page.sys.weatherFeels + "°"
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         RowLayout {
@@ -263,7 +263,7 @@ ColumnLayout {
             text: page.sys.tr("Сама оболочка спрашивает погоду раз в четверть часа. Показывается она в настольных виджетах — включаются во вкладке Appearance.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 }

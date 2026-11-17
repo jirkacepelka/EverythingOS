@@ -30,7 +30,7 @@ Item {
                 Layout.fillWidth: true
                 text: view.sys.tr("Уведомления")
                 color: view.sys.colFg
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 1; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
 
             // не беспокоить
@@ -61,7 +61,7 @@ Item {
                     Text {
                         text: view.sys.tr("Не беспокоить")
                         color: view.sys.dnd ? view.sys.colFg : view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
                 MouseArea {
@@ -85,7 +85,7 @@ Item {
                     anchors.centerIn: parent
                     text: view.sys.tr("Очистить")
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
                 MouseArea {
                     id: clearMa
@@ -182,12 +182,12 @@ Item {
                                 text: row.nSummary
                                 color: view.sys.colFg
                                 elide: Text.ElideRight
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             Text {
                                 text: row.nApp + "  " + row.nTime
                                 color: Qt.rgba(1, 1, 1, 0.30)
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
                         Text {
@@ -201,7 +201,7 @@ Item {
                             // тело уведомления может содержать разметку —
                             // см. bodyMarkupSupported в shell.qml
                             textFormat: Text.StyledText
-                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         }
                     }
 
@@ -209,7 +209,7 @@ Item {
                         Layout.alignment: Qt.AlignTop
                         text: "×"
                         color: delMa.containsMouse ? view.sys.colCrit : view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         Behavior on color { ColorAnimation { duration: 150 } }
                         MouseArea {
                             id: delMa
@@ -242,7 +242,7 @@ Item {
                                : view.sys.tr("Пока ничего нет")
             color: view.sys.colMuted
             horizontalAlignment: Text.AlignHCenter
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

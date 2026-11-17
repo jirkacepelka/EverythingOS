@@ -307,7 +307,7 @@ ColumnLayout {
                                                     : page.sys.tr("Нажмите сочетание…"))
                       : (brow.combo.length ? brow.combo : "—")
                 color: brow.combo.length || brow.capturing ? page.sys.colFg : page.sys.colMuted
-                font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 4; bold: true }
+                font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3; bold: false }
             }
 
             TextField {
@@ -321,7 +321,7 @@ ColumnLayout {
                 color: page.sys.colFg
                 selectByMouse: true
                 background: null
-                font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 4 }
+                font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3 }
                 onEditingFinished: if (text.trim() !== page.bindRaw(brow.bindId)) page.setBind(brow.bindId, text.trim())
             }
 
@@ -355,14 +355,14 @@ ColumnLayout {
             text: brow.label
             color: page.sys.colMuted
             elide: Text.ElideRight
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         Text {
             text: "×"
             visible: brow.combo.length > 0
             color: cMa.containsMouse ? page.sys.colCrit : page.sys.colMuted
-            font { family: page.sys.fontFam; pixelSize: page.sys.fontSize + 2 }
+            font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3 }
             Behavior on color { ColorAnimation { duration: 150 } }
             MouseArea {
                 id: cMa
@@ -383,8 +383,8 @@ ColumnLayout {
         Layout.topMargin: 8
         color: page.sys.colMuted
         font {
-            family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4
-            bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+            family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3
+            bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
         }
     }
 
@@ -400,7 +400,7 @@ ColumnLayout {
         Layout.fillWidth: true
         text: page.sys.tr("Нажмите на сочетание, чтобы изменить. × убирает клавишу.")
         color: Qt.rgba(1, 1, 1, 0.32)
-        font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+        font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
     }
 
     Flickable {

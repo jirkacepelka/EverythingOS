@@ -290,13 +290,13 @@ ShellRoot {
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: root.timeText
                         color: "#ffffff"
-                        font { family: root.fontFam; pixelSize: 84; bold: true }
+                        font { family: root.fontFam; pixelSize: 84; bold: false }
                     }
                     Text {
                         anchors.horizontalCenter: parent.horizontalCenter
                         text: root.dateText
                         color: Qt.rgba(1, 1, 1, 0.55)
-                        font { family: root.fontFam; pixelSize: 17 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                     }
 
                     // Своя строка хозяина машины: чей это компьютер, куда
@@ -306,7 +306,7 @@ ShellRoot {
                         visible: text.length > 0
                         text: root.cfg ? root.cfg.lockHint : ""
                         color: Qt.rgba(1, 1, 1, 0.50)
-                        font { family: root.fontFam; pixelSize: 14 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                     }
 
                     // подсказка мигает, пока не начали вводить
@@ -316,7 +316,7 @@ ShellRoot {
                         color: Qt.rgba(1, 1, 1, 0.40)
                         opacity: root.authMode ? 0 : 1
                         visible: opacity > 0.01
-                        font { family: root.fontFam; pixelSize: 13; letterSpacing: 1 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3; letterSpacing: 1 }
                         Behavior on opacity { NumberAnimation { duration: 300 } }
                         SequentialAnimation on scale {
                             running: !root.authMode
@@ -339,11 +339,11 @@ ShellRoot {
                     scale: root.authMode ? 1 : 0.92
 
                     Behavior on width {
-                        NumberAnimation { duration: 380; easing.type: Easing.OutBack }
+                        NumberAnimation { duration: 380; easing.type: Easing.OutBack; easing.overshoot: 0.8 }
                     }
                     Behavior on opacity { NumberAnimation { duration: 260 } }
                     Behavior on scale {
-                        NumberAnimation { duration: 380; easing.type: Easing.OutBack }
+                        NumberAnimation { duration: 380; easing.type: Easing.OutBack; easing.overshoot: 0.8 }
                     }
 
                     // тряска при неверном пароле: двигаем трансформ, чтобы
@@ -421,7 +421,7 @@ ShellRoot {
                                         Component.onCompleted: scale = 1
                                         Behavior on scale {
                                             NumberAnimation {
-                                                duration: 180; easing.type: Easing.OutBack
+                                                duration: 180; easing.type: Easing.OutBack; easing.overshoot: 0.8
                                             }
                                         }
                                     }
@@ -432,7 +432,7 @@ ShellRoot {
                                     text: root.errorText.length ? root.errorText : root.tr("Пароль")
                                     color: root.errorText.length
                                            ? root.colCrit : Qt.rgba(1, 1, 1, 0.35)
-                                    font { family: root.fontFam; pixelSize: 14 }
+                                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                                 }
                             }
                         }
@@ -447,7 +447,7 @@ ShellRoot {
                     color: Qt.rgba(1, 1, 1, 0.55)
                     opacity: root.authMode ? 1 : 0
                     visible: opacity > 0.01
-                    font { family: root.fontFam; pixelSize: 14; letterSpacing: 1 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3; letterSpacing: 1 }
                     Behavior on opacity { NumberAnimation { duration: 300 } }
                 }
 

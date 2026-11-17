@@ -53,7 +53,7 @@ FocusScope {
                 Text {
                     text: view.sys.tr("Сохранить пароль?")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -88,14 +88,14 @@ FocusScope {
                 color: view.sys.colFg
                 selectByMouse: true
                 enabled: !view.sys.vaultBusy
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 1 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 onAccepted: { view.sys.unlockVault(text); text = ""; }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
                     visible: pw.text.length === 0
                     text: view.sys.tr("Пароль пользователя")
                     color: Qt.rgba(1, 1, 1, 0.28)
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 1 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
         }
@@ -130,14 +130,14 @@ FocusScope {
                     color: view.sys.colFg
                     selectByMouse: true
                     text: view.prompt ? String(view.prompt.label || "") : ""
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     onAccepted: view.save()
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: name.text.length === 0
                         text: view.sys.tr("Откуда пароль")
                         color: Qt.rgba(1, 1, 1, 0.28)
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
             }
@@ -157,14 +157,14 @@ FocusScope {
                     verticalAlignment: TextInput.AlignVCenter
                     color: view.sys.colFg
                     selectByMouse: true
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     onAccepted: view.save()
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: login.text.length === 0
                         text: view.sys.tr("Логин (необязательно)")
                         color: Qt.rgba(1, 1, 1, 0.28)
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
             }
@@ -175,7 +175,7 @@ FocusScope {
             Layout.fillWidth: true
             text: view.prompt ? "•".repeat(Math.min(24, String(view.prompt.pw).length)) : ""
             color: view.sys.colMuted
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
 
         RowLayout {
@@ -191,7 +191,7 @@ FocusScope {
                     anchors.centerIn: parent
                     text: view.sys.tr("Не сохранять")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
                 MouseArea {
                     id: noMa
@@ -214,7 +214,7 @@ FocusScope {
                     anchors.centerIn: parent
                     text: view.sys.tr("Сохранить")
                     color: view.sys.colOk
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
                 MouseArea {
                     id: yesMa

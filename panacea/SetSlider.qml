@@ -32,12 +32,12 @@ ColumnLayout {
             text: sl.label
             color: sl.sys.colFg
             elide: Text.ElideRight
-            font { family: sl.sys.fontBody; pixelSize: sl.sys.fontSize - 1 }
+            font { family: sl.sys.fontBody; pixelSize: sl.sys.fontSize - 3 }
         }
         Text {
             text: sl.valueText
             color: sl.sys.colMuted
-            font { family: sl.sys.fontBody; pixelSize: sl.sys.fontSize - 2 }
+            font { family: sl.sys.fontBody; pixelSize: sl.sys.fontSize - 3 }
         }
     }
 

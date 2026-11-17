@@ -92,7 +92,7 @@ Item {
                   ? view.sys.tr("Ещё раз, чтобы подтвердить: ") + view.actions[view.armed].label
                   : view.sys.tr("Завершение работы")
             color: view.armed >= 0 ? view.actions[view.armed].accent : view.sys.colFg
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize; bold: true }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             Behavior on color { ColorAnimation { duration: 180 } }
         }
 
@@ -137,7 +137,7 @@ Item {
                     Behavior on border.color { ColorAnimation { duration: 160 } }
 
                     scale: btnMa.pressed ? 0.94 : (btnMa.containsMouse ? 1.03 : 1.0)
-                    Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutBack } }
+                    Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
                     ColumnLayout {
                         id: body
@@ -169,19 +169,19 @@ Item {
                                     x: 1; y: 15
                                     text: "Z"
                                     color: itemrt.ink
-                                    font { family: view.sys.fontBody; pixelSize: 19; bold: true }
+                                    font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3; bold: false }
                                 }
                                 Text {
                                     x: 17; y: 1
                                     text: "z"
                                     color: itemrt.ink
-                                    font { family: view.sys.fontBody; pixelSize: 10; bold: true }
+                                    font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3; bold: false }
                                 }
                                 Text {
                                     x: 24; y: 8
                                     text: "z"
                                     color: itemrt.ink
-                                    font { family: view.sys.fontBody; pixelSize: 14; bold: true }
+                                    font { family: view.sys.fontBody; pixelSize: view.sys.fontSize - 3; bold: false }
                                 }
                             }
 
@@ -201,7 +201,7 @@ Item {
                             color: rectang.isArmed ? view.sys.colFg : view.sys.colMuted
                             font {
                                 family: view.sys.fontFam
-                                pixelSize: view.sys.fontSize - 4
+                                pixelSize: view.sys.fontSize - 3
                                 bold: rectang.isArmed
                             }
                             Behavior on color { ColorAnimation { duration: 160 } }

@@ -34,7 +34,7 @@ ColumnLayout {
             text: page.sys.tr("Коды XKB через запятую, например us,tr. Сочетания клавиш меняются отдельно по Super+/.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
         TextField {
             id: layoutsField
@@ -43,7 +43,7 @@ ColumnLayout {
             text: page.sys.cfg.keyboardLayouts
             color: page.sys.colFg
             placeholderTextColor: page.sys.colMuted
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             leftPadding: 12; rightPadding: 12; topPadding: 9; bottomPadding: 9
             selectByMouse: true
             selectionColor: page.sys.colOn
@@ -64,7 +64,7 @@ ColumnLayout {
             text: page.sys.cfg.keyboardVariants
             color: page.sys.colFg
             placeholderTextColor: page.sys.colMuted
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             leftPadding: 12; rightPadding: 12; topPadding: 9; bottomPadding: 9
             selectByMouse: true
             selectionColor: page.sys.colOn
@@ -85,7 +85,7 @@ ColumnLayout {
             text: page.sys.cfg.keyboardOptions
             color: page.sys.colFg
             placeholderTextColor: page.sys.colMuted
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             leftPadding: 12; rightPadding: 12; topPadding: 9; bottomPadding: 9
             selectByMouse: true
             selectionColor: page.sys.colOn
@@ -105,7 +105,7 @@ ColumnLayout {
             text: page.sys.keyboardInputError
             color: page.sys.colCrit
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
         SetButton {
             sys: page.sys
@@ -116,7 +116,7 @@ ColumnLayout {
             visible: page.applied && page.sys.keyboardInputError.length === 0
             text: page.sys.tr("Раскладки применены")
             color: page.sys.colOn
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 
@@ -126,7 +126,7 @@ ColumnLayout {
         text: page.sys.tr("В Niri раскладки задаются в ~/.config/niri/config.kdl; этот файл сохраняется при обновлении.")
         color: page.sys.colMuted
         wrapMode: Text.WordWrap
-        font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+        font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
     }
 
     SetCard {
@@ -151,7 +151,7 @@ ColumnLayout {
             text: page.sys.tr("0 — скорость как её отдаёт мышь. Влево медленнее, вправо быстрее.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
 
         SetToggle {

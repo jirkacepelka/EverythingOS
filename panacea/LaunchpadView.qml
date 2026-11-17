@@ -903,7 +903,7 @@ FocusScope {
                 anchors.verticalCenter: parent.verticalCenter
                 text: ""
                 color: Qt.rgba(1, 1, 1, 0.6)
-                font { family: view.sys.fontFam; pixelSize: 13 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
             TextInput {
                 id: search
@@ -1069,7 +1069,7 @@ FocusScope {
             visible: view.searching && view.results.length === 0
             text: view.sys.tr("Ничего не найдено")
             color: Qt.rgba(1, 1, 1, 0.6)
-            font { family: view.sys.fontFam; pixelSize: 15 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 
@@ -1118,7 +1118,7 @@ FocusScope {
                 horizontalAlignment: TextInput.AlignHCenter
                 color: "#ffffff"
                 selectionColor: view.sys.colOn
-                font { family: view.sys.fontDisplay; pixelSize: 22; bold: true }
+                font { family: view.sys.fontDisplay; pixelSize: 22; bold: false }
                 readOnly: !view.renaming
                 text: view.folder ? view.folder.name : ""
                 onActiveFocusChanged: if (!activeFocus && view.renaming) commitName()
@@ -1390,7 +1390,7 @@ FocusScope {
                 anchors.centerIn: parent
                 text: String(ai.app ? (ai.app.name || "?") : "?").charAt(0).toUpperCase()
                 color: "#ffffff"
-                font { family: (ai.v ? ai.v.sys.fontFam : "sans"); pixelSize: Math.max(8, ai.width * 0.42); bold: true }
+                font { family: (ai.v ? ai.v.sys.fontFam : "sans"); pixelSize: Math.max(8, ai.width * 0.42); bold: false }
             }
         }
     }
@@ -1495,7 +1495,7 @@ FocusScope {
                         elide: Text.ElideRight
                         text: deleg.modelData.label
                         color: view.sys.colFg
-                        font { family: view.sys.fontFam; pixelSize: 12 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                     MouseArea {
                         id: mItemMa

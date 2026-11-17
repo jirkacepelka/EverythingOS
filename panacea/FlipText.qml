@@ -10,7 +10,7 @@ Item {
     property color  textColor: "#ffffff"
     property string fontFam: "monospace"
     property int    pixelSize: 15
-    property bool   bold: true
+    property bool   bold: false
     property int    dur: 190
     // Минимальная ширина: не даём пилюле дёргаться при переходе 9 -> 10
     property real   minWidth: 0

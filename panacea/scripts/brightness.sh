@@ -76,7 +76,16 @@ cmd_detect() {
 
 # ------------------------------------------------------------------- backlight
 bl_get() { brightnessctl -d "$1" -m 2>/dev/null | LC_ALL=C awk -F, '{gsub("%","",$4); print $4}'; }
-bl_set() { brightnessctl -d "$1" -q s "$2%" 2>/dev/null; }
+bl_set() {
+    brightnessctl -d "$1" -q s "$2%" 2>/dev/null && return 0
+    # No write access to sysfs (no udev rule / video group): ask systemd-logind,
+    # which lets the active session set the backlight without root.
+    local max raw
+    max=$(cat "/sys/class/backlight/$1/max_brightness" 2>/dev/null) || return 1
+    raw=$(( (max * $2 + 50) / 100 )); [ "$raw" -lt 1 ] && raw=1
+    busctl call org.freedesktop.login1 /org/freedesktop/login1/session/auto \
+        org.freedesktop.login1.Session SetBrightness ssu backlight "$1" "$raw" >/dev/null 2>&1
+}
 
 # ------------------------------------------------------------------------- DDC
 # Карта шин. Строки «шина<TAB>разъём»; разъём — то же имя, каким монитор

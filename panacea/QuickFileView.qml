@@ -61,9 +61,9 @@ ColumnLayout {
             }
             Text {
                 Layout.fillWidth: true; text: row.label; color: view.sys.colFg; elide: Text.ElideRight
-                font { family: view.sys.fontFam; pixelSize: 12; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
-            Text { text: "›"; color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: 18 } }
+            Text { text: "›"; color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 } }
         }
         MouseArea { id: hit; anchors.fill: parent; enabled: row.available; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: row.triggered() }
     }
@@ -79,8 +79,8 @@ ColumnLayout {
             }
             ColumnLayout {
                 Layout.fillWidth: true; spacing: 2
-                Text { text: view.sys.tr("Быстрые действия"); color: view.sys.colFg; font { family: view.sys.fontFam; pixelSize: 15; bold: true } }
-                Text { Layout.fillWidth: true; text: view.paths.length === 1 ? view.filename : view.paths.length + " " + view.sys.tr("файлов"); elide: Text.ElideMiddle; color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: 10 } }
+                Text { text: view.sys.tr("Быстрые действия"); color: view.sys.colFg; font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false } }
+                Text { Layout.fillWidth: true; text: view.paths.length === 1 ? view.filename : view.paths.length + " " + view.sys.tr("файлов"); elide: Text.ElideMiddle; color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 } }
             }
         }
         Item { Layout.preferredHeight: 2 }
@@ -103,7 +103,7 @@ ColumnLayout {
             Layout.fillWidth: true; visible: view.busy || view.result.length > 0
             text: view.busy ? view.sys.tr("Выполняется…") : view.result
             color: view.sys.colMuted; wrapMode: Text.WrapAnywhere
-            font { family: view.sys.fontFam; pixelSize: 10 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

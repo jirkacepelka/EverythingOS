@@ -98,7 +98,7 @@ ColumnLayout {
             text: page.sys.tr("Bounce — насколько смоделированный осциллятор перелетает цель, прежде чем осесть на ней.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 }

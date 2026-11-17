@@ -116,8 +116,8 @@ Item {
                         color: view.sys ? view.sys.colFg : "#ffffff"
                         font {
                             family: view.sys ? view.sys.fontFam : "sans-serif"
-                            pixelSize: 17
-                            bold: true
+                            pixelSize: view.sys.fontSize - 3
+                            bold: false
                         }
                         elide: Text.ElideRight
                     }
@@ -128,7 +128,7 @@ Item {
                         color: view.sys ? view.sys.colMuted : "#888888"
                         font {
                             family: view.sys ? view.sys.fontFam : "sans-serif"
-                            pixelSize: 11
+                            pixelSize: view.sys.fontSize - 3
                         }
                     }
                 }
@@ -178,7 +178,7 @@ Item {
                         anchors.centerIn: parent
                         text: "✕"
                         color: closeMa.containsMouse ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colFg : "#ffffff")
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 12; bold: true }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                     }
 
                     MouseArea {
@@ -234,7 +234,7 @@ Item {
                                     Text {
                                         text: (view.activeDay ? view.activeDay.tempMax : (view.currentObj ? view.currentObj.temp : (view.sys && view.sys.weatherTemp ? view.sys.weatherTemp : "--"))) + "°"
                                         color: view.sys ? view.sys.colFg : "#ffffff"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 36; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 36; bold: false }
                                     }
 
                                     // Плашка диапазона температур дня
@@ -250,7 +250,7 @@ Item {
                                             anchors.centerIn: parent
                                             text: view.activeDay ? (view.activeDay.tempMin + "° … " + view.activeDay.tempMax + "°") : ""
                                             color: view.sys ? view.sys.colMuted : "#888"
-                                            font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 10; bold: true }
+                                            font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                         }
                                     }
                                 }
@@ -260,7 +260,7 @@ Item {
                                           ? view.activeDay.desc
                                           : (view.currentObj ? view.currentObj.desc : (view.sys && view.sys.weatherDesc ? view.sys.weatherDesc : "—"))
                                     color: view.sys ? view.sys.colFg : "#ffffff"
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 12; bold: true }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                     elide: Text.ElideRight
                                     Layout.fillWidth: true
                                 }
@@ -299,13 +299,13 @@ Item {
                                     Text {
                                         text: view.isEn ? "FEELS LIKE" : "ОЩУЩАЕТСЯ"
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; letterSpacing: 0.9; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 0.9; bold: false }
                                     }
                                 }
                                 Text {
                                     text: (view.activeDay ? view.activeDay.feelsMax : (view.currentObj ? view.currentObj.feels : (view.sys && view.sys.weatherTemp ? view.sys.weatherTemp : "--"))) + "°"
                                     color: view.sys ? view.sys.colFg : "#fff"
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: true }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: false }
                                 }
                             }
                         }
@@ -333,13 +333,13 @@ Item {
                                     Text {
                                         text: view.activeDay ? (view.isEn ? "RAIN" : "ОСАДКИ") : (view.isEn ? "HUMIDITY" : "ВЛАЖНОСТЬ")
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; letterSpacing: 0.9; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 0.9; bold: false }
                                     }
                                 }
                                 Text {
                                     text: view.activeDay ? (view.activeDay.pop + "%") : ((view.currentObj ? view.currentObj.humidity : (view.sys && view.sys.weatherHumidity ? view.sys.weatherHumidity : "--")) + "%")
                                     color: (view.activeDay && view.activeDay.pop > 40) ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colFg : "#fff")
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: true }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: false }
                                 }
                             }
                         }
@@ -367,7 +367,7 @@ Item {
                                     Text {
                                         text: view.isEn ? "WIND" : "ВЕТЕР"
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; letterSpacing: 0.9; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 0.9; bold: false }
                                     }
                                 }
                                 RowLayout {
@@ -375,13 +375,13 @@ Item {
                                     Text {
                                         text: String(view.activeDay ? view.activeDay.wind : (view.currentObj ? view.currentObj.wind : (view.sys && view.sys.weatherWind ? view.sys.weatherWind : "--")))
                                         color: view.sys ? view.sys.colFg : "#fff"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: false }
                                     }
                                     Text {
                                         Layout.alignment: Qt.AlignBaseline
                                         text: view.isEn ? "m/s" : "м/с"
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 13; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                     }
                                 }
                             }
@@ -410,7 +410,7 @@ Item {
                                     Text {
                                         text: view.isEn ? "PRESSURE" : "ДАВЛЕНИЕ"
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; letterSpacing: 0.9; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 0.9; bold: false }
                                     }
                                 }
                                 RowLayout {
@@ -418,13 +418,13 @@ Item {
                                     Text {
                                         text: view.currentObj ? String(view.currentObj.pressure) : "--"
                                         color: view.sys ? view.sys.colFg : "#fff"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: false }
                                     }
                                     Text {
                                         Layout.alignment: Qt.AlignBaseline
                                         text: view.isEn ? "hPa" : "гПа"
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 13; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                     }
                                 }
                             }
@@ -453,7 +453,7 @@ Item {
                                     Text {
                                         text: view.isEn ? "UV INDEX" : "УФ-ИНДЕКС"
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; letterSpacing: 0.9; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 0.9; bold: false }
                                     }
                                 }
                                 RowLayout {
@@ -461,14 +461,14 @@ Item {
                                     Text {
                                         text: view.activeDay ? String(view.activeDay.uv) : "--"
                                         color: (view.activeDay && view.activeDay.uv >= 6) ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colFg : "#fff")
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 26; bold: false }
                                     }
                                     Text {
                                         Layout.alignment: Qt.AlignBaseline
                                         visible: view.activeDay !== null
                                         text: (view.activeDay && view.activeDay.uv >= 6) ? (view.isEn ? "High" : "Высокий") : (view.isEn ? "Moderate" : "Умерен.")
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 12; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                     }
                                 }
                             }
@@ -497,7 +497,7 @@ Item {
                                     Text {
                                         text: view.isEn ? "SUN" : "СОЛНЦЕ"
                                         color: view.sys ? view.sys.colMuted : "#888"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; letterSpacing: 0.9; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 0.9; bold: false }
                                     }
                                 }
                                 Text {
@@ -506,7 +506,7 @@ Item {
                                     horizontalAlignment: Text.AlignHCenter
                                     text: (view.activeDay && view.activeDay.sunrise && view.activeDay.sunset) ? (view.activeDay.sunrise + " / " + view.activeDay.sunset) : "--:--"
                                     color: view.sys ? view.sys.colFg : "#fff"
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 17; bold: true }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                 }
                             }
                         }
@@ -523,13 +523,13 @@ Item {
                             Text {
                                 text: view.isEn ? "HOURLY FORECAST" : "ПОЧАСОВОЙ ПРОГНОЗ"
                                 color: view.sys ? view.sys.colMuted : "#888"
-                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 10; letterSpacing: 1.1; bold: true }
+                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 1.1; bold: false }
                             }
                             Item { Layout.fillWidth: true }
                             Text {
                                 text: "◀  ▶"
                                 color: Qt.rgba(1, 1, 1, 0.25)
-                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 9 }
+                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
 
@@ -582,7 +582,7 @@ Item {
                                                 Layout.alignment: Qt.AlignHCenter
                                                 text: superreg.index === 0 ? (view.isEn ? "Now" : "Сейчас") : superreg.modelData.time
                                                 color: superreg.index === 0 ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colMuted : "#888")
-                                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 10; bold: superreg.index === 0 }
+                                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: superreg.index === 0 }
                                             }
 
                                             Text {
@@ -596,14 +596,14 @@ Item {
                                                 Layout.alignment: Qt.AlignHCenter
                                                 text: superreg.modelData.temp + "°"
                                                 color: view.sys ? view.sys.colFg : "#ffffff"
-                                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 12; bold: true }
+                                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                             }
 
                                             Text {
                                                 Layout.alignment: Qt.AlignHCenter
                                                 text: superreg.modelData.pop > 0 ? ("💧" + superreg.modelData.pop + "%") : " "
                                                 color: superreg.modelData.pop > 40 ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colMuted : "#888")
-                                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 9 }
+                                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
                                             }
                                         }
 
@@ -630,7 +630,7 @@ Item {
                     Text {
                         text: view.isEn ? "7-DAY FORECAST" : "ПРОГНОЗ НА 7 ДНЕЙ"
                         color: view.sys ? view.sys.colMuted : "#888"
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 10; letterSpacing: 1.1; bold: true }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; letterSpacing: 1.1; bold: false }
                     }
 
                     ColumnLayout {
@@ -666,7 +666,7 @@ Item {
                                     color: dayItem.index === 0 ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colFg : "#ffffff")
                                     font {
                                         family: view.sys ? view.sys.fontFam : "sans-serif"
-                                        pixelSize: 11
+                                        pixelSize: view.sys.fontSize - 3
                                         bold: dayItem.index === 0 || view.selectedDayIndex === dayItem.index
                                     }
                                     elide: Text.ElideRight
@@ -708,7 +708,7 @@ Item {
                                     horizontalAlignment: Text.AlignRight
                                     text: dayItem.modelData.tempMin + "°"
                                     color: view.sys ? view.sys.colMuted : "#888"
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11 }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
                                 }
 
                                 // Макс. температура (прижата к правому краю карточки)
@@ -721,7 +721,7 @@ Item {
                                     horizontalAlignment: Text.AlignLeft
                                     text: dayItem.modelData.tempMax + "°"
                                     color: view.sys ? view.sys.colFg : "#fff"
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; bold: true }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                 }
 
                                 // Графическая температурная полоска дня

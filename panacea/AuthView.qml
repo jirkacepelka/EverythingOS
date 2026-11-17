@@ -68,7 +68,7 @@ Item {
                 Text {
                     text: view.sys.tr("Требуются права")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -118,7 +118,7 @@ Item {
                                      : view.sys.tr("Пароль")
                     color: view.sys.colFg
                     placeholderTextColor: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     background: null
                     enabled: view.flow ? view.flow.isResponseRequired : false
 
@@ -180,7 +180,7 @@ Item {
                     anchors.centerIn: parent
                     text: view.sys.tr("Подтвердить")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 MouseArea {
                     id: okMa

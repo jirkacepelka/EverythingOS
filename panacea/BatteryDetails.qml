@@ -21,7 +21,7 @@ ColumnLayout {
               ? (sys.batteryCharging ? sys.tr("До полной зарядки: ") : sys.tr("Осталось примерно: ")) + view.duration(sys.batteryRemainingSeconds)
               : sys.tr("Время работы пока недоступно")
         color: sys.colFg
-        font { family: sys.fontFam; pixelSize: 12; bold: true }
+        font { family: sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
     }
     Text {
         Layout.fillWidth: true
@@ -29,13 +29,13 @@ ColumnLayout {
             : sys.powerProfile === "performance" ? sys.tr("Максимум отдаёт приоритет производительности.")
             : sys.tr("Баланс сочетает производительность и расход энергии.")
         color: sys.colMuted; wrapMode: Text.WordWrap
-        font { family: sys.fontFam; pixelSize: 10 }
+        font { family: sys.fontFam; pixelSize: view.sys.fontSize - 3 }
     }
     Text {
         Layout.fillWidth: true
         text: sys.tr("История заряда · последние 24 часа")
         color: sys.colFg
-        font { family: sys.fontFam; pixelSize: 11; bold: true }
+        font { family: sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
     }
     Rectangle {
         Layout.fillWidth: true; Layout.preferredHeight: 60
@@ -61,14 +61,14 @@ ColumnLayout {
             anchors.centerIn: parent; visible: view.history.length < 2
             text: view.sys.tr("История накапливается во время работы оболочки")
             color: view.sys.colMuted
-            font { family: view.sys.fontFam; pixelSize: 10 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
     Text {
         Layout.fillWidth: true
         visible: view.info.cycle !== null && view.info.cycle !== undefined && view.info.cycle >= 0
         text: view.sys.tr("Циклы зарядки: ") + view.info.cycle
-        color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: 10 }
+        color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
     }
     ColumnLayout {
         Layout.fillWidth: true; spacing: 5
@@ -76,7 +76,7 @@ ColumnLayout {
         Text {
             Layout.fillWidth: true
             text: view.sys.tr("Пороги зарядки: ") + view.info.start + "–" + view.info.end + "%"
-            color: view.sys.colFg; font { family: view.sys.fontFam; pixelSize: 11; bold: true }
+            color: view.sys.colFg; font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
         }
         RowLayout {
             Layout.fillWidth: true
@@ -100,7 +100,7 @@ ColumnLayout {
                         anchors.centerIn: parent
                         text: preset.modelData.start + "–" + preset.modelData.end + "%"
                         color: preset.selected || hit.containsMouse ? view.sys.colFg : view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: 11; bold: preset.selected }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: preset.selected }
                     }
                     MouseArea {
                         id: hit
@@ -115,7 +115,7 @@ ColumnLayout {
         Text {
             Layout.fillWidth: true; wrapMode: Text.WordWrap
             text: view.sys.tr("Изменение требует прав администратора; TLP может восстановить свои настройки.")
-            color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: 10 }
+            color: view.sys.colMuted; font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

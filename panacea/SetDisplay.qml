@@ -147,7 +147,7 @@ ColumnLayout {
             text: page.sys.tr("«За фокусом» — остров переезжает на тот экран, где вы сейчас работаете.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
     }
 
@@ -180,7 +180,7 @@ ColumnLayout {
                     Text {
                         text: card.modelData.name
                         color: page.sys.colFg
-                        font { family: page.sys.fontDisplay; pixelSize: page.sys.fontSize }
+                        font { family: page.sys.fontDisplay; pixelSize: page.sys.fontSize - 3 }
                     }
                     Text {
                         Layout.fillWidth: true
@@ -188,7 +188,7 @@ ColumnLayout {
                         text: card.modelData.desc
                         color: page.sys.colMuted
                         elide: Text.ElideRight
-                        font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                        font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                     }
                 }
 
@@ -237,7 +237,7 @@ ColumnLayout {
                                   + "что не установлен драйвер видеокарты.")
                 color: page.sys.colCrit
                 wrapMode: Text.WordWrap
-                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             }
 
             // Раскладка. Первый экран — точка отсчёта, остальные встают
@@ -287,7 +287,7 @@ ColumnLayout {
                                     + "Обычно это включается в его меню пунктом DDC/CI.")
                 color: page.sys.colMuted
                 wrapMode: Text.WordWrap
-                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             }
 
             // Цифровая интенсивность стоит сразу под яркостью: обе про то,
@@ -347,14 +347,14 @@ ColumnLayout {
                 Text {
                     text: page.sys.tr("Обнаружить экраны")
                     color: page.sys.colFg
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 1 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
                 Text {
                     Layout.fillWidth: true
                     text: page.sys.tr("Перечитать список подключённых мониторов.")
                     color: page.sys.colMuted
                     wrapMode: Text.WordWrap
-                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+                    font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 }
             }
 

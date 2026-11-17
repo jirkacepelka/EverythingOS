@@ -46,7 +46,7 @@ Item {
         Behavior on color { ColorAnimation { duration: 150 } }
         Behavior on border.color { ColorAnimation { duration: 150 } }
         scale: chipMa.pressed ? 0.94 : 1.0
-        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         Text {
             id: chipText
@@ -167,7 +167,7 @@ Item {
                 text: microw.label
                 color: microw.active ? view.sys.colFg : view.sys.colMuted
                 elide: Text.ElideRight
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
 
@@ -202,7 +202,7 @@ Item {
         border.width: 1
         Behavior on color { ColorAnimation { duration: 150 } }
         scale: bigMa.pressed ? 0.96 : 1.0
-        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         RowLayout {
             anchors.centerIn: parent
@@ -218,7 +218,7 @@ Item {
             Text {
                 text: bigbutton.label
                 color: view.sys.colFg
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
         }
 
@@ -267,7 +267,7 @@ Item {
                         : view.sys.recPaused  ? view.sys.tr("Пауза")
                                               : view.sys.tr("Идёт запись")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -277,7 +277,7 @@ Item {
                           : view.sys.tr("Готово к записи")
                     color: view.sys.recError.length ? view.sys.colCrit : view.sys.colMuted
                     elide: Text.ElideMiddle
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
 
@@ -286,7 +286,7 @@ Item {
                 visible: view.sys.recActive
                 text: view.sys.recTimeText
                 color: view.sys.recPaused ? view.sys.colWarn : view.sys.colCrit
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 4; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
         }
 
@@ -306,8 +306,8 @@ Item {
                 text: "FPS"
                 color: view.sys.colMuted
                 font {
-                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4
-                    bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                    bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
                 }
             }
             Repeater {
@@ -338,8 +338,8 @@ Item {
                 text: view.sys.tr("Папка")
                 color: view.sys.colMuted
                 font {
-                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4
-                    bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                    bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
                 }
             }
             Repeater {
@@ -457,7 +457,7 @@ Item {
             text: view.sys.tr("Файл ляжет в ") + view.sys.cfg.recDir
             color: Qt.rgba(1, 1, 1, 0.30)
             elide: Text.ElideMiddle
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

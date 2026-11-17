@@ -78,7 +78,7 @@ Item {
             anchors.centerIn: parent
             text: parent.sym
             color: view.sys.colMuted
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
         MouseArea {
             id: navMa
@@ -107,7 +107,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     text: view.monthTitle
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 2; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                     fontSizeMode: Text.HorizontalFit
                     minimumPixelSize: 12
                 }
@@ -135,7 +135,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     text: modelData
                     color: index >= 5 ? Qt.rgba(1, 0.42, 0.42, 0.55) : view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
             }
         }
@@ -174,7 +174,7 @@ Item {
                                                        : view.sys.colFg
                         font {
                             family: view.sys.fontFam
-                            pixelSize: view.sys.fontSize - 2
+                            pixelSize: view.sys.fontSize - 3
                             bold: cell.modelData.isToday
                         }
                     }
@@ -203,7 +203,7 @@ Item {
                 anchors.centerIn: parent
                 text: view.sys.tr("Сегодня")
                 color: view.sys.colMuted
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
             MouseArea {
                 id: todayMa

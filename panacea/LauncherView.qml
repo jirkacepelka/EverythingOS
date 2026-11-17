@@ -16,6 +16,20 @@ FocusScope {
     id: view
     property var sys
 
+    // Vložený do přehledu ploch (hledání jako v GNOME): po spuštění aplikace
+    // se zavře celý přehled, Esc jen ukončí hledání.
+    property bool embedded: false
+    signal escaped()
+    signal prefilled()
+    function focusInput() { input.forceActiveFocus(); }
+    function done() {
+        view.sys.closeLauncher();
+        if (view.sys.overviewOpen) view.sys.closeOverview();
+    }
+    function handleEscape() {
+        view.sys.closeLauncher();
+    }
+
     implicitHeight: col.implicitHeight
 
     property string query: ""
@@ -135,7 +149,7 @@ FocusScope {
         // отдельного «вы уверены?» на пути к ней быть не должно — человек
         // попросил перезагрузиться, а не поговорить об этом.
         sys.bootIntoSystem(app.bootId);
-        sys.closeLauncher();
+        view.done();
     }
 
     // Всё, что лаунчер показывает помимо приложений.
@@ -237,14 +251,14 @@ FocusScope {
         var url = /^(https?:\/\/|www\.)\S+$/.test(q) ? (q.indexOf("http") === 0 ? q : "https://" + q)
                 : view.engine().u + encodeURIComponent(q);
         sys.openFileWith(url, "");
-        sys.closeLauncher();
+        view.done();
     }
     function ask() {
         if (view.aiBusy || !view.askText.length) return;
         if (view.aiAnswer.length) {          // второй Enter — копировать ответ
             pCopyCalc.command = ["sh", "-c", "printf '%s' \"$1\" | wl-copy", "_", view.aiAnswer];
             pCopyCalc.running = true;
-            sys.closeLauncher();
+            view.done();
             return;
         }
         view.aiBusy = true;
@@ -295,7 +309,7 @@ FocusScope {
         if (mathResult.length === 0) return;
         pCopyCalc.command = ["sh", "-c", "printf '%s' \"$1\" | wl-copy", "_", mathResult];
         pCopyCalc.running = true;
-        sys.closeLauncher();
+        view.done();
     }
 
     onQueryChanged: index = 0
@@ -319,7 +333,7 @@ FocusScope {
         if (app.builtin === "ai") { ask(); return; }
         rememberApp(app);
         app.execute();
-        sys.closeLauncher();
+        view.done();
     }
     function move(delta) {
         if (results.length === 0) return;
@@ -364,22 +378,37 @@ FocusScope {
                     placeholderText: view.sys.tr("Поиск приложений…")
                     color: view.sys.colFg
                     placeholderTextColor: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: 13 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     background: null
                     onTextChanged: view.query = text
+
+                    // předvyplnění z přehledu ploch (první napsané písmeno)
+                    function takePrefill() {
+                        if (!view.sys.launcherPrefill) return;
+                        text = view.sys.launcherPrefill;
+                        view.sys.launcherPrefill = "";
+                        cursorPosition = text.length;
+                        forceActiveFocus();
+                        view.prefilled();
+                    }
+                    Component.onCompleted: takePrefill()
+                    Connections {
+                        target: view.sys
+                        function onLauncherPrefillChanged() { input.takePrefill(); }
+                    }
 
                     Keys.onDownPressed:   view.move(1)
                     Keys.onUpPressed:     view.move(-1)
                     Keys.onReturnPressed: view.launch()
                     Keys.onEnterPressed:  view.launch()
-                    Keys.onEscapePressed: view.sys.closeLauncher()
+                    Keys.onEscapePressed: view.handleEscape()
                     Keys.onTabPressed:    view.move(1)
                 }
                 Text {
                     visible: view.results.length > 0
                     text: view.results.length
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: 11 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
         }
@@ -414,12 +443,12 @@ FocusScope {
                     text: view.mathResult
                     color: view.sys.colFg
                     elide: Text.ElideRight
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 3; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     text: "Enter"
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
 
@@ -451,7 +480,7 @@ FocusScope {
                     color: view.aiBusy ? view.sys.colMuted : view.sys.colFg
                     wrapMode: Text.Wrap
                     textFormat: Text.PlainText
-                    font { family: view.sys.fontFam; pixelSize: 13 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
         }
@@ -533,7 +562,7 @@ FocusScope {
                                 visible: String(row.modelData.glyph || "").length === 0
                                 text: String(row.modelData.name || "?").charAt(0).toUpperCase()
                                 color: view.sys.colFg
-                                font { family: view.sys.fontFam; pixelSize: 12; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: 12; bold: false }
                             }
                         }
                     }
@@ -548,7 +577,7 @@ FocusScope {
                             elide: Text.ElideRight
                             font {
                                 family: view.sys.fontFam
-                                pixelSize: 13
+                                pixelSize: view.sys.fontSize - 3
                                 bold: row.index === view.index
                             }
                         }
@@ -558,7 +587,7 @@ FocusScope {
                             text: row.modelData.genericName || ""
                             color: view.sys.colMuted
                             elide: Text.ElideRight
-                            font { family: view.sys.fontFam; pixelSize: 10 }
+                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         }
                     }
 
@@ -566,7 +595,7 @@ FocusScope {
                         visible: row.index === view.index
                         text: "󰌑"
                         color: view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: 12 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
 
@@ -587,7 +616,7 @@ FocusScope {
             text: view.sys.tr("Ничего не найдено")
             color: view.sys.colMuted
             horizontalAlignment: Text.AlignHCenter
-            font { family: view.sys.fontFam; pixelSize: 11 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

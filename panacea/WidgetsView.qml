@@ -134,7 +134,7 @@ Item {
         elide: Text.ElideRight
         font {
             family: view.sys ? view.sys.fontFam : "sans-serif"
-            pixelSize: 9
+            pixelSize: view.sys.fontSize - 3
             capitalization: Font.AllUppercase
             letterSpacing: 1.1
         }
@@ -177,8 +177,8 @@ Item {
                     color: (view.sys && view.sys.weekend) ? view.sys.colCrit : (view.sys ? view.sys.colMuted : "#888888")
                     font {
                         family: view.sys ? view.sys.fontFam : "sans-serif"
-                        pixelSize: 11
-                        bold: true
+                        pixelSize: view.sys.fontSize - 3
+                        bold: false
                     }
                 }
 
@@ -443,7 +443,7 @@ Item {
                         color: view.sys ? view.sys.colMuted : "#888888"
                         horizontalAlignment: Text.AlignHCenter
                         elide: Text.ElideRight
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11 }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
 
@@ -506,7 +506,7 @@ Item {
                                     maximumLineCount: 2
                                     elide: Text.ElideRight
                                     lineHeight: 0.95
-                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11 }
+                                    font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
                                 }
 
                                 // Иконка-подсказка: клик переключит на монитор системы
@@ -539,7 +539,7 @@ Item {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: (view.sys && view.sys.weatherReady) ? (view.sys.weatherHumidity + "%") : "--"
                                         color: view.sys ? view.sys.colFg : "#ffffff"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 15; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                     }
 
                                     Caption {
@@ -567,7 +567,7 @@ Item {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: (view.sys && view.sys.weatherReady) ? String(view.sys.weatherWind) : "--"
                                         color: view.sys ? view.sys.colFg : "#ffffff"
-                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 15; bold: true }
+                                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                                     }
 
                                     Caption {
@@ -694,7 +694,7 @@ Item {
                             Text {
                                 text: (view.sys && view.sys.loadMem >= 0) ? (view.sys.loadMem + "%") : "--%"
                                 color: view.sys ? view.sys.colFg : "#ffffff"
-                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; bold: true }
+                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             Caption { text: "RAM"; font.pixelSize: 8 }
                         }
@@ -708,7 +708,7 @@ Item {
                                 Layout.alignment: Qt.AlignRight
                                 text: (view.sys && view.sys.loadDisk >= 0) ? (view.sys.loadDisk + "%") : "--%"
                                 color: view.sys ? view.sys.colCrit : "#d71921"
-                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 11; bold: true }
+                                font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             Caption { Layout.alignment: Qt.AlignRight; text: "SSD"; font.pixelSize: 8 }
                         }
@@ -756,7 +756,7 @@ Item {
                         text: view.progressMode === "day"
                               ? (view.sys ? view.sys.tr("ПРОГРЕСС ДНЯ") : "DAY PROGRESS")
                               : (view.sys ? view.sys.tr("ПРОГРЕСС ГОДА") : "YEAR PROGRESS")
-                        font.bold: true
+                        font.bold: false
                         font.pixelSize: 9
                         font.letterSpacing: 1.2
                         color: view.sys ? view.sys.colMuted : "#888888"
@@ -830,7 +830,7 @@ Item {
                         color: view.sys ? view.sys.colMuted : "#888888"
                         font {
                             family: view.sys ? view.sys.fontFam : "sans-serif"
-                            pixelSize: 10
+                            pixelSize: view.sys.fontSize - 3
                         }
                     }
 
@@ -934,7 +934,7 @@ Item {
 
                     Caption {
                         text: "SCRATCHPAD"
-                        font.bold: true
+                        font.bold: false
                         font.pixelSize: 8
                         font.letterSpacing: 1.1
                     }
@@ -967,7 +967,7 @@ Item {
                         visible: scratchEdit.text.length > 0
                         text: "×"
                         color: clearMa.containsMouse ? (view.sys ? view.sys.colCrit : "#d71921") : (view.sys ? view.sys.colMuted : "#888888")
-                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: 13; bold: true }
+                        font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3; bold: false }
                         MouseArea {
                             id: clearMa
                             anchors.fill: parent
@@ -1047,7 +1047,7 @@ Item {
                         visible: scratchEdit.text.length === 0 && !scratchEdit.activeFocus
                         font {
                             family: view.sys ? view.sys.fontFam : "sans-serif"
-                            pixelSize: 11
+                            pixelSize: view.sys.fontSize - 3
                         }
                     }
 

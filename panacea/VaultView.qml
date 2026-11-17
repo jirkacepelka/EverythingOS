@@ -106,7 +106,7 @@ FocusScope {
                 Text {
                     text: view.sys.tr("Пароли")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -170,14 +170,14 @@ FocusScope {
                     color: view.sys.colFg
                     selectByMouse: true
                     enabled: !view.sys.vaultBusy
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     onAccepted: { view.sys.unlockVault(text); text = ""; }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: pw.text.length === 0
                         text: view.sys.tr("Пароль")
                         color: Qt.rgba(1, 1, 1, 0.28)
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
 
@@ -185,7 +185,7 @@ FocusScope {
                     visible: view.sys.vaultBusy
                     text: view.sys.tr("Проверка…")
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
         }
@@ -205,7 +205,7 @@ FocusScope {
             text: view.sys.tr("Хранилище шифруется этим же паролем и закрывается само через 15 минут простоя.")
             color: Qt.rgba(1, 1, 1, 0.30)
             wrapMode: Text.WordWrap
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
 
         // ---------------------------------------------------------- поиск/+
@@ -230,14 +230,14 @@ FocusScope {
                     verticalAlignment: TextInput.AlignVCenter
                     color: view.sys.colFg
                     selectByMouse: true
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     onTextChanged: { view.query = text; view.sys.touchVault(); }
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: search.text.length === 0
                         text: view.sys.tr("Поиск")
                         color: Qt.rgba(1, 1, 1, 0.28)
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
             }
@@ -329,8 +329,8 @@ FocusScope {
                     color: view.sys.browserError.length ? view.sys.colCrit : view.sys.colMuted
                     elide: Text.ElideRight
                     font {
-                        family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4
-                        bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                        family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                        bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
                     }
                 }
 
@@ -347,7 +347,7 @@ FocusScope {
                         anchors.centerIn: parent
                         text: view.sys.tr("Добавить все")
                         color: view.sys.colOk
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                     MouseArea {
                         id: allMa
@@ -420,7 +420,7 @@ FocusScope {
                                 elide: Text.ElideRight
                                 font {
                                     family: view.sys.fontFam
-                                    pixelSize: view.sys.fontSize - 5
+                                    pixelSize: view.sys.fontSize - 3
                                 }
                             }
                         }
@@ -520,7 +520,7 @@ FocusScope {
                                 text: String(row.modelData.label)
                                 color: view.sys.colFg
                                 elide: Text.ElideRight
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             Text {
                                 Layout.fillWidth: true
@@ -529,7 +529,7 @@ FocusScope {
                                       : String(row.modelData.at)
                                 color: view.sys.colMuted
                                 elide: Text.ElideRight
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
 
@@ -651,7 +651,7 @@ FocusScope {
                                     : view.sys.tr("Пока ни одного пароля")
             color: view.sys.colMuted
             horizontalAlignment: Text.AlignHCenter
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

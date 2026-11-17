@@ -1431,6 +1431,7 @@ PanelWindow {
     // оставаться одинаковой, а не растягиваться вместе с ползунком.
     readonly property real dotHBig:   root.fontSize + 10   // часы в панели
     readonly property real dotHClock: root.fontSize - 1    // часы в острове
+    readonly property real dotHPill:  (root.fontSize - 3) * 0.72   // všechna čísla a texty v liště: jednotných 13 px
     readonly property real dotHSmall: root.fontSize - 3    // числа при значках
     readonly property real dotHTiny:  root.fontSize - 5    // сводка нагрузки
 
@@ -1658,7 +1659,7 @@ PanelWindow {
     SequentialAnimation {
         id: fileAbsorbAnimation
         NumberAnimation { target: root; property: "fileAbsorb"; to: 1; duration: root.noMotion ? 0 : 130; easing.type: Easing.InQuad }
-        NumberAnimation { target: root; property: "fileAbsorb"; to: 0; duration: root.noMotion ? 0 : 260; easing.type: Easing.OutBack }
+        NumberAnimation { target: root; property: "fileAbsorb"; to: 0; duration: root.noMotion ? 0 : 260; easing.type: Easing.OutBack; easing.overshoot: 0.8 }
     }
     Timer {
         id: quickFileOpenTimer
@@ -1822,6 +1823,8 @@ PanelWindow {
     // wayland-хэндл (по нему ScreencopyView берёт живой кадр). Оба лежат
     // на HyprlandToplevel, поэтому собираем их в один список.
     property bool overviewOpen: false
+    // Text napsaný v přehledu ploch: otevře launcher a předvyplní hledání
+    property string launcherPrefill: ""
     function openOverview() {
         if (Compositor.isNiri) {
             Compositor.refresh();
@@ -4574,6 +4577,7 @@ PanelWindow {
         }
         function launcher(): void { root.toggleLauncher(); }
         function overview(): void { root.toggleOverview(); }
+        function search(text: string): void { root.launcherPrefill = text; root.openLauncher(); }
         function launchpad(): void { root.toggleLaunchpad(); }
         // Всегда плитки Wi-Fi/Bluetooth, даже когда играет музыка
         function controls(): void { root.togglePage("main"); }
@@ -4918,7 +4922,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: "󰈙"
                         color: root.colOn
-                        font { family: root.fontFam; pixelSize: 17 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                         scale: Math.max(0.25, 1 - root.fileAbsorb * 0.75)
                         opacity: Math.max(0.3, 1 - root.fileAbsorb * 0.7)
                     }
@@ -4928,12 +4932,12 @@ PanelWindow {
                     Text {
                         text: root.tr("Отпустите файл")
                         color: root.colFg
-                        font { family: root.fontFam; pixelSize: 12; bold: true }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                     }
                     Text {
                         text: root.tr("Быстрые действия")
                         color: root.colMuted
-                        font { family: root.fontFam; pixelSize: 10 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                     }
                 }
             }
@@ -5369,12 +5373,12 @@ PanelWindow {
                         text: root.notifSummary
                         color: root.colFg
                         elide: Text.ElideRight
-                        font { family: root.fontFam; pixelSize: root.fontSize - 1; bold: true }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                     }
                     Text {
                         text: root.notifApp
                         color: root.colMuted
-                        font { family: root.fontFam; pixelSize: root.fontSize - 5 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                     }
                 }
 
@@ -5408,7 +5412,7 @@ PanelWindow {
                         required property var modelData
                         width: 30; height: 30; radius: 15
                         color: modelData.action === "panacea-allow" ? "#305f46" : "#643f45"
-                        Text { anchors.centerIn: parent; text: modelData.label; color: modelData.action === "panacea-allow" ? "#9be0b1" : "#f0b3b6"; font { pixelSize: 17; bold: true } }
+                        Text { anchors.centerIn: parent; text: modelData.label; color: modelData.action === "panacea-allow" ? "#9be0b1" : "#f0b3b6"; font { pixelSize: root.fontSize - 3; bold: false } }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.replyAgentApproval(modelData.action) }
                     }
                 }
@@ -5420,7 +5424,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignTop
                 text: "×"
                 color: closeMa.containsMouse ? root.colFg : root.colMuted
-                font { family: root.fontFam; pixelSize: root.fontSize + 2 }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 Behavior on color { ColorAnimation { duration: 150 } }
                 MouseArea {
                     id: closeMa
@@ -5491,14 +5495,14 @@ PanelWindow {
                         : root.tr("Подключено")
                     color: (root.btToastDisconnected || root.btToastLowBatt) ? root.colCrit : root.colMuted
                     transform: Translate { y: 2 }
-                    font { family: root.fontFam; pixelSize: root.fontSize - 4 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
                 Text {
                     Layout.maximumWidth: 220
                     text: root.btToastName
                     color: root.colFg
                     elide: Text.ElideRight
-                    font { family: root.fontFam; pixelSize: root.fontSize + 1; bold: true }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                 }
             }
 
@@ -5581,7 +5585,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: String(root.btConnectedBattery)
                         color: root.btConnectedBattery <= 20 ? root.colCrit : root.colFg
-                        font { family: root.fontFam; pixelSize: root.fontSize - 6; bold: true }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                     }
                 }
 
@@ -5639,7 +5643,7 @@ PanelWindow {
                         : root.wifiToastQuality > 66 ? "󰤨"
                         : root.wifiToastQuality > 33 ? "󰤥" : "󰤟"
                     color: root.wifiToastDisconnected ? root.colCrit : root.colFg
-                    font { family: root.fontFam; pixelSize: 22 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
             }
 
@@ -5652,14 +5656,14 @@ PanelWindow {
                     text: root.wifiToastDisconnected ? root.tr("Отключено") : root.tr("Подключено")
                     color: root.wifiToastDisconnected ? root.colCrit : root.colMuted
                     transform: Translate { y: 2 }
-                    font { family: root.fontFam; pixelSize: root.fontSize - 4 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
                 Text {
                     Layout.maximumWidth: 220
                     text: root.wifiToastSsid
                     color: root.colFg
                     elide: Text.ElideRight
-                    font { family: root.fontFam; pixelSize: root.fontSize + 1; bold: true }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                 }
             }
 
@@ -5742,7 +5746,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: String(root.wifiToastQuality)
                         color: root.wifiToastQuality <= 25 ? root.colCrit : root.colFg
-                        font { family: root.fontFam; pixelSize: root.fontSize - 6; bold: true }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                     }
                 }
 
@@ -5756,7 +5760,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: "󰤮"
                         color: root.colCrit
-                        font { family: root.fontFam; pixelSize: 14 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                     }
                 }
             }
@@ -5855,13 +5859,13 @@ PanelWindow {
                 text: root.acToastKind === "lowbatt" ? root.tr("Низкий заряд батареи")
                                                       : root.tr("Заряжается")
                 color: root.acToastKind === "lowbatt" ? root.colCrit : root.colFg
-                font { family: root.fontFam; pixelSize: root.fontSize; bold: true }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             }
             Text {
                 Layout.alignment: Qt.AlignVCenter
                 text: root.batteryPct + "%"
                 color: root.acToastKind === "lowbatt" ? root.colCrit : root.colOk
-                font { family: root.fontFam; pixelSize: root.fontSize; bold: true }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             }
         }
 
@@ -5889,7 +5893,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 text: root.tr("Записать экран")
                 color: root.colFg
-                font { family: root.fontFam; pixelSize: root.fontSize; bold: true }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             }
             Repeater {
                 model: root.recPickMons
@@ -5907,7 +5911,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: modelData.name
                         color: chipMa.containsMouse ? "#ffffff" : root.colFg
-                        font { family: root.fontFam; pixelSize: root.fontSize - 2; bold: true }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                     }
                     MouseArea {
                         id: chipMa
@@ -5922,7 +5926,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 text: "×"
                 color: pickCloseMa.containsMouse ? root.colFg : root.colMuted
-                font { family: root.fontFam; pixelSize: root.fontSize + 2 }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 MouseArea {
                     id: pickCloseMa
                     anchors.fill: parent
@@ -5966,7 +5970,7 @@ PanelWindow {
                 text: root.voxState === "transcribing" ? root.tr("Расшифровываю…")
                                                        : root.tr("Слушаю…")
                 color: root.colFg
-                font { family: root.fontFam; pixelSize: root.fontSize; bold: true }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             }
 
             MicWaveBars {
@@ -6026,7 +6030,7 @@ PanelWindow {
                 horizontalAlignment: Text.AlignRight
                 text: root.osdMuted ? "—" : Math.round(root.osdValue * 100) + "%"
                 color: root.colMuted
-                font { family: root.fontFam; pixelSize: root.fontSize - 1; bold: true }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             }
         }
 
@@ -6034,7 +6038,7 @@ PanelWindow {
         // варианту, поэтому капсула не растягивается и не сужается на ходу.
         TextMetrics {
             id: mClock
-            font { family: root.fontFam; pixelSize: root.fontSize; bold: true }
+            font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             // Эталон под самый широкий вариант ИМЕННО текущего формата:
             // с секундами строка длиннее, а место под неё резервировалось
             // старое — часы налезали на соседей, и остров стоял впритык.
@@ -6044,7 +6048,7 @@ PanelWindow {
         }
         TextMetrics {
             id: mBatt
-            font { family: root.fontFam; pixelSize: root.fontSize - 1; bold: true }
+            font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             text: "100%"
         }
         TextMetrics {
@@ -6061,7 +6065,7 @@ PanelWindow {
         }
         TextMetrics {
             id: mWs
-            font { family: root.fontFam; pixelSize: root.fontSize - 1; bold: true }
+            font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
             text: "10"
         }
 
@@ -6222,7 +6226,7 @@ PanelWindow {
                         DotIcon {
                             Layout.alignment: Qt.AlignVCenter
                             code: root.weatherIcon
-                            size: root.dotHClock
+                            size: root.dotHPill
                             color: islWthMa2.containsMouse ? root.colOn : root.colFg
                         }
                         // Градусы обычным шрифтом. Точки оставлены часам и
@@ -6233,7 +6237,7 @@ PanelWindow {
                             Layout.alignment: Qt.AlignVCenter
                             text: root.weatherTemp + "°"
                             color: islWthMa2.containsMouse ? root.colOn : root.colFg
-                            font { family: root.fontFam; pixelSize: root.fontSize }
+                            font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                         }
                     }
                     
@@ -6248,13 +6252,13 @@ PanelWindow {
             }
 
             // --------------------------------------------- центр: часы
-            DotText {
+            PlainNum {
                 id: nClock
                 anchors.centerIn: parent
                 anchors.horizontalCenterOffset: mascot.active ? -80 : 0
                 Behavior on anchors.horizontalCenterOffset { enabled: !root.expanded && capsule.height <= root.pillH + 2; NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
                 value: root.timeText
-                size: root.dotHClock
+                size: root.dotHPill
                 // Жирность у точечной цифры — это плотность точек, а не
                 // толщина линии: рисовать нечем, кроме них. Просвет ужат до
                 // десятой доли, точки почти смыкаются, и цифра читается
@@ -6279,7 +6283,7 @@ PanelWindow {
                     text: (root.loadCpu >= 0 ? "CPU " + root.loadCpu + "%" + (root.loadTempCpu >= 0 ? " " + root.loadTempCpu + "°" : "") : "")
                         + (root.loadGpu >= 0 ? "  GPU " + root.loadGpu + "%" + (root.loadTempGpu >= 0 ? " " + root.loadTempGpu + "°" : "") : "")
                     color: root.colFg
-                    font { family: root.fontFam; pixelSize: root.fontSize - 5 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
 
                 // Кабель вытесняет антенну: связь идёт по нему, и значок
@@ -6325,8 +6329,8 @@ PanelWindow {
                     value: root.kbLayout
                     textColor: root.colFg
                     fontFam: root.fontFam
-                    pixelSize: root.fontSize - 4
-                    bold: true
+                    pixelSize: root.fontSize - 3
+                    bold: false
                 }
 
                 RowLayout {
@@ -6344,11 +6348,11 @@ PanelWindow {
                         font { family: root.fontFam; pixelSize: root.iconSize - 2 }
                     }
 
-                    DotText {
+                    PlainNum {
                         Layout.alignment: Qt.AlignVCenter
                         value: root.sinkAudio
                                ? String(Math.round(root.sinkAudio.volume * 100)) : "0"
-                        size: root.dotHSmall
+                        size: root.dotHPill
                         color: (root.sinkAudio && root.sinkAudio.muted)
                                ? root.colMuted : root.colFg
                     }
@@ -6368,10 +6372,10 @@ PanelWindow {
                         font { family: root.fontFam; pixelSize: root.iconSize - 2 }
                     }
 
-                    DotText {
+                    PlainNum {
                         Layout.alignment: Qt.AlignVCenter
                         value: String(root.batteryPct)
-                        size: root.dotHSmall
+                        size: root.dotHPill
                         color: root.batteryPct <= 15 && !root.acOnline
                                ? root.colCrit : root.colFg
                     }
@@ -6472,7 +6476,7 @@ PanelWindow {
                             visible: vertArt.status !== Image.Ready
                             text: "󰝚"
                             color: root.colMuted
-                            font { family: root.fontFam; pixelSize: 11 }
+                            font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                         }
                     }
 
@@ -6482,7 +6486,7 @@ PanelWindow {
                         value: root.player ? String(root.player.trackTitle || "") : ""
                         textColor: root.colFg
                         size: root.fontSize - 3
-                        bold: true
+                        bold: false
                         maxChars: 10
                     }
 
@@ -6548,7 +6552,7 @@ PanelWindow {
                     value: root.dayText
                     textColor: root.colMuted
                     size: root.fontSize - 2
-                    bold: true
+                    bold: false
                 }
 
                 // часы: часы и минуты отдельными строками
@@ -6556,26 +6560,26 @@ PanelWindow {
                     Layout.alignment: Qt.AlignHCenter
                     text: root.timeText.split(":")[0] || ""
                     color: root.colFg
-                    font { family: root.fontFam; pixelSize: root.fontSize; bold: true }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: (root.timeText.split(":")[1] || "").replace(/[^0-9]/g, "")
                     color: root.colFg
-                    font { family: root.fontFam; pixelSize: root.fontSize; bold: true }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                 }
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: String(root.wsId)
                     color: root.colFg
-                    font { family: root.fontFam; pixelSize: root.fontSize - 1; bold: true }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: root.kbLayout
                     color: root.colFg
-                    font { family: root.fontFam; pixelSize: root.fontSize - 4; bold: true }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.alignment: Qt.AlignHCenter
@@ -6583,7 +6587,7 @@ PanelWindow {
                     text: (root.loadCpu >= 0 ? "C" + root.loadCpu + "%" + (root.loadTempCpu >= 0 ? "/" + root.loadTempCpu + "°" : "") : "")
                           + (root.loadGpu >= 0 ? " G" + root.loadGpu + "%" + (root.loadTempGpu >= 0 ? "/" + root.loadTempGpu + "°" : "") : "")
                     color: root.colFg
-                    font { family: root.fontFam; pixelSize: root.fontSize - 5 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
                 Text {
                     Layout.alignment: Qt.AlignHCenter
@@ -6591,14 +6595,14 @@ PanelWindow {
                     text: root.batteryIcon
                     color: root.batteryCharging || root.acOnline ? root.colOk
                          : root.batteryPct <= 15 ? root.colCrit : root.colMuted
-                    font { family: root.fontFam; pixelSize: root.fontSize - 1 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     visible: root.batteryPresent
                     text: root.batteryPct
                     color: root.colMuted
-                    font { family: root.fontFam; pixelSize: root.fontSize - 4 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
             }
 
@@ -6676,7 +6680,7 @@ PanelWindow {
                     Row {
                         anchors.centerIn: parent; spacing: 8
                         IslandTabIcon { anchors.verticalCenter: parent.verticalCenter; width: 19; height: 19; kind: modelData.page === "main" ? "home" : "chat"; tint: root.page === modelData.page ? root.colFg : root.colMuted }
-                        Text { id: tabText; anchors.verticalCenter: parent.verticalCenter; visible: root.page === modelData.page; text: modelData.title; color: root.colFg; font { family: root.fontBody; pixelSize: 12; bold: true } }
+                        Text { id: tabText; anchors.verticalCenter: parent.verticalCenter; visible: root.page === modelData.page; text: modelData.title; color: root.colFg; font { family: root.fontBody; pixelSize: root.fontSize - 3; bold: false } }
                     }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: { root.page = modelData.page; root.holdOpen = modelData.page === "chat"; } }
                 }
@@ -6692,7 +6696,7 @@ PanelWindow {
             visible: root.expanded && !root.settingsMode && (root.page === "main" || root.page === "chat" || root.page === "vpn")
             color: root.vpnConnected ? root.colFg : (root.page === "vpn" ? Qt.rgba(1,1,1,0.12) : "transparent")
             Behavior on color { ColorAnimation { duration: root.animFast } }
-            Text { anchors.centerIn: parent; text: root.vpnBusy ? "···" : root.vpnCountry; color: root.vpnConnected ? root.colBg : root.colFg; font { family: root.fontBody; pixelSize: 12; bold: true } }
+            Text { anchors.centerIn: parent; text: root.vpnBusy ? "···" : root.vpnCountry; color: root.vpnConnected ? root.colBg : root.colFg; font { family: root.fontBody; pixelSize: root.fontSize - 3; bold: false } }
             Canvas {
                 anchors.fill: parent; anchors.margins: -3; visible: root.vpnBusy
                 onPaint: { var c = getContext("2d"); c.reset(); c.strokeStyle = root.colFg; c.lineWidth = 2; c.lineCap = "round"; c.beginPath(); c.arc(width / 2, height / 2, width / 2 - 2, 0, Math.PI * 1.4); c.stroke(); }
@@ -6936,14 +6940,14 @@ PanelWindow {
 
         scale: root.tipText.length > 0 ? 1 : 0.92
         transformOrigin: Item.Right
-        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         Text {
             id: globalTipText
             anchors.centerIn: parent
             text: root.tipText
             color: root.colFg
-            font { family: root.fontFam; pixelSize: 11 }
+            font { family: root.fontFam; pixelSize: root.fontSize - 3 }
         }
     }
 
@@ -7007,9 +7011,11 @@ LazyLoader {
         screen: root.screen
         color: "transparent"
         exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Overlay
-        WlrLayershell.keyboardFocus: root.overviewOpen ? WlrKeyboardFocus.Exclusive
-                                                       : WlrKeyboardFocus.None
+        // Top (pod Overlay s notchem): notch zůstane klikatelný a psaní v
+        // přehledu otevře launcher v notchi, ten si vezme klávesnici.
+        WlrLayershell.layer: WlrLayer.Top
+        WlrLayershell.keyboardFocus: root.overviewOpen && !root.launcherOpen ? WlrKeyboardFocus.Exclusive
+                                                                          : WlrKeyboardFocus.None
         visible: root.overviewOpen
 
         Rectangle {
@@ -7280,7 +7286,7 @@ PanelWindow {
                         : root.fileOpPhase === "sync" ? "󰆓"
                         : (!root.fileOpActive ? "󰄬" : "󰆏")
                     color: root.fileOpError.length ? root.colCrit : root.colOn
-                    font { family: root.fontFam; pixelSize: 18 }
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
                 ColumnLayout {
                     Layout.fillWidth: true
@@ -7294,7 +7300,7 @@ PanelWindow {
                             : root.fileOpLabel
                         color: root.colFg
                         elide: Text.ElideMiddle
-                        font { family: root.fontFam; pixelSize: root.fontSize - 1; bold: true }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
                     }
                     Text {
                         Layout.fillWidth: true
@@ -7310,7 +7316,7 @@ PanelWindow {
                         wrapMode: Text.Wrap
                         maximumLineCount: 2
                         elide: Text.ElideRight
-                        font { family: root.fontFam; pixelSize: root.fontSize - 4 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                     }
                 }
                 Rectangle {
@@ -7325,7 +7331,7 @@ PanelWindow {
                         anchors.centerIn: parent
                         text: root.fileOpActive ? root.tr("Отмена") : root.tr("Закрыть")
                         color: root.colFg
-                        font { family: root.fontFam; pixelSize: root.fontSize - 4 }
+                        font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                     }
                     MouseArea {
                         id: fileOpBtnMa
@@ -7376,7 +7382,7 @@ PanelWindow {
                 visible: root.fileOpActive && root.fileOpQueue.length > 0
                 text: root.tr("В очереди: ") + root.fileOpQueue.length
                 color: root.colMuted
-                font { family: root.fontFam; pixelSize: root.fontSize - 5 }
+                font { family: root.fontFam; pixelSize: root.fontSize - 3 }
             }
         }
     }

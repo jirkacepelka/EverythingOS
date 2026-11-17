@@ -71,26 +71,26 @@ Item {
                 text: mock.sys ? mock.sys.dayText : ""
                 color: Qt.rgba(mock.fgCol.r, mock.fgCol.g, mock.fgCol.b, 0.5)
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs - 1; bold: true }
+                       pixelSize: mock.fs - 1; bold: false }
             }
             Text {
                 text: mock.sys ? mock.sys.timeText : ""
                 color: mock.fgCol
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs; bold: true }
+                       pixelSize: mock.fs; bold: false }
             }
             Text {
                 text: mock.sys ? String(mock.sys.wsId) : "1"
                 color: mock.fgCol
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs - 1; bold: true }
+                       pixelSize: mock.fs - 1; bold: false }
             }
             Text {
                 text: mock.sys ? mock.sys.kbLayout : "US"
                 color: (mock.sys && mock.sys.kbLayout === "RU") ? mock.sys.tint("#7FB3FF")
                      : Qt.rgba(mock.fgCol.r, mock.fgCol.g, mock.fgCol.b, 0.5)
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs - 2; bold: true }
+                       pixelSize: mock.fs - 2; bold: false }
             }
             Text {
                 text: mock.sys ? mock.sys.batteryIcon : ""
@@ -123,7 +123,7 @@ Item {
                         text: modelData
                         color: Qt.rgba(mock.fgCol.r, mock.fgCol.g, mock.fgCol.b, 0.5)
                         font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                               pixelSize: mock.fs - 2; bold: true }
+                               pixelSize: mock.fs - 2; bold: false }
                     }
                 }
             }
@@ -132,7 +132,7 @@ Item {
                 text: mock.sys ? (mock.sys.timeText.split(":")[0] || "") : ""
                 color: mock.fgCol
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs; bold: true }
+                       pixelSize: mock.fs; bold: false }
             }
             Text {
                 Layout.alignment: Qt.AlignHCenter
@@ -140,14 +140,14 @@ Item {
                       ? (mock.sys.timeText.split(":")[1] || "").replace(/[^0-9]/g, "") : ""
                 color: mock.fgCol
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs; bold: true }
+                       pixelSize: mock.fs; bold: false }
             }
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: mock.sys ? String(mock.sys.wsId) : "1"
                 color: mock.fgCol
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs - 1; bold: true }
+                       pixelSize: mock.fs - 1; bold: false }
             }
             Text {
                 Layout.alignment: Qt.AlignHCenter
@@ -155,7 +155,7 @@ Item {
                 color: (mock.sys && mock.sys.kbLayout === "RU") ? mock.sys.tint("#7FB3FF")
                      : Qt.rgba(mock.fgCol.r, mock.fgCol.g, mock.fgCol.b, 0.5)
                 font { family: mock.sys ? mock.sys.fontFam : "monospace"
-                       pixelSize: mock.fs - 3; bold: true }
+                       pixelSize: mock.fs - 3; bold: false }
             }
             Text {
                 Layout.alignment: Qt.AlignHCenter

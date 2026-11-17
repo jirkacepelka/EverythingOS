@@ -129,7 +129,7 @@ Item {
                 Layout.fillWidth: true
                 text: view.sys.tr("Звук")
                 color: view.sys.colFg
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 1; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
         }
 
@@ -194,7 +194,7 @@ Item {
                     border.color: view.sys.colBg
                     border.width: 2
                     scale: drag.pressed ? 1.25 : (drag.containsMouse ? 1.1 : 1.0)
-                    Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutBack } }
+                    Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
                 }
                 MouseArea {
                     id: drag
@@ -212,7 +212,7 @@ Item {
                 horizontalAlignment: Text.AlignRight
                 text: view.sinkAudio ? Math.round(view.sinkAudio.volume * 100) + "%" : "—"
                 color: view.sys.colMuted
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
 
@@ -223,8 +223,8 @@ Item {
             text: view.sys.tr("Устройство вывода")
             color: view.sys.colMuted
             font {
-                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4
-                bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
             }
         }
 
@@ -268,7 +268,7 @@ Item {
                         color: dev.active ? view.sys.colFg : view.sys.colMuted
                         elide: Text.ElideRight
                         font {
-                            family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2
+                            family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
                             bold: dev.active
                         }
                     }
@@ -296,7 +296,7 @@ Item {
             text: view.sys.tr("Нет устройств")
             color: view.sys.colMuted
             horizontalAlignment: Text.AlignHCenter
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
 
         // ------------------------------------------ громкость приложений (микшер)
@@ -309,8 +309,8 @@ Item {
                 text: view.sys.tr("Громкость приложений")
                 color: view.sys.colMuted
                 font {
-                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4
-                    bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                    family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                    bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
                 }
             }
 
@@ -326,7 +326,7 @@ Item {
                     anchors.centerIn: parent
                     text: String(view.streamsList.length)
                     color: view.sys.colOn
-                    font { family: view.sys.fontFam; pixelSize: 10; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
             }
 
@@ -372,8 +372,8 @@ Item {
                             color: view.sys.colFg
                             elide: Text.ElideRight
                             font {
-                                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2
-                                bold: true
+                                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                                bold: false
                             }
                         }
 
@@ -442,7 +442,7 @@ Item {
                             border.color: view.sys.colBg
                             border.width: 2
                             scale: appDrag.pressed ? 1.25 : (appDrag.containsMouse ? 1.1 : 1.0)
-                            Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutBack } }
+                            Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
                         }
 
                         MouseArea {
@@ -479,7 +479,7 @@ Item {
             text: view.sys.tr("Нет активных приложений со звуком")
             color: view.sys.colMuted
             horizontalAlignment: Text.AlignHCenter
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; italic: true }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; italic: true }
             Layout.topMargin: 4
             Layout.bottomMargin: 4
         }

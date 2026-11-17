@@ -79,7 +79,7 @@ FocusScope {
 
     function expandPath(p) {
         if (!p) return "";
-        var home = Quickshell.env("HOME") || "/home/ensi";
+        var home = Quickshell.env("HOME") || "/home/jiricepelka";
         if (p.startsWith("~/")) return home + p.substring(1);
         if (p.startsWith("file://")) return p.substring(7);
         return p;
@@ -233,7 +233,7 @@ FocusScope {
                         placeholderText: view.sys.tr("Поиск в буфере")
                         color: view.sys.colFg
                         placeholderTextColor: view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         background: null
                         onTextEdited: { view.query = text; view.reload(); }
 
@@ -328,7 +328,7 @@ FocusScope {
                         visible: isPinned
                         text: "󰤱"
                         color: view.sys.colCrit
-                        font { family: view.sys.fontFam; pixelSize: 13 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
 
                     // Левая часть: превью цвета / миниатюра картинки / значок типа
@@ -376,7 +376,7 @@ FocusScope {
                         text: isImage ? view.sys.tr("Изображение (Binary)") : preview
                         color: view.sys.colFg
                         elide: Text.ElideRight
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
 
                     // Правая часть: Smart Actions (кнопки конвертации и открытия)
@@ -396,7 +396,7 @@ FocusScope {
                                 anchors.centerIn: parent
                                 text: "RGB"
                                 color: view.sys.colFg
-                                font { family: view.sys.fontFam; pixelSize: 9; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             MouseArea {
                                 id: rgbMa
@@ -418,7 +418,7 @@ FocusScope {
                                 anchors.centerIn: parent
                                 text: "HSL"
                                 color: view.sys.colFg
-                                font { family: view.sys.fontFam; pixelSize: 9; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             MouseArea {
                                 id: hslMa
@@ -440,7 +440,7 @@ FocusScope {
                                 anchors.centerIn: parent
                                 text: "󰌹"
                                 color: view.sys.colFg
-                                font { family: view.sys.fontFam; pixelSize: 11 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             MouseArea {
                                 id: urlMa
@@ -462,7 +462,7 @@ FocusScope {
                                 anchors.centerIn: parent
                                 text: "󰈙"
                                 color: view.sys.colFg
-                                font { family: view.sys.fontFam; pixelSize: 11 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             MouseArea {
                                 id: fileMa
@@ -483,7 +483,7 @@ FocusScope {
                                 anchors.centerIn: parent
                                 text: "󰤱"
                                 color: isPinned ? view.sys.colCrit : (pinMa.containsMouse ? view.sys.colFg : view.sys.colMuted)
-                                font { family: view.sys.fontFam; pixelSize: 11 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             MouseArea {
                                 id: pinMa
@@ -514,7 +514,7 @@ FocusScope {
             text: view.query.length ? view.sys.tr("Ничего не найдено") : view.sys.tr("Буфер пуст")
             color: view.sys.colMuted
             horizontalAlignment: Text.AlignHCenter
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 }

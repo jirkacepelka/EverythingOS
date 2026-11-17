@@ -114,7 +114,7 @@ Item {
         Behavior on border.color { ColorAnimation { duration: 180 } }
 
         scale: segMa.pressed ? 0.95 : 1.0
-        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         ColumnLayout {
             anchors.centerIn: parent
@@ -131,7 +131,7 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 text: parent.parent.label
                 color: parent.parent.active ? view.sys.colFg : view.sys.colMuted
-                font { family: view.sys.fontFam; pixelSize: 11; bold: parent.parent.active }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: parent.parent.active }
                 Behavior on color { ColorAnimation { duration: 180 } }
             }
         }
@@ -179,7 +179,7 @@ Item {
                 color: parent.parent.on ? parent.parent.accent : Qt.rgba(1, 1, 1, 0.10)
                 Behavior on color { ColorAnimation { duration: 180 } }
                 scale: iconMa.pressed ? 0.9 : (iconMa.containsMouse ? 1.06 : 1.0)
-                Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+                Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
                 Text {
                     anchors.centerIn: parent
@@ -205,7 +205,7 @@ Item {
                     text: iconBtn.parent.parent.label
                     color: view.sys.colFg
                     elide: Text.ElideRight
-                    font { family: view.sys.fontFam; pixelSize: 13; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: 13; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -256,7 +256,7 @@ Item {
         Behavior on border.color { ColorAnimation { duration: 160 } }
 
         scale: ibMa.pressed ? 0.9 : (ibMa.containsMouse ? 1.06 : 1.0)
-        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         Glyph {
             anchors.fill: parent
@@ -281,7 +281,7 @@ Item {
                 // кружок налит акцентом: на светлом акценте белая цифра
                 // пропадает целиком
                 color: view.sys.fgOn(view.sys.colOn)
-                font { family: view.sys.fontFam; pixelSize: 9; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
         }
 
@@ -311,7 +311,7 @@ Item {
             scale: ibMa.containsMouse ? 1 : 0.92
             transformOrigin: Item.Bottom
             Behavior on scale {
-                NumberAnimation { duration: 160; easing.type: Easing.OutBack }
+                NumberAnimation { duration: 160; easing.type: Easing.OutBack; easing.overshoot: 0.8 }
             }
 
             Text {
@@ -319,7 +319,7 @@ Item {
                 anchors.centerIn: parent
                 text: ibTip.parent.tip
                 color: view.sys.colFg
-                font { family: view.sys.fontFam; pixelSize: 11 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
     }
@@ -472,7 +472,7 @@ Item {
                                : Qt.rgba(1, 1, 1, 0.10)
                 Behavior on color { ColorAnimation { duration: 180 } }
                 scale: miniIconMa.pressed ? 0.9 : (miniIconMa.containsMouse ? 1.07 : 1.0)
-                Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+                Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
                 // Значок лежит прямо на кружке, и цвет берётся от него: на
                 // акцентном кружке белый по белому не виден вовсе, а на
@@ -523,7 +523,7 @@ Item {
                     text: tile.label
                     color: tile.ink
                     elide: Text.ElideRight
-                    font { family: view.sys.fontFam; pixelSize: 12; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -536,7 +536,7 @@ Item {
                            ? Qt.rgba(tile.ink.r, tile.ink.g, tile.ink.b, 0.6)
                            : view.sys.colMuted
                     elide: Text.ElideRight
-                    font { family: view.sys.fontFam; pixelSize: 10 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
         }
@@ -572,13 +572,13 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 text: battstat.label
                 color: view.sys.colMuted
-                font { family: view.sys.fontFam; pixelSize: 10 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
             Text {
                 Layout.alignment: Qt.AlignHCenter
                 text: battstat.value
                 color: view.sys.colFg
-                font { family: view.sys.fontFam; pixelSize: 12; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
         }
     }
@@ -598,7 +598,7 @@ Item {
         opacity: enabledAction ? 1 : 0.35
         Behavior on color { ColorAnimation { duration: 140 } }
         scale: mbMa.pressed ? 0.9 : (mbMa.containsMouse ? 1.08 : 1.0)
-        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         Text {
             anchors.centerIn: parent
@@ -708,7 +708,7 @@ Item {
             // то на тёмном: перекрашиваем на границе, иначе она пропадает.
             color: (trk.width * trk.shown) > (trk.width - trkVal.width - 12)
                    ? view.sys.colBg : view.sys.colFg
-            font { family: view.sys.fontFam; pixelSize: 11; bold: true }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
         }
 
         MouseArea {
@@ -778,7 +778,7 @@ Item {
                 Text {
                     text: view.sys.tr("Звук")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: 12; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                     MouseArea {
                         anchors.fill: parent
                         anchors.margins: -4
@@ -798,7 +798,7 @@ Item {
                                                    : view.sys.tr("Нет устройств")
                     color: view.sys.colMuted
                     elide: Text.ElideRight
-                    font { family: view.sys.fontFam; pixelSize: 10 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: Qt.PointingHandCursor
@@ -866,7 +866,7 @@ Item {
                 Text {
                     text: view.sys.tr("Яркость")
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: 12; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Item { Layout.fillWidth: true }
                 Text {
@@ -877,7 +877,7 @@ Item {
                     text: brCard.bname
                     color: view.sys.colMuted
                     elide: Text.ElideRight
-                    font { family: view.sys.fontFam; pixelSize: 10 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
 
@@ -926,7 +926,7 @@ Item {
             Layout.fillWidth: true
             text: parent.title
             color: view.sys.colFg
-            font { family: view.sys.fontFam; pixelSize: 13; bold: true }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
         }
         Rectangle {
             Layout.preferredWidth: 28; Layout.preferredHeight: 28
@@ -990,20 +990,20 @@ Item {
                     text: row1id.title
                     color: view.sys.colFg
                     elide: Text.ElideRight
-                    font { family: view.sys.fontFam; pixelSize: 12; bold: row1id.highlight }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: row1id.highlight }
                 }
                 Text {
                     text: row1id.sub
                     visible: text.length > 0
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: 10 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
             Text {
                 visible: row1id.highlight
                 text: "󰄬"
                 color: view.sys.colOn
-                font { family: view.sys.fontFam; pixelSize: 13 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
         MouseArea {
@@ -1046,7 +1046,7 @@ Item {
         implicitWidth:  nDots.implicitWidth
         implicitHeight: nDots.implicitHeight
 
-        DotText {
+        PlainNum {
             id: nDots
             value: num.value
             size: num.size
@@ -1102,7 +1102,7 @@ Item {
                 color: view.sys.recActive ? view.sys.colCrit : Qt.rgba(1, 1, 1, 0.10)
                 Behavior on color { ColorAnimation { duration: 180 } }
                 scale: recBtnMa.pressed ? 0.9 : (recBtnMa.containsMouse ? 1.07 : 1.0)
-                Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+                Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
                 Text {
                     anchors.centerIn: parent
@@ -1132,7 +1132,7 @@ Item {
                     color: view.sys.colMuted
                     elide: Text.ElideRight
                     font {
-                        family: view.sys.fontFam; pixelSize: 9
+                        family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
                         capitalization: Font.AllUppercase; letterSpacing: 1.2
                     }
                 }
@@ -1181,7 +1181,7 @@ Item {
             Layout.preferredWidth: 30
             text: lrow.name
             color: view.sys.colMuted
-            font { family: view.sys.fontFam; pixelSize: 9; letterSpacing: 0.6 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; letterSpacing: 0.6 }
         }
 
         Rectangle {
@@ -1339,13 +1339,13 @@ Item {
                         RowLayout {
                             spacing: 5
 
-                            DotText {
+                            PlainNum {
                                 Layout.alignment: Qt.AlignVCenter
                                 value: view.sys.timeText
                                 size: view.sys.dotHBig
                                 color: view.sys.colFg
                             }
-                            DotText {
+                            PlainNum {
                                 // по верхнему краю, а не по центру: мелкое
                                 // число посередине крупных часов читалось бы
                                 // как их часть
@@ -1373,7 +1373,7 @@ Item {
                                 text: view.sys.tr("Календарь")
                                 color: clockMa.containsMouse ? view.sys.colOn
                                                             : Qt.rgba(1, 1, 1, 0.28)
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                                 Behavior on color { ColorAnimation { duration: 150 } }
                             }
                         }
@@ -1593,7 +1593,7 @@ Item {
                                 visible: cardArt.status !== Image.Ready
                                 text: "󰝚"
                                 color: view.sys.colMuted
-                                font { family: view.sys.fontFam; pixelSize: 18 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             // клик по обложке — пауза: отдельной страницы
                             // плеера больше нет, всё управление здесь
@@ -1613,14 +1613,14 @@ Item {
                                 text: mediaCard.p ? mediaCard.p.trackTitle : ""
                                 color: view.sys.colFg
                                 elide: Text.ElideRight
-                                font { family: view.sys.fontFam; pixelSize: 13; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             Text {
                                 Layout.fillWidth: true
                                 text: mediaCard.p ? mediaCard.p.trackArtist : ""
                                 color: view.sys.colMuted
                                 elide: Text.ElideRight
-                                font { family: view.sys.fontFam; pixelSize: 11 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
 
@@ -1789,13 +1789,13 @@ Item {
                         Layout.fillWidth: true
                         Layout.topMargin: -6
                         visible: seek.visible && seek.dur > 0
-                        DotText {
+                        PlainNum {
                             value: view.fmtTime(seek.pos)
                             size: view.sys.dotHSmall
                             color: view.sys.colMuted
                         }
                         Item { Layout.fillWidth: true }
-                        DotText {
+                        PlainNum {
                             value: view.fmtTime(seek.dur)
                             size: view.sys.dotHSmall
                             color: Qt.rgba(1, 1, 1, 0.28)
@@ -1933,7 +1933,7 @@ Item {
                         text: "Coffee mode"
                         color: view.sys.keepAwake ? view.sys.colFg : view.sys.colMuted
                         font {
-                            family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2
+                            family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
                             bold: view.sys.keepAwake
                         }
                     }
@@ -2005,8 +2005,8 @@ Item {
                     text: view.sys.tr("Трей")
                     color: view.sys.colMuted
                     font {
-                        family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4
-                        bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                        family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                        bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
                     }
                 }
 
@@ -2026,7 +2026,7 @@ Item {
                         border.width: 1
                         Behavior on color { ColorAnimation { duration: 150 } }
                         scale: trayMa.pressed ? 0.9 : 1.0
-                        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack } }
+                        Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
                         Image {
                             anchors.fill: parent
@@ -2083,7 +2083,7 @@ Item {
                             scale: trayMa.containsMouse ? 1 : 0.92
                             transformOrigin: Item.Bottom
                             Behavior on scale {
-                                NumberAnimation { duration: 160; easing.type: Easing.OutBack }
+                                NumberAnimation { duration: 160; easing.type: Easing.OutBack; easing.overshoot: 0.8 }
                             }
 
                             Text {
@@ -2091,7 +2091,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: tip.label
                                 color: view.sys.colFg
-                                font { family: view.sys.fontFam; pixelSize: 11 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
                     }
@@ -2163,7 +2163,7 @@ Item {
                         Text {
                             text: view.sys.batteryPct + "%"
                             color: reg.tint
-                            font { family: view.sys.fontFam; pixelSize: 18; bold: true }
+                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                         }
                         Text {
                             Layout.fillWidth: true
@@ -2173,7 +2173,7 @@ Item {
                                                       : view.sys.profileLabel
                             color: view.sys.colMuted
                             elide: Text.ElideRight
-                            font { family: view.sys.fontFam; pixelSize: 11 }
+                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         }
                     }
 
@@ -2295,7 +2295,7 @@ Item {
                 placeholderText: view.sys.tr("Имя пользователя")
                 color: view.sys.colFg
                 placeholderTextColor: view.sys.colMuted
-                font { family: view.sys.fontFam; pixelSize: 12 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 onAccepted: pwField.forceActiveFocus()
             }
 
@@ -2317,7 +2317,7 @@ Item {
                     Text {
                         text: "󰌾"
                         color: view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: 14 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                     TextField {
                         id: pwField
@@ -2326,7 +2326,7 @@ Item {
                         echoMode: TextInput.Password
                         color: view.sys.colFg
                         placeholderTextColor: view.sys.colMuted
-                        font { family: view.sys.fontFam; pixelSize: 12 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         background: null
                         onAccepted: connectBtn.go()
                     }
@@ -2365,7 +2365,7 @@ Item {
                 visible: view.sys.wifiError.length > 0
                 text: view.sys.wifiError
                 color: view.sys.colCrit
-                font { family: view.sys.fontFam; pixelSize: 11 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
 
             // список сетей
@@ -2414,7 +2414,7 @@ Item {
                 text: view.sys.wifiBusy ? view.sys.tr("Поиск сетей…") : view.sys.tr("Сети не найдены")
                 color: view.sys.colMuted
                 horizontalAlignment: Text.AlignHCenter
-                font { family: view.sys.fontFam; pixelSize: 11 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
 
             Timer { id: pwFocus; interval: 80; onTriggered: (wifiPage.passwordSecurity === "eap" ? userField : pwField).forceActiveFocus() }
@@ -2470,7 +2470,7 @@ Item {
                 text: view.sys.tr("Для этой сети ничего не сохранено.")
                 color: view.sys.colMuted
                 horizontalAlignment: Text.AlignHCenter
-                font { family: view.sys.fontFam; pixelSize: 11 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
 
@@ -2579,7 +2579,7 @@ Item {
                                 color: entry.modelData.enabled
                                        ? view.sys.colFg : view.sys.colMuted
                                 elide: Text.ElideRight
-                                font { family: view.sys.fontFam; pixelSize: 12 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
 
                             // стрелка у подменю
@@ -2618,7 +2618,7 @@ Item {
                 text: view.sys.tr("Меню пустое")
                 color: view.sys.colMuted
                 horizontalAlignment: Text.AlignHCenter
-                font { family: view.sys.fontFam; pixelSize: 11 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
 
@@ -2693,7 +2693,7 @@ Item {
                       ? view.sys.tr("Поиск устройств…") : view.sys.tr("Устройства не найдены")
                 color: view.sys.colMuted
                 horizontalAlignment: Text.AlignHCenter
-                font { family: view.sys.fontFam; pixelSize: 11 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
     }

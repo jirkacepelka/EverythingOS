@@ -56,7 +56,7 @@ ColumnLayout {
                 clip: true
                 selectByMouse: true
                 text: page.sys.cfg.lockHint
-                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+                font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
                 onEditingFinished: { page.sys.cfg.lockHint = text; page.sys.saveCfg(); }
 
                 Text {

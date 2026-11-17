@@ -1007,7 +1007,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 text: menuitem.label
                 color: menuitem.danger ? view.sys.colCrit : view.sys.colFg
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
 
@@ -1041,8 +1041,8 @@ Item {
             text: sec.title
             color: Qt.rgba(1, 1, 1, 0.32)
             font {
-                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5
-                bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
             }
         }
 
@@ -1090,7 +1090,7 @@ Item {
                             elide: Text.ElideRight
                             font {
                                 family: view.sys.fontFam
-                                pixelSize: view.sys.fontSize - 2
+                                pixelSize: view.sys.fontSize - 3
                                 bold: disk.active
                             }
                         }
@@ -1106,7 +1106,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: "⏏"
                                 color: ejectMa.containsMouse ? view.sys.colCrit : Qt.rgba(1, 1, 1, 0.65)
-                                font { family: view.sys.fontFam; pixelSize: 12; bold: true }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             MouseArea {
                                 id: ejectMa
@@ -1123,8 +1123,8 @@ Item {
                                                    : Qt.rgba(1, 1, 1, 0.42)
                             font {
                                 family: view.sys.fontFam
-                                pixelSize: view.sys.fontSize - 6
-                                bold: true
+                                pixelSize: view.sys.fontSize - 3
+                                bold: false
                             }
                         }
                     }
@@ -1137,7 +1137,7 @@ Item {
                               : (view.human(disk.model.dSize) + " • " + view.sys.tr("Подключить"))
                         color: disk.mounted ? Qt.rgba(1, 1, 1, 0.28) : view.sys.colOn
                         elide: Text.ElideRight
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 7 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
 
                     // полоска заполнения; у телефонов размера нет — и полосы тоже
@@ -1243,7 +1243,7 @@ Item {
                     text: view.dir === Quickshell.env("HOME")
                           ? view.sys.tr("Домашняя") : view.dir.split("/").pop() || "/"
                     color: view.sys.colFg
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 5; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     Layout.fillWidth: true
@@ -1279,7 +1279,7 @@ Item {
                         text: view.filter.length ? view.filter : view.sys.tr("Просто печатайте")
                         color: view.filter.length ? view.sys.colFg : Qt.rgba(1, 1, 1, 0.30)
                         elide: Text.ElideRight
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 1 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
             }
@@ -1396,7 +1396,7 @@ Item {
                                 visible: place.model.pKey === "trash" && view.trashCount > 0
                                 text: String(view.trashCount)
                                 color: view.sys.colMuted
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             Text {
                                 Layout.fillWidth: true
@@ -1405,7 +1405,7 @@ Item {
                                 elide: Text.ElideRight
                                 font {
                                     family: view.sys.fontFam
-                                    pixelSize: view.sys.fontSize - 1
+                                    pixelSize: view.sys.fontSize - 3
                                     bold: place.active
                                 }
                             }
@@ -1483,7 +1483,7 @@ Item {
                                 color: sortbtn.on ? view.sys.colFg : view.sys.colMuted
                                 font {
                                     family: view.sys.fontFam
-                                    pixelSize: view.sys.fontSize - 4
+                                    pixelSize: view.sys.fontSize - 3
                                     bold: sortbtn.on
                                 }
                             }
@@ -1492,7 +1492,7 @@ Item {
                                 visible: sortbtn.on
                                 text: view.sortDesc ? "󰄼" : "󰄿"
                                 color: view.sys.colOn
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
                         MouseArea {
@@ -1508,8 +1508,8 @@ Item {
                         text: view.sys.tr("Сортировка")
                         color: Qt.rgba(1, 1, 1, 0.30)
                         font {
-                            family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5
-                            bold: true; capitalization: Font.AllUppercase; letterSpacing: 1
+                            family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
+                            bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
                         }
                     }
                     SortBtn { key: "name"; label: view.sys.tr("Имя") }
@@ -1545,7 +1545,7 @@ Item {
                                 id: hidTxt
                                 text: view.sys.tr("Скрытые")
                                 color: view.sys.cfg.filesHidden ? view.sys.colFg : view.sys.colMuted
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
                         MouseArea {
@@ -1585,7 +1585,7 @@ Item {
                                 id: ffTxt
                                 text: view.sys.tr("Папки сверху")
                                 color: view.foldersFirst ? view.sys.colFg : view.sys.colMuted
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
                         MouseArea {
@@ -1781,7 +1781,7 @@ Item {
                                 elide: Text.ElideMiddle
                                 font {
                                     family: view.sys.fontFam
-                                    pixelSize: view.sys.fontSize
+                                    pixelSize: view.sys.fontSize - 3
                                     bold: row.index === view.current || row.isSelected
                                 }
                             }
@@ -1790,7 +1790,7 @@ Item {
                                 text: view.timeText(row.model)
                                 color: Qt.rgba(1, 1, 1, 0.26)
                                 horizontalAlignment: Text.AlignRight
-                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             Text {
                                 Layout.preferredWidth: 62
@@ -2025,7 +2025,7 @@ Item {
                                 elide: Text.ElideRight
                                 font {
                                     family: view.sys.fontFam
-                                    pixelSize: view.sys.fontSize - 4
+                                    pixelSize: view.sys.fontSize - 3
                                     bold: tile.index === view.current || tile.isSelected
                                 }
                             }
@@ -2089,7 +2089,7 @@ Item {
                                              : view.sys.tr("Пусто")
                     color: view.sys.colMuted
                     horizontalAlignment: Text.AlignHCenter
-                    font { family: view.sys.fontFam; pixelSize: 11 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
         }
@@ -2137,14 +2137,14 @@ Item {
                     Text {
                         text: view.sys.tr("Чем открыть")
                         color: view.sys.colFg
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 1; bold: true }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                     }
                     Text {
                         Layout.fillWidth: true
                         text: view.openWithFile.split("/").pop()
                         color: view.sys.colMuted
                         elide: Text.ElideMiddle
-                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 5 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
                 Rectangle {
@@ -2155,7 +2155,7 @@ Item {
                         anchors.centerIn: parent
                         text: "×"
                         color: view.sys.colFg
-                        font { family: view.sys.fontFam; pixelSize: 16 }
+                        font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                     MouseArea {
                         id: backMa
@@ -2210,7 +2210,7 @@ Item {
                             elide: Text.ElideRight
                             font {
                                 family: view.sys.fontFam
-                                pixelSize: view.sys.fontSize
+                                pixelSize: view.sys.fontSize - 3
                                 bold: appRow.index === appList.index
                             }
                         }
@@ -2218,7 +2218,7 @@ Item {
                             visible: appRow.index === 0
                             text: view.sys.tr("по умолчанию")
                             color: view.sys.colMuted
-                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 6 }
+                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                         }
                     }
 
@@ -2239,7 +2239,7 @@ Item {
                 text: view.sys.tr("Подходящих программ не нашлось")
                 color: view.sys.colMuted
                 horizontalAlignment: Text.AlignHCenter
-                font { family: view.sys.fontFam; pixelSize: 11 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
 
@@ -2434,7 +2434,7 @@ Item {
                       : view.sys.tr("Совпало имён: ") + view.dropConflicts.length
                 color: view.sys.colMuted
                 elide: Text.ElideMiddle
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
 
             Repeater {
@@ -2505,7 +2505,7 @@ Item {
         scale: view.menuOpen ? 1 : 0.94
         transformOrigin: Item.TopLeft
         Behavior on opacity { NumberAnimation { duration: 120 } }
-        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 140; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         ColumnLayout {
             id: menuCol
@@ -2697,7 +2697,7 @@ Item {
             Text {
                 text: view.selectedCount + " " + view.sys.tr("выбрано")
                 color: view.sys.colFg
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2; bold: true }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
             }
 
             Rectangle {
@@ -2791,7 +2791,7 @@ Item {
                     anchors.centerIn: parent
                     text: "✕"
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: 12 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
                 MouseArea {
                     id: btnCloseMa
@@ -2825,7 +2825,7 @@ Item {
         border.width: 1
 
         scale: view.dialogMode.length > 0 ? 1 : 0.94
-        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack } }
+        Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
 
         RowLayout {
             anchors.fill: parent
@@ -2845,7 +2845,7 @@ Item {
                 placeholderTextColor: view.sys.colMuted
                 placeholderText: view.sys.tr("Имя")
                 background: null
-                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize }
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 onAccepted: view.confirmDialog()
                 Keys.onEscapePressed: view.cancelDialog()
             }
@@ -2943,12 +2943,12 @@ Item {
                     text: String(view.propsData.name || "")
                     color: view.sys.colFg
                     elide: Text.ElideMiddle
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize; bold: true }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                 }
                 Text {
                     text: "×"
                     color: view.sys.colMuted
-                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize + 6 }
+                    font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     MouseArea {
                         anchors.fill: parent; anchors.margins: -8
                         cursorShape: Qt.PointingHandCursor

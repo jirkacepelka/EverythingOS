@@ -313,7 +313,7 @@ Item {
             color: "#f2f2f2"
             font {
                 family: view.sys.fontFam
-                pixelSize: view.sys.fontSize + 12; bold: true
+                pixelSize: view.sys.fontSize - 3; bold: false
             }
         }
         // Вкладки: картинки и видео. Карусель у них одна и та же — меняется
@@ -349,7 +349,7 @@ Item {
                         color: tabBtn.picked ? "#171719" : "#b8b8bb"
                         font {
                             family: view.sys.fontFam
-                            pixelSize: view.sys.fontSize - 2
+                            pixelSize: view.sys.fontSize - 3
                             bold: tabBtn.picked
                         }
                         Behavior on color { ColorAnimation { duration: 160 } }
@@ -375,7 +375,7 @@ Item {
                                  : view.sys.tr("Обоев не найдено"))
                     : view.sys.tr("Читаю…")
             color: view.sys.colMuted
-            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
 
@@ -549,7 +549,7 @@ Item {
                                 elide: Text.ElideRight
                                 font {
                                     family: view.sys.fontFam
-                                    pixelSize: view.sys.fontSize + 1; bold: true
+                                    pixelSize: view.sys.fontSize - 3; bold: false
                                 }
                             }
 

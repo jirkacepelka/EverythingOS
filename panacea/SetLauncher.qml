@@ -100,7 +100,7 @@ ColumnLayout {
             text: page.sys.tr("Любой запрос можно отправить в поисковик последней строкой списка. Если подключить ИИ, запрос с «?» в начале уйдёт ему, и короткий ответ появится прямо в лаунчере.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
         SetPick {
             sys: page.sys
@@ -120,7 +120,7 @@ ColumnLayout {
             Layout.fillWidth: true
             color: page.sys.colFg
             placeholderTextColor: page.sys.colMuted
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 2 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
             leftPadding: 12; rightPadding: 12; topPadding: 9; bottomPadding: 9
             selectByMouse: true
             background: Rectangle {
@@ -135,7 +135,7 @@ ColumnLayout {
             text: page.sys.tr("Настройки API для вкладки «Чат» в острове: OpenAI-совместимый сервис, модель и ключ.")
             color: page.sys.colMuted
             wrapMode: Text.WordWrap
-            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
         }
         Field {
             placeholderText: page.sys.tr("Адрес API, например https://api.openai.com/v1")

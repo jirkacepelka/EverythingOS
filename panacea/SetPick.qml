@@ -49,7 +49,7 @@ ColumnLayout {
             text: pick.label
             color: pick.sys.colFg
             elide: Text.ElideRight
-            font { family: pick.sys.fontBody; pixelSize: pick.sys.fontSize - 1 }
+            font { family: pick.sys.fontBody; pixelSize: pick.sys.fontSize - 3 }
         }
 
         Rectangle {
@@ -82,7 +82,7 @@ ColumnLayout {
                 // шеврон вверх, когда список раскрыт, и вниз, когда свёрнут
                 text: String.fromCodePoint(pick.open ? 0xF0143 : 0xF0140)
                 color: pick.sys.colMuted
-                font { family: pick.sys.fontFam; pixelSize: pick.sys.fontSize - 2 }
+                font { family: pick.sys.fontFam; pixelSize: pick.sys.fontSize - 3 }
             }
 
             MouseArea {
