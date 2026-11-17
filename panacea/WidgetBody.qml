@@ -53,24 +53,33 @@ Item {
         }
     }
 
-    // segmented dot bar: white dots up to the level, the last one red, the rest dim
+    // segmented dot bar (horizontal, or vertical filling from the bottom):
+    // white dots up to the level, the last one red, the rest dim
     component DotBar: Item {
         id: bar
         property real value: 0
-        property int count: Math.max(8, Math.floor(width / 16))
+        property bool vertical: false
         property bool locked: false
-        signal moved(real v)
-        readonly property real d: Math.min(height, (width - (count - 1) * 4) / count)
+        readonly property real len: vertical ? height : width
+        readonly property real thick: vertical ? width : height
+        readonly property int count: Math.max(6, Math.floor(len / 16))
+        readonly property real d: Math.min(thick, (len - (count - 1) * 4) / count)
         readonly property int lit: Math.round(value * count)
-        Row {
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: (bar.width - bar.count * bar.d) / Math.max(1, bar.count - 1)
+        signal moved(real v)
+        function dotColor(i) {   // i counts from the low end
+            return locked ? root.dim : (i < lit - 1 ? root.fg : (i === lit - 1 ? root.red : root.dim));
+        }
+        Grid {
+            anchors.centerIn: parent
+            columns: bar.vertical ? 1 : bar.count
+            rowSpacing: (bar.len - bar.count * bar.d) / Math.max(1, bar.count - 1)
+            columnSpacing: rowSpacing
             Repeater {
                 model: bar.count
                 Rectangle {
                     required property int index
                     width: bar.d; height: bar.d; radius: bar.d / 2
-                    color: bar.locked ? root.dim : (index < bar.lit - 1 ? root.fg : (index === bar.lit - 1 ? root.red : root.dim))
+                    color: bar.dotColor(bar.vertical ? bar.count - 1 - index : index)
                 }
             }
         }
@@ -78,57 +87,86 @@ Item {
             anchors.fill: parent
             enabled: root.interactive
             cursorShape: Qt.PointingHandCursor
-            function set(m) { bar.moved(Math.max(0, Math.min(1, (m.x + 4) / width))); }
+            function set(m) {
+                var v = bar.vertical ? 1 - m.y / height : (m.x + 4) / width;
+                bar.moved(Math.max(0, Math.min(1, v)));
+            }
             onPressed: m => set(m)
             onPositionChanged: m => { if (pressed) set(m); }
         }
     }
 
+    // Sound and Brightness share one layout: a dot bar that runs along the longer side
+    // (horizontal when the card is wide, vertical when it is tall) with the value next to it
+    component LevelBody: Item {
+        id: lb
+        property string title: ""
+        property string valueText: "0"
+        property real level: 0
+        property bool locked: false
+        property color titleColor: root.sys ? root.sys.colMuted : "#888"
+        signal moved(real v)
+        signal numberClicked()
+        readonly property bool vertical: height > width
+        readonly property bool narrow: width < 110
+
+        // caption (dropped when the card is too narrow for it)
+        WCaption {
+            sys: root.sys
+            visible: !lb.narrow || !lb.vertical
+            x: 16; y: 10
+            width: parent.width - 32
+            text: lb.title
+            color: lb.titleColor
+        }
+        WNum {
+            id: num
+            sys: root.sys
+            x: lb.vertical ? (parent.width - width) / 2 : 16
+            y: lb.vertical ? (lb.narrow ? 12 : 30) : parent.height - height - 10
+            value: lb.valueText
+            size: lb.vertical ? (lb.narrow ? 16 : 22) : 22
+            MouseArea {
+                anchors.fill: parent; anchors.margins: -6
+                enabled: root.interactive; cursorShape: Qt.PointingHandCursor
+                onClicked: lb.numberClicked()
+            }
+        }
+        DotBar {
+            vertical: lb.vertical
+            x: lb.vertical ? 16 : 100
+            y: lb.vertical ? num.y + num.height + 14 : 0
+            width: lb.vertical ? parent.width - 32 : parent.width - 116
+            height: lb.vertical ? parent.height - y - 16 : parent.height
+            value: lb.level
+            locked: lb.locked
+            onMoved: v => lb.moved(v)
+        }
+    }
+
     Component {
         id: volumeBody
-        Item {
+        LevelBody {
             readonly property var a: root.sys ? root.sys.sinkAudio : null
-            WCaption { sys: root.sys; x: 16; y: 10; text: (parent.a && parent.a.muted) ? "Sound · muted" : "Sound"
-                       color: (parent.a && parent.a.muted) ? root.red : (root.sys ? root.sys.colMuted : "#888") }
-            WNum {
-                sys: root.sys
-                x: 16; y: parent.height - height - 10
-                value: parent.a ? String(Math.round(parent.a.volume * 100)) : "0"
-                size: 22
-                MouseArea {
-                    anchors.fill: parent; anchors.margins: -6
-                    enabled: root.interactive; cursorShape: Qt.PointingHandCursor
-                    onClicked: { var a = parent.parent.a; if (a) a.muted = !a.muted; }
-                }
-            }
-            DotBar {
-                anchors { left: parent.left; leftMargin: 100; right: parent.right; rightMargin: 16; verticalCenter: parent.verticalCenter }
-                height: 14
-                value: parent.a ? parent.a.volume : 0
-                locked: parent.a ? parent.a.muted : false
-                onMoved: v => { var a = parent.a; if (a) { a.muted = false; a.volume = v; } }
-            }
+            title: (a && a.muted) ? "Sound · muted" : "Sound"
+            titleColor: (a && a.muted) ? root.red : (root.sys ? root.sys.colMuted : "#888")
+            valueText: a ? String(Math.round(a.volume * 100)) : "0"
+            level: a ? a.volume : 0
+            locked: a ? a.muted : false
+            onMoved: v => { if (a) { a.muted = false; a.volume = v; } }
+            onNumberClicked: { if (a) a.muted = !a.muted; }
         }
     }
 
     Component {
         id: brightBody
-        Item {
+        LevelBody {
             readonly property var d: (root.sys && root.sys.brightList.length > 0) ? root.sys.brightList[0] : null
-            WCaption { sys: root.sys; x: 16; y: 10; text: "Brightness" }
-            WNum {
-                sys: root.sys
-                x: 16; y: parent.height - height - 10
-                value: parent.d ? String(parent.d.pct) : "0"
-                size: 22
-            }
-            DotBar {
-                anchors { left: parent.left; leftMargin: 100; right: parent.right; rightMargin: 16; verticalCenter: parent.verticalCenter }
-                height: 14
-                value: parent.d ? parent.d.pct / 100 : 0
-                locked: !parent.d
-                onMoved: v => { if (parent.d) root.sys.brightSet(parent.d.id, Math.max(1, v * 100)); }
-            }
+            title: "Brightness"
+            valueText: d ? String(d.pct) : "0"
+            level: d ? d.pct / 100 : 0
+            locked: !d
+            onMoved: v => { if (d) root.sys.brightSet(d.id, Math.max(1, v * 100)); }
             Component.onCompleted: if (root.sys && root.sys.brightList.length === 0) root.sys.brightRefresh(false)
         }
     }

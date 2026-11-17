@@ -11,8 +11,8 @@ QtObject {
     function px(cells) { return cells * pitch - gap; }
 
     readonly property var types: [
-        { id: "volume",       name: "Sound",      cw: 4, ch: 1, minW: 3, maxW: 8, minH: 1, maxH: 1 },
-        { id: "brightness",   name: "Brightness", cw: 4, ch: 1, minW: 3, maxW: 8, minH: 1, maxH: 1 },
+        { id: "volume",       name: "Sound",      cw: 4, ch: 1, minW: 1, maxW: 8, minH: 1, maxH: 5 },
+        { id: "brightness",   name: "Brightness", cw: 4, ch: 1, minW: 1, maxW: 8, minH: 1, maxH: 5 },
         { id: "clockAnalog",  name: "Analog",     cw: 2, ch: 2, minW: 2, maxW: 4, minH: 2, maxH: 4 },
         { id: "clockRing",    name: "Ring clock", cw: 2, ch: 2, minW: 2, maxW: 4, minH: 2, maxH: 4 },
         { id: "clockDot",     name: "Dot clock",  cw: 4, ch: 2, minW: 3, maxW: 8, minH: 1, maxH: 3 },
