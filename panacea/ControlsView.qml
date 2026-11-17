@@ -2756,6 +2756,10 @@ Item {
                     Row1 {
                         id: row1
                         required property var modelData
+                        // unnamed devices (MAC address only) are noise: hidden unless enabled in Settings
+                        visible: view.sys.cfg.btShowUnnamed || modelData.connected || modelData.paired || modelData.bonded
+                                 || (modelData.name && modelData.name.length > 0
+                                     && !/^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/.test(modelData.name))
                         icon: (modelData.icon === "audio-headset" || modelData.icon === "audio-headphones") ? "󱡏"
                             : modelData.icon === "input-mouse" ? "󰦋"
                             : modelData.icon === "input-keyboard" ? "󰌌"

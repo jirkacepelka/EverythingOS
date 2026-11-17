@@ -196,6 +196,7 @@ PanelWindow {
             property bool   featPlayer: true
             property bool   featWifi: true
             property bool   featBluetooth: true
+            property bool   btShowUnnamed: false
             property bool   featClipboard: true
             property bool   featNotifications: true
             property bool   featCalendar: true
@@ -431,7 +432,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 16, islandRadius: 0, splitIsland: false, showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2", borderAlpha: 55,
+        islandGap: 16, islandRadius: 0, splitIsland: false, btShowUnnamed: false, showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2", borderAlpha: 55,
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",

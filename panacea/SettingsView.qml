@@ -63,6 +63,12 @@ Item {
           sub: view.sys.tr("Скорость указателя и разгон."),
           keys: "mouse keyboard layouts xkb pointer cursor sensitivity speed accel acceleration raw input flat "
                 + "мышь клавиатура раскладки указатель курсор скорость сенса чувствительность разгон ввод vpn впн" },
+        { id: "wifi", title: "Wi-Fi", g: 0xF05A9, page: "SetWifi.qml",
+          sub: "Connection, saved networks and scanning.",
+          keys: "wifi wi-fi wireless network internet ssid password saved forget scan wlan сеть вайфай" },
+        { id: "bluetooth", title: "Bluetooth", g: 0xF00AF, page: "SetBluetooth.qml",
+          sub: "Adapter, paired devices and pairing.",
+          keys: "bluetooth bt pair paired devices headphones mouse keyboard trust forget discoverable блютуз устройства" },
         { id: "vpn", title: "VPN", g: 0xF0582, page: "SetVpn.qml",
           sub: view.sys.tr("Клиент и профиль для быстрого подключения."), keys: "vpn впн happ hiddify clash proxy прокси сеть клиент" },
         { id: "system",  title: view.sys.tr("Система"),         g: 0xF0493, page: "SetSystem.qml",
@@ -77,6 +83,7 @@ Item {
         { id: "appearance", title: view.sys.tr("Оформление"), g: 0xF03D8, pages: ["look", "weather", "motion"] },
         { id: "controls", title: view.sys.tr("Управление"), g: 0xF062E, pages: ["cc", "launch", "notif"] },
         { id: "devices", title: view.sys.tr("Устройства"), g: 0xF0379, pages: ["display", "input"] },
+        { id: "network", title: "Network", g: 0xF05A9, pages: ["wifi", "bluetooth"] },
         { id: "vpn", title: "VPN", g: 0xF0582, pages: ["vpn"] },
         { id: "security", title: view.sys.tr("Безопасность"), g: 0xF033E, pages: ["lock"] },
         { id: "system", title: view.sys.tr("Система"), g: 0xF0493, pages: ["system"] }
