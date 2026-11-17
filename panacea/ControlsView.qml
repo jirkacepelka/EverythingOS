@@ -34,7 +34,7 @@ Item {
     // 2-column tiles, then record/battery, bottom buttons
     readonly property bool android: view.sys && view.sys.splitMode
     readonly property int tileR: view.android ? 26 : 14
-    readonly property var ccDefault: view.android ? ["clock", "sliders", "toggles", "media", "power", "quick", "tray"]
+    readonly property var ccDefault: view.android ? ["clock", "toggles", "sliders", "tiles", "media", "power", "quick", "tray"]
                                                   : ["clock", "toggles", "sliders", "media", "power", "quick", "tray"]
     readonly property var ccOrder: {
         if (view.ccOrderOverride) return view.ccOrderOverride;
@@ -1542,7 +1542,7 @@ Item {
                 // сети и устройства, — но обрезать их приходилось всё равно,
                 // только неровными карточками вместо честного многоточия.
                 VolCard {
-                    visible: view.sys.cfg.featAudio
+                    visible: view.sys.cfg.featAudio && !view.android
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
                     Layout.columnSpan: view.android ? 2 : 1
@@ -1556,18 +1556,20 @@ Item {
             // эта дорожка единственный быстрый способ до неё добраться.
             // Экранов, отвечающих на запрос яркости, может не быть вовсе —
             // тогда в строке остаётся один звук.
-            RowLayout {
+            GridLayout {
                 objectName: "cc-sliders"
                 Layout.row: view.ccRow("sliders")
                 Layout.column: 0
                 Layout.fillWidth: true
-                spacing: 8
+                columns: view.android ? 1 : 2
+                columnSpacing: 8
+                rowSpacing: 8
                 // Звук отсюда уехал наверх, в строку с сетью и Bluetooth, и
                 // в этой строке осталась одна яркость. Управляется она не
                 // везде: на настольной машине без DDC экранов в списке нет
                 // вовсе, и строка прячется целиком — пустая, она всё равно
                 // съедала бы промежуток сетки.
-                visible: (view.sys.brightList || []).length > 0
+                visible: (view.sys.brightList || []).length > 0 || (view.android && view.sys.cfg.featAudio)
 
                 Repeater {
                     model: view.sys.brightList
@@ -1581,6 +1583,52 @@ Item {
                         bpct: modelData.pct
                         bname: (view.sys.brightList || []).length > 1 ? modelData.name : ""
                     }
+                }
+
+                // Android style: volume sits under brightness
+                VolCard {
+                    visible: view.android && view.sys.cfg.featAudio
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 46
+                }
+            }
+
+            // Android style: Do Not Disturb + Screenshot tiles
+            RowLayout {
+                objectName: "cc-tiles"
+                Layout.row: view.android ? view.ccRow("tiles") : 99
+                Layout.column: 0
+                Layout.fillWidth: true
+                spacing: 8
+                visible: view.android
+
+                MiniTile {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                    Layout.preferredHeight: 72
+                    icon: String.fromCodePoint(view.sys.dnd ? 0xF009B : 0xF009A)
+                    label: "Do Not Disturb"
+                    sub: view.sys.dnd ? "On" : "Off"
+                    on: view.sys.dnd
+                    accent: view.sys.colOn
+                    onIconClicked: view.sys.toggleDnd()
+                    onBodyClicked: view.sys.toggleDnd()
+                }
+                MiniTile {
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: 1
+                    Layout.preferredHeight: 72
+                    icon: String.fromCodePoint(0xF0104)
+                    label: "Screenshot"
+                    sub: "Select an area"
+                    on: false
+                    accent: view.sys.colOn
+                    function shoot() {
+                        view.sys.collapse();
+                        Quickshell.execDetached(["sh", "-c", "sleep 0.5; " + view.sys.scriptDir + "/shot.sh"]);
+                    }
+                    onIconClicked: shoot()
+                    onBodyClicked: shoot()
                 }
             }
 

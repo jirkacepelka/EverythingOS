@@ -1755,8 +1755,10 @@ PanelWindow {
     readonly property bool splitCenter: splitMode && centerPages.indexOf(page) >= 0
     property string lastCenter: "music"
     readonly property bool tabbedPage: splitMode ? splitCenter : (page === "main" || page === "chat" || page === "vpn")
+    // Split island: sub-pages of the control center without their own header need a back button
+    readonly property bool backShown: splitMode && expanded && !settingsMode && ["power", "notif", "record", "vpn"].indexOf(page) >= 0
     // Right popup (control center) is 25% narrower than the center one
-    readonly property int popupW: splitRight ? Math.round(panelW * 0.75) : panelW
+    readonly property int popupW: (splitRight && ["main", "notif", "power"].indexOf(page) >= 0) ? Math.round(panelW * 0.75) : panelW
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
@@ -5252,7 +5254,7 @@ PanelWindow {
         function applyContentH() {
             var it = contentLoader.item;
             if (!it || it.implicitHeight <= 40) return;
-            var target = it.implicitHeight + (root.tabbedPage && !root.settingsMode ? 75 : 30);
+            var target = it.implicitHeight + ((root.tabbedPage || root.backShown) && !root.settingsMode ? 75 : 30);
             // Мелкие колебания раскладки цель не двигают. Высота идёт через
             // Behavior, а тот на каждое изменение цели начинает анимацию
             // заново — с текущей точки и на полную длительность. Пока страница
@@ -6922,6 +6924,33 @@ PanelWindow {
             }
         }
 
+        Rectangle {
+            id: backBtn
+            parent: (root.keepVis && root.expanded && !root.settingsMode) ? detachedPanel : capsule
+            anchors.top: parent.top
+            anchors.topMargin: 12
+            anchors.left: parent.left
+            anchors.leftMargin: 16
+            z: 65
+            width: 34; height: 34; radius: 17
+            visible: root.backShown
+            color: backBtnMa.containsMouse ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(1, 1, 1, 0.08)
+            Behavior on color { ColorAnimation { duration: 120 } }
+            Text {
+                anchors.centerIn: parent
+                text: String.fromCodePoint(0xF004D)
+                color: root.colFg
+                font { family: root.fontFam; pixelSize: 15 }
+            }
+            MouseArea {
+                id: backBtnMa
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: root.page = "main"
+            }
+        }
+
         Row {
             id: islandTabs
             parent: (root.keepVis && root.expanded && !root.settingsMode) ? detachedPanel : capsule
@@ -6979,7 +7008,7 @@ PanelWindow {
             z: 10
             parent: (root.keepVis && !root.settingsMode && (root.expanded || detachedPanel.opacity > 0.005)) ? detachedPanel : capsule
             anchors.top: parent ? parent.top : undefined
-            anchors.topMargin: root.tabbedPage && !root.settingsMode ? 55 : 15
+            anchors.topMargin: (root.tabbedPage || root.backShown) && !root.settingsMode ? 55 : 15
             anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
             // Ширина берётся у ЦЕЛЕВОЙ панели, а не у анимируемой капсулы:
             // иначе содержимое переливалось по ширине на каждом кадре
