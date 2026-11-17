@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Effects
 import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
@@ -19,6 +20,28 @@ FocusScope {
     // Без focus: true клавиатура остаётся у корня окна, и Enter в оверлее
     // просто никуда не приходил — стол не переключался.
     focus: true
+
+    // Blurred copy of the desktop behind the workspace cards (Settings → Appearance)
+    ScreencopyView {
+        id: bgShot
+        anchors.fill: parent
+        captureSource: view.sys.screen
+        live: false
+        paintCursor: false
+        visible: false
+        layer.enabled: view.sys.cfg.overviewBlur
+    }
+    MultiEffect {
+        anchors.fill: parent
+        source: bgShot
+        visible: view.sys.cfg.overviewBlur && bgShot.hasContent
+        autoPaddingEnabled: false
+        blurEnabled: true
+        blurMax: 64
+        blur: 1.0
+        blurMultiplier: 1.2
+        saturation: 0.15
+    }
 
     // Выбор храним по номеру стола, а не по индексу в списке: список
     // приходит асинхронно и на первом кадре ещё пустой, поэтому индекс,
@@ -394,6 +417,107 @@ FocusScope {
         opacity: view.searching ? 0.6 : 0
         visible: opacity > 0
         Behavior on opacity { NumberAnimation { duration: 160 } }
+    }
+
+
+    // ------------------------------------------------------------ app dock
+    // Optional (Settings → Appearance): pinned apps plus whatever is running.
+    // Click focuses the app (or launches it), right click pins / unpins.
+    readonly property var dockPinnedList: {
+        try { var l = JSON.parse(view.sys.cfg.dockPinned); return Array.isArray(l) ? l : []; } catch (e) { return []; }
+    }
+    function dockKey(s) { var p = String(s || "").toLowerCase().split("."); return p[p.length - 1]; }
+    readonly property var dockItems: {
+        var run = [];
+        var tl = Hyprland.toplevels ? Hyprland.toplevels.values : [];
+        for (var i = 0; i < tl.length; i++) {
+            var o = tl[i].lastIpcObject;
+            if (o && o["class"] && run.indexOf(o["class"]) < 0) run.push(o["class"]);
+        }
+        var out = [], used = {};
+        for (var p = 0; p < view.dockPinnedList.length; p++) {
+            var id = view.dockPinnedList[p], isRun = false;
+            for (var r = 0; r < run.length; r++)
+                if (view.dockKey(run[r]) === view.dockKey(id)) { isRun = true; used[r] = true; }
+            out.push({ id: id, running: isRun, pinned: true });
+        }
+        for (var q = 0; q < run.length; q++)
+            if (!used[q]) out.push({ id: run[q], running: true, pinned: false });
+        return out;
+    }
+    function dockTogglePin(id) {
+        var l = view.dockPinnedList.slice(), k = -1;
+        for (var i = 0; i < l.length; i++) if (view.dockKey(l[i]) === view.dockKey(id)) k = i;
+        if (k >= 0) l.splice(k, 1); else l.push(id);
+        view.sys.cfg.dockPinned = JSON.stringify(l);
+        view.sys.saveCfg();
+    }
+    function dockIcon(id) {
+        var e = null;
+        try { e = DesktopEntries.heuristicLookup(id); } catch (err) {}
+        var n = (e && e.icon) ? e.icon : String(id).toLowerCase();
+        var p = Quickshell.iconPath(n, true);
+        return p ? String(p) : "";
+    }
+
+    Rectangle {
+        id: dock
+        visible: view.sys.cfg.overviewDock && view.dockItems.length > 0
+        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 26 }
+        width: dockRow.implicitWidth + 28
+        height: 76
+        radius: height / 2
+        color: Qt.rgba(0.06, 0.06, 0.07, 0.72)
+        border.width: 1
+        border.color: Qt.rgba(1, 1, 1, 0.12)
+        MouseArea { anchors.fill: parent }
+
+        Row {
+            id: dockRow
+            anchors.centerIn: parent
+            spacing: 10
+            Repeater {
+                model: view.dockItems
+                delegate: Item {
+                    id: di
+                    required property var modelData
+                    width: 54; height: 54
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: 16
+                        color: dma.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
+                    }
+                    Image {
+                        anchors.centerIn: parent
+                        width: 38; height: 38
+                        sourceSize: Qt.size(76, 76)
+                        source: view.dockIcon(di.modelData.id)
+                        fillMode: Image.PreserveAspectFit
+                        asynchronous: true
+                        scale: dma.containsMouse ? 1.12 : 1
+                        Behavior on scale { NumberAnimation { duration: 120 } }
+                    }
+                    Rectangle {
+                        visible: di.modelData.running
+                        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 1 }
+                        width: 5; height: 5; radius: 3
+                        color: view.sys.colFg
+                    }
+                    MouseArea {
+                        id: dma
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        acceptedButtons: Qt.LeftButton | Qt.RightButton
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: mouse => {
+                            if (mouse.button === Qt.RightButton) { view.dockTogglePin(di.modelData.id); return; }
+                            view.sys.closeOverview();
+                            view.sys.focusApp(di.modelData.id);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // drop zone: move the dragged window to a brand new workspace

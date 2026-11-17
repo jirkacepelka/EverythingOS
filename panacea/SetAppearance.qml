@@ -40,6 +40,27 @@ ColumnLayout {
     SetCard {
         sys: page.sys
 
+        SetLabel { sys: page.sys; text: "Workspaces" }
+
+        SetToggle {
+            sys: page.sys
+            label: "Blurred background"
+            sub: "Blur the desktop behind the workspace overview."
+            on: page.sys.cfg.overviewBlur
+            onToggled: v => { page.sys.cfg.overviewBlur = v; page.sys.saveCfg(); }
+        }
+        SetToggle {
+            sys: page.sys
+            label: "App dock"
+            sub: "Show a dock with pinned and running apps in the overview. Right-click an app to pin or unpin it."
+            on: page.sys.cfg.overviewDock
+            onToggled: v => { page.sys.cfg.overviewDock = v; page.sys.saveCfg(); }
+        }
+    }
+
+    SetCard {
+        sys: page.sys
+
         SetLabel { sys: page.sys; text: page.sys.tr("Язык") }
 
         SetPick {
