@@ -24,7 +24,7 @@
     },
     "key": {
       "type": "string",
-      "width": 16
+      "width": 18
     },
     "bar": {
       "border": {
@@ -56,9 +56,6 @@
       }
     },
     {
-      "type": "break"
-    },
-    {
       "type": "os",
       "key": "\uf32a  OS",
       "format": "{name} {version-id}"
@@ -78,9 +75,6 @@
       "format": "{dpkg} dpkg \u00b7 {flatpak-user} flatpak"
     },
     {
-      "type": "break"
-    },
-    {
       "type": "shell",
       "key": "\uf120  SHELL",
       "format": "{pretty-name}"
@@ -94,9 +88,6 @@
       "type": "terminal",
       "key": "\uf489  TERMINAL",
       "format": "{pretty-name}"
-    },
-    {
-      "type": "break"
     },
     {
       "type": "cpu",
@@ -118,9 +109,6 @@
       "key": "\uf0a0  DISK",
       "folders": "/",
       "format": "{size-percentage-bar}  {size-used} / {size-total}"
-    },
-    {
-      "type": "break"
     },
     {
       "type": "custom",
