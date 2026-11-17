@@ -5185,15 +5185,47 @@ PanelWindow {
         readonly property bool collapsing: root.splitIdleRaw && capsule.height > root.pillH + 4
         property real heldW: 540
         property bool heldRight: false
+        // Split island open/close animation: the capsule grows from the width of the pill
+        // it replaces to the popup width (and back), instead of jumping
+        property real splitW: 540
+        property bool splitAnim: false
+        property bool popupClosing: false
+        Behavior on splitW {
+            enabled: capsule.splitAnim
+            NumberAnimation {
+                duration: root.animMs
+                easing.type: root.animBounce > 0 ? Easing.OutBack : Easing.InOutCubic
+                easing.overshoot: root.easeOvershoot
+            }
+        }
+        function pillStartW(right) {
+            var w = right ? rightPill.width : midPill.width;
+            return w > 40 ? w : 200;
+        }
+        onCollapsingChanged: if (!capsule.collapsing) { capsule.splitAnim = false; capsule.popupClosing = false; }
         Connections {
             target: root
-            function onExpandedChanged() { if (root.expanded) capsule.heldRight = root.splitRight; }
+            function onExpandedChanged() {
+                if (root.expanded) capsule.heldRight = root.splitRight;
+                if (!root.splitMode) return;
+                if (root.expanded && !root.keepVis) {
+                    capsule.popupClosing = false;
+                    capsule.splitAnim = false;
+                    capsule.splitW = capsule.pillStartW(root.splitRight);
+                    capsule.splitAnim = true;
+                    capsule.splitW = root.panelW;
+                } else if (!root.expanded && !root.keepVis) {
+                    capsule.popupClosing = true;
+                    capsule.splitAnim = true;
+                    capsule.splitW = capsule.pillStartW(capsule.heldRight);
+                }
+            }
             function onSplitRightChanged() { if (root.expanded) capsule.heldRight = root.splitRight; }
         }
         width: root.settingsMode ? root.settingsW
-             : (root.expanded && !root.keepVis) ? root.panelW
+             : (root.expanded && !root.keepVis) ? (root.splitMode ? capsule.splitW : root.panelW)
              : root.pillSide     ? idleThick
-             : capsule.collapsing ? capsule.heldW
+             : capsule.collapsing ? (capsule.popupClosing ? capsule.splitW : capsule.heldW)
                                  : idleLen
         // целевая высота — к ней анимируется height и по ней же сразу
         // рассчитывается центрирование, чтобы движение было одноэтапным
