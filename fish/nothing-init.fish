@@ -1,7 +1,8 @@
 # EverythingOS terminal session: one-line prompt (folder, branch, red dot) + fastfetch.
 function fish_greeting; end
 function fish_prompt
-    set -l p (string replace -r "^$HOME" "~" $PWD)
+    set -l p (string replace -r "^$HOME/?" "" $PWD)
+    test -z "$p"; and set p Home
     set -l parts (string split / $p)
     set_color D71921; echo -n "  "
     if test (count $parts) -gt 1
