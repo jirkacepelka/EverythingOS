@@ -1,0 +1,168 @@
+pragma ComponentBehavior: Bound
+import QtQuick
+import Quickshell
+
+// Full-screen widget editor layer: a tray at the bottom with every widget type.
+// Drag a tile onto the desktop to place it (or click it to add it near the top
+// left), then drag placed widgets to move them or use × to remove them.
+Item {
+    id: view
+
+    property var sys
+    readonly property alias bar: bar
+
+    WidgetCatalog { id: cat }
+
+    // dim the desktop a little so the editor reads as a mode
+    Rectangle { anchors.fill: parent; color: Qt.rgba(0, 0, 0, 0.35) }
+
+    // the desktop grid: square cells that widgets snap to (and, later, app icons)
+    readonly property real ox: view.sys.widgetsOriginX
+    readonly property real oy: view.sys.widgetsOriginY
+    readonly property int gcols: Math.max(1, Math.floor((view.width - 2 * view.ox + 12) / 78))
+    readonly property int grows: Math.max(1, Math.floor((view.height - view.oy - 24) / 78))
+    Repeater {
+        model: view.gcols * view.grows
+        Rectangle {
+            required property int index
+            x: view.ox + (index % view.gcols) * 78
+            y: view.oy + Math.floor(index / view.gcols) * 78
+            width: 66; height: 66; radius: 10
+            color: "transparent"
+            border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.07)
+        }
+    }
+
+    // ghost that follows the pointer while dragging a tile
+    Rectangle {
+        id: ghost
+        visible: false
+        property var type: null
+        z: 100
+        width: type ? type.w : 0
+        height: type ? type.h : 0
+        radius: view.sys.shapeR
+        color: view.sys.colBg
+        opacity: 0.92
+        border.color: Qt.rgba(1, 1, 1, 0.7); border.width: 1.5
+        WidgetBody {
+            anchors.fill: parent
+            sys: view.sys
+            type: ghost.type ? ghost.type.id : ""
+            interactive: false
+        }
+    }
+
+    Rectangle {
+        id: bar
+        z: 50
+        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: view.sys.cfg.islandGap + 1 }
+        width: Math.min(view.width - 40, row.implicitWidth + 40)
+        height: 140
+        radius: view.sys.winR
+        color: view.sys.colBg
+        border.width: view.sys.edgeW
+        border.color: view.sys.edgeColor
+
+        Row {
+            id: row
+            anchors.centerIn: parent
+            spacing: 10
+
+            Repeater {
+                model: cat.types
+                delegate: Item {
+                    id: tile
+                    required property var modelData
+                    // live miniature of the widget, scaled to fit the tile
+                    readonly property real sc: Math.min(120 / modelData.w, 78 / modelData.h)
+                    width: Math.max(96, modelData.w * sc + 16)
+                    height: 118
+                    Rectangle {
+                        anchors.fill: parent; radius: Math.max(10, view.sys.winR - 6)
+                        color: tma.containsMouse || tma.pressed ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+                    }
+                    WCard {
+                        sys: view.sys
+                        anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 8 }
+                        width: tile.modelData.w * tile.sc; height: tile.modelData.h * tile.sc
+                        radius: Math.max(5, view.sys.shapeR * tile.sc)
+                        clip: true
+                        WidgetBody {
+                            width: tile.modelData.w; height: tile.modelData.h
+                            scale: tile.sc; transformOrigin: Item.TopLeft
+                            sys: view.sys
+                            type: tile.modelData.id
+                            interactive: false
+                        }
+                    }
+                    WCaption {
+                        sys: view.sys
+                        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 8 }
+                        text: tile.modelData.name
+                        font.pixelSize: view.sys.fontSize - 5
+                    }
+                    MouseArea {
+                        id: tma
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        property bool moved: false
+                        onPressed: m => { moved = false; }
+                        onPositionChanged: m => {
+                            if (!pressed) return;
+                            var p = tma.mapToItem(view, m.x, m.y);
+                            if (!moved && Math.abs(m.x - width / 2) + Math.abs(m.y - height / 2) < 24) return;
+                            if (!moved) { moved = true; ghost.type = tile.modelData; ghost.visible = true; }
+                            // the ghost snaps to the cell the widget would land on
+                            var gx = Math.max(0, Math.min(view.gcols - tile.modelData.cw, Math.round((p.x - ghost.width / 2 - view.ox) / 78)));
+                            var gy = Math.max(0, Math.min(view.grows - tile.modelData.ch, Math.round((p.y - ghost.height / 2 - view.oy) / 78)));
+                            ghost.x = view.ox + gx * 78;
+                            ghost.y = view.oy + gy * 78;
+                        }
+                        onReleased: m => {
+                            var p = tma.mapToItem(view, m.x, m.y);
+                            if (moved) {
+                                ghost.visible = false;
+                                if (p.y < bar.y - 10) {
+                                    view.sys.addWidget(tile.modelData.id,
+                                        Math.round((ghost.x - view.ox) / 78), Math.round((ghost.y - view.oy) / 78));
+                                }
+                            }
+                        }
+                        onClicked: if (!moved) view.sys.addWidget(tile.modelData.id, -1, -1)
+                    }
+                }
+            }
+
+            Rectangle { width: 1; height: 60; anchors.verticalCenter: parent.verticalCenter; color: Qt.rgba(1, 1, 1, 0.12) }
+
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 8
+                Rectangle {
+                    width: 84; height: 32; radius: 16
+                    color: view.sys.colFg
+                    Text { anchors.centerIn: parent; text: "Done"; color: view.sys.colBg
+                           font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; weight: Font.DemiBold } }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.sys.widgetEdit = false }
+                }
+                Rectangle {
+                    visible: view.sys.widgetHidden.length > 0
+                    width: 84; height: 32; radius: 16
+                    color: "transparent"; border.width: 1; border.color: view.sys.colLine
+                    Text { anchors.centerIn: parent; text: "Restore"; color: view.sys.colMuted
+                           font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 } }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.sys.restoreBuiltins() }
+                }
+                Rectangle {
+                    width: 84; height: 32; radius: 16
+                    color: "transparent"; border.width: 1; border.color: view.sys.colLine
+                    Text { anchors.centerIn: parent; text: "Clear added"; color: view.sys.colMuted
+                           font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 } }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.sys.clearWidgets() }
+                }
+            }
+        }
+    }
+}

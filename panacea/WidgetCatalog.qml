@@ -1,0 +1,27 @@
+import QtQuick
+
+// Catalogue of the widgets that can be placed on the desktop from the tray.
+// The desktop is a grid of square cells (pitch 78 px, cell 66 px, gap 12 px):
+// cw x ch is the span in cells, w / h the resulting card size in pixels.
+QtObject {
+    readonly property int pitch: 78
+    readonly property int gap: 12
+    function px(cells) { return cells * pitch - gap; }
+
+    readonly property var types: [
+        { id: "volume",       name: "Sound",      cw: 4, ch: 1 },
+        { id: "brightness",   name: "Brightness", cw: 4, ch: 1 },
+        { id: "clockAnalog",  name: "Analog",     cw: 2, ch: 2 },
+        { id: "clockRing",    name: "Ring clock", cw: 2, ch: 2 },
+        { id: "clockDot",     name: "Dot clock",  cw: 4, ch: 2 },
+        { id: "clockFlip",    name: "Flip clock", cw: 4, ch: 2 },
+        { id: "battery",      name: "Battery",    cw: 2, ch: 2 },
+        { id: "calendar",     name: "Calendar",   cw: 4, ch: 3 }
+    ].map(function (t) { t.w = t.cw * 78 - 12; t.h = t.ch * 78 - 12; return t; })
+
+    function find(id) {
+        if (id === "clockDigital") id = "clockDot";   // renamed
+        for (var i = 0; i < types.length; i++) if (types[i].id === id) return types[i];
+        return null;
+    }
+}

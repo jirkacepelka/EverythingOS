@@ -50,8 +50,9 @@ Item {
 
     // ---- Volné umístění widgetů ------------------------------------------
     // Pozice (relativně k počátku) se ukládají jako JSON v cfg.widgetPosJson.
+    function isHidden(id) { return view.sys && view.sys.widgetHidden ? view.sys.widgetHidden.indexOf(id) >= 0 : false; }
     readonly property bool editing: view.sys ? Boolean(view.sys.widgetEdit) : false
-    readonly property real snap: 12
+    readonly property real snap: 78   // desktop grid pitch (shared with the tray widgets)
     readonly property var sizes: ({
         date: [view.col, 140], clock: [view.col, 140], weather: [view.col, 140],
         right: [view.col, 140], progress: [view.fullW, 72], music: [view.fullW, 180],
@@ -59,9 +60,9 @@ Item {
     })
     function defaults() {
         var s = view.col + view.gap;
-        return { date: {x: 0, y: 0}, clock: {x: s, y: 0}, weather: {x: 0, y: 152},
-                 right: {x: s, y: 152}, progress: {x: 0, y: 304}, music: {x: 0, y: 388},
-                 scratch: {x: 0, y: 580} };
+        return { date: {x: 0, y: 0}, clock: {x: s, y: 0}, weather: {x: 0, y: 156},
+                 right: {x: s, y: 156}, progress: {x: 0, y: 312}, music: {x: 0, y: 390},
+                 scratch: {x: 0, y: 624} };
     }
     function loadPos() {
         var d = view.defaults(), saved = {};
@@ -134,6 +135,17 @@ Item {
             anchors.fill: parent; radius: view.cardRadius; color: Qt.rgba(1, 1, 1, dl.pressed ? 0.10 : 0.04)
             border.color: Qt.rgba(1, 1, 1, 0.55); border.width: 1.5
         }
+        Rectangle {   // hide this built-in widget (restore from the tray)
+            anchors { top: parent.top; right: parent.right; margins: 6 }
+            width: 22; height: 22; radius: 11
+            color: view.sys ? view.sys.colCrit : "#D71921"
+            Text { anchors.centerIn: parent; text: "×"; color: "white"; font.pixelSize: 15; font.bold: true }
+            MouseArea {
+                anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                onPressed: m => m.accepted = true
+                onClicked: view.sys.hideBuiltin(dl.wid)
+            }
+        }
     }
 
     // Режимы карточек
@@ -181,32 +193,11 @@ Item {
 
     // Общий вид карточки: тёмная плашка со скруглением
     // Stejné pozadí a společný okraj jako pilulky ostrova
-    component Card: Rectangle {
-        radius: view.cardRadius
-        color: view.sys ? view.sys.colBg : "#000000"
-        border.width: view.sys ? view.sys.edgeW : 0
-        border.color: view.sys ? view.sys.edgeColor : "transparent"
-    }
+    // The built-in widgets share their card, dot digits and caption with the tray widgets
+    // (WCard / WNum / WCaption).
+    component Card: WCard { sys: view.sys }
 
-    // Точечное число
-    component Num: Item {
-        id: num
-        property string value: ""
-        property real size: 14
-        property real gapRatio: 0.22
-        property color color: view.sys ? view.sys.colFg : "#ffffff"
-
-        implicitWidth:  dots.implicitWidth
-        implicitHeight: dots.implicitHeight
-
-        DotText {
-            id: dots
-            value: num.value
-            size: num.size
-            gapRatio: num.gapRatio
-            color: num.color
-        }
-    }
+    component Num: WNum { sys: view.sys }
 
     // Значок погоды: точечный DotIcon
     component WIcon: Item {
@@ -225,17 +216,7 @@ Item {
         }
     }
 
-    // Мелкая подпись заглавными вразрядку
-    component Caption: Text {
-        color: view.sys ? view.sys.colMuted : "#888888"
-        elide: Text.ElideRight
-        font {
-            family: view.sys ? view.sys.fontFam : "sans-serif"
-            pixelSize: view.fsBody
-            capitalization: Font.AllUppercase
-            letterSpacing: 1.1
-        }
-    }
+    component Caption: WCaption { sys: view.sys }
 
     // Karty jsou volně umístěné (absolutní x/y z view.wpos), ne v layoutu.
     Item {
@@ -248,6 +229,7 @@ Item {
             // Карточка даты (144x140)
             Card {
                 id: dateCard
+                visible: !view.isHidden("date")
                 x: view.wx("date"); y: view.wy("date")
                 width: view.col; height: 140
 
@@ -294,6 +276,7 @@ Item {
             // Карточка часов Nothing OS (144x140) — переключает аналоговые / цифровые
             Card {
                 id: clockCard
+                visible: !view.isHidden("clock")
                 x: view.wx("clock"); y: view.wy("clock")
                 width: view.col; height: 140
 
@@ -495,6 +478,7 @@ Item {
             // Главная карточка погоды (144x140) — клик открывает полное окно прогноза
             Card {
                 id: mainWeatherCard
+                visible: !view.isHidden("weather")
                 x: view.wx("weather"); y: view.wy("weather")
                 width: view.col; height: 140
                 Layout.alignment: Qt.AlignTop
@@ -540,6 +524,7 @@ Item {
             // Правая карточка (144x140) — КЛИК ПЕРЕКЛЮЧАЕТ МЕЖДУ ПОГОДОЙ И СИСТЕМОЙ
             Card {
                 id: rightToggleCard
+                visible: !view.isHidden("right")
                 x: view.wx("right"); y: view.wy("right")
                 width: view.col; height: 140
                 Layout.alignment: Qt.AlignTop
@@ -811,6 +796,7 @@ Item {
         // ------------------------------------------------------ Ряд 3: Life Bar / Day & Year Progress (300x72)
         Card {
             id: progressCard
+            visible: !view.isHidden("progress")
             x: view.wx("progress"); y: view.wy("progress")
             width: view.fullW; height: 72
 
@@ -933,14 +919,14 @@ Item {
             id: musicCard
             x: view.wx("music"); y: view.wy("music")
             width: view.fullW; height: implicitHeight
-            visible: view.sys && view.sys.cfg && view.sys.cfg.widgetMusic !== false
+            visible: view.sys && view.sys.cfg && view.sys.cfg.widgetMusic !== false && !view.isHidden("music")
             sys: view.sys
         }
 
         // ------------------------------------------------------ Ряд 5: ScratchPad Widget (300x140)
         Card {
             id: scratchCard
-            visible: (view.sys && view.sys.cfg && view.sys.cfg.widgetScratchpad !== false)
+            visible: (view.sys && view.sys.cfg && view.sys.cfg.widgetScratchpad !== false) && !view.isHidden("scratch")
             x: view.wx("scratch"); y: view.wy("scratch")
             width: view.fullW; height: 140
 
@@ -1155,7 +1141,7 @@ Item {
     // Lišta úprav rozložení
     Rectangle {
         id: editBar
-        visible: view.editing
+        visible: false   // controls moved to the widget tray
         z: 200
         x: (view.width - width) / 2
         y: view.height - height - 28

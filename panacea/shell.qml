@@ -198,6 +198,8 @@ PanelWindow {
             property bool   featBluetooth: true
             property bool   btShowUnnamed: false
             property bool   overviewBlur: true
+            property string widgetItemsJson: "[]"
+            property string widgetHiddenJson: "[]"
             property bool   overviewDock: false
             property bool   dockEnabled: false
             property bool   dockAutoHide: true
@@ -437,7 +439,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 16, islandRadius: 0, splitIsland: false, btShowUnnamed: false, overviewBlur: true, overviewDock: false, dockEnabled: false, dockAutoHide: true, dockPinned: "[\"app.zen_browser.zen\",\"org.gnome.Nautilus\",\"foot\",\"com.anthropic.Claude\"]", showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2", borderAlpha: 55,
+        islandGap: 16, islandRadius: 0, splitIsland: false, btShowUnnamed: false, overviewBlur: true, widgetItemsJson: "[]", widgetHiddenJson: "[]", overviewDock: false, dockEnabled: false, dockAutoHide: true, dockPinned: "[\"app.zen_browser.zen\",\"org.gnome.Nautilus\",\"foot\",\"com.anthropic.Claude\"]", showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2", borderAlpha: 55,
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -1740,6 +1742,85 @@ PanelWindow {
     property bool onboardingOpen: false
     // Režim úprav rozložení widgetů (přetahování myší)
     property bool widgetEdit: false
+    // Widgets placed from the tray: [{ id, type, gx, gy }] in grid cells, stored as JSON in the config.
+    // The desktop is a grid of square cells (pitch 78 px) starting at the widget origin.
+    readonly property int widgetPitch: 78
+    readonly property var widgetItems: {
+        var out = [];
+        try {
+            var l = JSON.parse(cfg.widgetItemsJson || "[]");
+            if (Array.isArray(l)) for (var i = 0; i < l.length; i++) {
+                var w = l[i];
+                if (w.gx === undefined) w = { id: w.id, type: w.type, gx: Math.max(0, Math.round((w.x - widgetsOriginX) / 78)), gy: Math.max(0, Math.round((w.y - widgetsOriginY) / 78)) };
+                out.push(w);
+            }
+        } catch (e) {}
+        return out;
+    }
+    WidgetCatalog { id: widgetCat }
+    function saveWidgetItems(l) { cfg.widgetItemsJson = JSON.stringify(l); saveCfg(); }
+    // rectangles (px, absolute) already taken on the desktop: built-in widgets and placed ones
+    function widgetRects(ignoreId) {
+        var r = [];
+        var cards = [widgets.cDate, widgets.cClock, widgets.cWeather, widgets.cRight, widgets.cProgress, widgets.cMusic, widgets.cScratch];
+        for (var i = 0; i < cards.length; i++)
+            if (cards[i].visible) r.push({ x: cards[i].x, y: cards[i].y, w: cards[i].width, h: cards[i].height });
+        for (var j = 0; j < widgetItems.length; j++) {
+            var it = widgetItems[j], t = widgetCat.find(it.type);
+            if (t && it.id !== ignoreId) r.push({ x: widgetsOriginX + it.gx * 78, y: widgetsOriginY + it.gy * 78, w: t.w, h: t.h });
+        }
+        return r;
+    }
+    // nearest free cell position to (gx, gy) for a widget of this type
+    function widgetFreeSpot(type, gx, gy, ignoreId) {
+        var t = widgetCat.find(type); if (!t) return { gx: gx, gy: gy };
+        var rects = widgetRects(ignoreId);
+        var cols = Math.max(t.cw, Math.floor((width - 2 * widgetsOriginX + 12) / 78));
+        var rows = Math.max(t.ch, Math.floor((height - widgetsOriginY - 24) / 78));
+        function free(cx, cy) {
+            if (cx < 0 || cy < 0 || cx + t.cw > cols || cy + t.ch > rows) return false;
+            var x = widgetsOriginX + cx * 78, y = widgetsOriginY + cy * 78;
+            for (var i = 0; i < rects.length; i++)
+                if (x < rects[i].x + rects[i].w + 4 && x + t.w + 4 > rects[i].x && y < rects[i].y + rects[i].h + 4 && y + t.h + 4 > rects[i].y) return false;
+            return true;
+        }
+        gx = Math.max(0, Math.min(cols - t.cw, gx)); gy = Math.max(0, Math.min(rows - t.ch, gy));
+        if (free(gx, gy)) return { gx: gx, gy: gy };
+        var best = null, bd = 1e9;
+        for (var cy = 0; cy < rows; cy++) for (var cx = 0; cx < cols; cx++) {
+            if (!free(cx, cy)) continue;
+            var d = (cx - gx) * (cx - gx) + (cy - gy) * (cy - gy);
+            if (d < bd) { bd = d; best = { gx: cx, gy: cy }; }
+        }
+        return best || { gx: gx, gy: gy };
+    }
+    function addWidget(type, gx, gy) {
+        var l = widgetItems.slice();
+        var p = widgetFreeSpot(type, gx < 0 ? 0 : gx, gy < 0 ? 0 : gy, "");
+        l.push({ id: "w" + Date.now() + Math.floor(Math.random() * 1000), type: type, gx: p.gx, gy: p.gy });
+        saveWidgetItems(l);
+    }
+    function moveWidget(id, gx, gy) {
+        var l = widgetItems.slice();
+        for (var i = 0; i < l.length; i++) if (l[i].id === id) {
+            var p = widgetFreeSpot(l[i].type, gx, gy, id);
+            l[i] = { id: id, type: l[i].type, gx: p.gx, gy: p.gy };
+        }
+        saveWidgetItems(l);
+    }
+    function removeWidget(id) {
+        saveWidgetItems(widgetItems.filter(function (w) { return w.id !== id; }));
+    }
+    function clearWidgets() { saveWidgetItems([]); }
+    // built-in widgets (date, clock, weather, right, progress, music, scratch) can be hidden and restored
+    readonly property var widgetHidden: {
+        try { var l = JSON.parse(cfg.widgetHiddenJson || "[]"); return Array.isArray(l) ? l : []; } catch (e) { return []; }
+    }
+    function hideBuiltin(id) {
+        if (widgetHidden.indexOf(id) >= 0) return;
+        cfg.widgetHiddenJson = JSON.stringify(widgetHidden.concat([id])); saveCfg();
+    }
+    function restoreBuiltins() { cfg.widgetHiddenJson = "[]"; saveCfg(); }
     Process {
         id: onboardCheck
         command: ["sh", "-c", "f=\"${XDG_RUNTIME_DIR:-/tmp}/panacea-onboarding-shown\"; [ -e \"$f\" ] || { : > \"$f\"; echo first; }"]
@@ -7966,15 +8047,16 @@ PanelWindow {
                                     : root.pillH + (root.cfg.notchMode ? 0 : root.cfg.islandGap)) + root.cfg.islandGap + 1
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.layer: WlrLayer.Bottom
+    // above the windows while editing so the built-in widgets can be reached too
+    WlrLayershell.layer: root.widgetEdit ? WlrLayer.Top : WlrLayer.Bottom
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
     // vstup jen na kartách (a liště úprav), zbytek plochy zůstává volný
     mask: Region {
-        item: widgets.cDate
-        Region { item: widgets.cClock;   intersection: Intersection.Combine }
-        Region { item: widgets.cWeather; intersection: Intersection.Combine }
-        Region { item: widgets.cRight;   intersection: Intersection.Combine }
-        Region { item: widgets.cProgress; intersection: Intersection.Combine }
+        item: widgets.cDate.visible ? widgets.cDate : null
+        Region { item: widgets.cClock.visible ? widgets.cClock : null;   intersection: Intersection.Combine }
+        Region { item: widgets.cWeather.visible ? widgets.cWeather : null; intersection: Intersection.Combine }
+        Region { item: widgets.cRight.visible ? widgets.cRight : null;   intersection: Intersection.Combine }
+        Region { item: widgets.cProgress.visible ? widgets.cProgress : null; intersection: Intersection.Combine }
         Region { item: widgets.cMusic.visible ? widgets.cMusic : null; intersection: Intersection.Combine }
         Region { item: widgets.cScratch.visible ? widgets.cScratch : null; intersection: Intersection.Combine }
         Region { item: root.widgetEdit ? widgets.editBarItem : null; intersection: Intersection.Combine }
@@ -7987,6 +8069,48 @@ PanelWindow {
         originX: widgetsWin.edgeInset
         originY: widgetsWin.topInset
     }
+}
+
+
+// Widgety přidané z lišty (Super+Shift+D): vlastní vrstva pod okny, vstup jen na kartách.
+PanelWindow {
+    id: extraWin
+    visible: root.cfg.featWidgets && root.widgetItems.length > 0
+    screen: root.screen
+    anchors { top: true; left: true; right: true; bottom: true }
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    // above the windows while editing so the placed widgets can be reached
+    WlrLayershell.layer: root.widgetEdit ? WlrLayer.Top : WlrLayer.Bottom
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    mask: Region {
+        regions: extraRegions.instances
+    }
+    Variants {
+        id: extraRegions
+        model: extraView.rects
+        Region {
+            required property var modelData
+            x: modelData.x; y: modelData.y; width: modelData.w; height: modelData.h
+            intersection: Intersection.Combine
+        }
+    }
+    ExtraWidgets { id: extraView; anchors.fill: parent; sys: root }
+}
+
+// Editor widgetů přes celou obrazovku s lištou dole (zapíná se přes widgetEdit).
+PanelWindow {
+    id: trayWin
+    visible: root.cfg.featWidgets && root.widgetEdit
+    screen: root.screen
+    anchors { top: true; left: true; right: true; bottom: true }
+    color: "transparent"
+    exclusionMode: ExclusionMode.Ignore
+    WlrLayershell.layer: WlrLayer.Top
+    WlrLayershell.namespace: "panacea-widget-editor"
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
+    mask: Region { item: trayView.bar }
+    WidgetTray { id: trayView; anchors.fill: parent; sys: root }
 }
 
 // Пока редактируются заметки, прозрачный слой над обоями ловит щелчок по
