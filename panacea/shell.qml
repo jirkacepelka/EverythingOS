@@ -5277,7 +5277,7 @@ PanelWindow {
         Behavior on opacity { NumberAnimation { duration: root.animFast } }
 
         color: root.splitIdle ? "transparent" : root.colBg
-        Behavior on color { ColorAnimation { duration: root.animFast } }
+        Behavior on color { enabled: !root.splitMode; ColorAnimation { duration: root.animFast } }
         // Углы у прижатой кромки срезаны, у смотрящей в экран — скруглены:
         // так остров выглядит выросшим из края, а не приклеенным к нему.
         // В режиме настроек капсула отрывается от кромки, и круглыми
