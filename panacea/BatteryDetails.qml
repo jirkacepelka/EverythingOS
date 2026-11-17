@@ -39,7 +39,7 @@ ColumnLayout {
     }
     Rectangle {
         Layout.fillWidth: true; Layout.preferredHeight: 60
-        radius: 10; color: Qt.rgba(1,1,1,0.04); border.color: sys.colLine
+        radius: 10; color: ShellColors.fgA(0.04); border.color: sys.colLine
         Canvas {
             id: chart; anchors.fill: parent; anchors.margins: 7
             onPaint: {
@@ -91,7 +91,7 @@ ColumnLayout {
                     Layout.preferredHeight: 32
                     radius: 10
                     color: selected ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.18)
-                                    : hit.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.05)
+                                    : hit.containsMouse ? ShellColors.fgA(0.10) : ShellColors.fgA(0.05)
                     border.width: 1
                     border.color: selected ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.55) : view.sys.colLine
                     Behavior on color { ColorAnimation { duration: view.sys.animFast } }

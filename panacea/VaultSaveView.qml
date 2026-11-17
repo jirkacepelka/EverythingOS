@@ -73,7 +73,7 @@ FocusScope {
             Layout.fillWidth: true
             Layout.preferredHeight: 40
             radius: 12
-            color: Qt.rgba(1, 1, 1, 0.06)
+            color: ShellColors.fgA(0.06)
             border.width: 1
             border.color: pw.activeFocus ? view.sys.colOn : view.sys.colLine
 
@@ -94,7 +94,7 @@ FocusScope {
                     anchors.verticalCenter: parent.verticalCenter
                     visible: pw.text.length === 0
                     text: view.sys.tr("Пароль пользователя")
-                    color: Qt.rgba(1, 1, 1, 0.28)
+                    color: ShellColors.fgA(0.28)
                     font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                 }
             }
@@ -118,7 +118,7 @@ FocusScope {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
                 radius: 11
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: ShellColors.fgA(0.06)
                 border.width: 1
                 border.color: name.activeFocus ? view.sys.colOn : view.sys.colLine
                 TextInput {
@@ -136,7 +136,7 @@ FocusScope {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: name.text.length === 0
                         text: view.sys.tr("Откуда пароль")
-                        color: Qt.rgba(1, 1, 1, 0.28)
+                        color: ShellColors.fgA(0.28)
                         font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
@@ -146,7 +146,7 @@ FocusScope {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
                 radius: 11
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: ShellColors.fgA(0.06)
                 border.width: 1
                 border.color: login.activeFocus ? view.sys.colOn : view.sys.colLine
                 TextInput {
@@ -163,7 +163,7 @@ FocusScope {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: login.text.length === 0
                         text: view.sys.tr("Логин (необязательно)")
-                        color: Qt.rgba(1, 1, 1, 0.28)
+                        color: ShellColors.fgA(0.28)
                         font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
@@ -186,7 +186,7 @@ FocusScope {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
                 radius: 11
-                color: noMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+                color: noMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
                 Text {
                     anchors.centerIn: parent
                     text: view.sys.tr("Не сохранять")

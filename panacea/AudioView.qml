@@ -109,7 +109,7 @@ Item {
                 Layout.preferredWidth: 30
                 Layout.preferredHeight: 30
                 radius: 10
-                color: backMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+                color: backMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
                 Behavior on color { ColorAnimation { duration: 150 } }
                 Text {
                     anchors.centerIn: parent
@@ -177,7 +177,7 @@ Item {
                     width: parent.usable
                     height: 6
                     radius: 3
-                    color: Qt.rgba(1, 1, 1, 0.12)
+                    color: ShellColors.fgA(0.12)
                     Rectangle {
                         width: parent.width * sl.pos
                         height: parent.height
@@ -241,7 +241,7 @@ Item {
                 radius: 12
                 color: dev.active
                        ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.16)
-                       : (devMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.05))
+                       : (devMa.containsMouse ? ShellColors.fgA(0.10) : ShellColors.fgA(0.05))
                 border.color: dev.active
                               ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.40)
                               : view.sys.colLine
@@ -347,7 +347,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 58
                 radius: 12
-                color: Qt.rgba(1, 1, 1, 0.05)
+                color: ShellColors.fgA(0.05)
                 border.color: view.sys.colLine
                 border.width: 1
 
@@ -424,7 +424,7 @@ Item {
                             width: parent.usable
                             height: 4
                             radius: 2
-                            color: Qt.rgba(1, 1, 1, 0.12)
+                            color: ShellColors.fgA(0.12)
                             Rectangle {
                                 width: parent.width * appSl.pos
                                 height: parent.height

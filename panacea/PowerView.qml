@@ -118,7 +118,7 @@ Item {
 
                     // база всегда нейтральная; подтверждение красит верхний слой
                     color: btnMa.containsMouse || isCurrent
-                           ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.05)
+                           ? ShellColors.fgA(0.10) : ShellColors.fgA(0.05)
 
                     // отдельный слой для подсветки подтверждения
                     Rectangle {
@@ -130,7 +130,7 @@ Item {
                     }
 
                     border.color: isArmed ? modelData.accent
-                                : isCurrent ? Qt.rgba(1, 1, 1, 0.22)
+                                : isCurrent ? ShellColors.fgA(0.22)
                                             : view.sys.colLine
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: 160 } }

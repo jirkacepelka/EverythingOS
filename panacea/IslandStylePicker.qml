@@ -38,9 +38,9 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: pk.cardHeight
         radius: 18
-        color: Qt.rgba(1, 1, 1, 0.05)
+        color: ShellColors.fgA(0.05)
         border.width: card.sel ? 2 : 1
-        border.color: card.sel ? pk.sys.colFg : Qt.rgba(1, 1, 1, 0.10)
+        border.color: card.sel ? pk.sys.colFg : ShellColors.fgA(0.10)
 
         Rectangle {
             id: scr

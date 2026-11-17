@@ -32,7 +32,7 @@ Rectangle {
            ? (ma.containsMouse
               ? Qt.rgba(btn.sys.colOn.r, btn.sys.colOn.g, btn.sys.colOn.b, 0.34)
               : Qt.rgba(btn.sys.colOn.r, btn.sys.colOn.g, btn.sys.colOn.b, 0.22))
-           : (ma.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent")
+           : (ma.containsMouse ? ShellColors.fgA(0.10) : "transparent")
     border.width: 1
     border.color: btn.primary ? btn.sys.colOn : btn.sys.colLine
 

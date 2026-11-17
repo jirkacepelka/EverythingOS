@@ -40,6 +40,27 @@ ColumnLayout {
     SetCard {
         sys: page.sys
 
+        SetLabel { sys: page.sys; text: "Mode" }
+
+        SetSelect {
+            sys: page.sys
+            label: "System mode"
+            options: [ { id: "dark", text: "Dark" }, { id: "light", text: "White" } ]
+            value: page.sys.lightMode ? "light" : "dark"
+            onPicked: id => page.sys.setLightMode(id === "light")
+        }
+        Text {
+            Layout.fillWidth: true
+            text: "Applies to the whole shell, the widgets and the system colour scheme (GTK apps)."
+            color: page.sys.colMuted
+            wrapMode: Text.WordWrap
+            font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 4 }
+        }
+    }
+
+    SetCard {
+        sys: page.sys
+
         SetLabel { sys: page.sys; text: "Workspaces" }
 
         SetToggle {
@@ -139,7 +160,7 @@ ColumnLayout {
                     width: 30; height: 30; radius: 15
                     color: modelData
                     border.width: page.sys.cfg.borderColor === modelData ? 3 : 1
-                    border.color: page.sys.cfg.borderColor === modelData ? page.sys.colFg : Qt.rgba(1, 1, 1, 0.25)
+                    border.color: page.sys.cfg.borderColor === modelData ? page.sys.colFg : ShellColors.fgA(0.25)
                     MouseArea {
                         anchors.fill: parent; cursorShape: Qt.PointingHandCursor
                         onClicked: { page.sys.cfg.borderColor = parent.modelData; page.sys.saveCfg(); }
@@ -342,7 +363,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 32
                     radius: 8
-                    color: sndMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
+                    color: sndMa.containsMouse ? ShellColors.fgA(0.12) : ShellColors.fgA(0.05)
                     border.color: sndMa.containsMouse ? page.sys.colOn : page.sys.colLine
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: 120 } }

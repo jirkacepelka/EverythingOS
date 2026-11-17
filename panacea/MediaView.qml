@@ -220,7 +220,7 @@ FocusScope {
         implicitHeight: 30
         radius: 15
         color: active ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.18)
-             : (cMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.05))
+             : (cMa.containsMouse ? ShellColors.fgA(0.10) : ShellColors.fgA(0.05))
         border.color: active ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                        view.sys.colOn.b, 0.45)
                              : view.sys.colLine
@@ -253,7 +253,7 @@ FocusScope {
         implicitHeight: 40
         radius: 20
         color: filled ? Qt.rgba(tint.r, tint.g, tint.b, ibMa.containsMouse ? 0.34 : 0.22)
-                      : (ibMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05))
+                      : (ibMa.containsMouse ? ShellColors.fgA(0.12) : ShellColors.fgA(0.05))
         border.color: view.sys.colLine
         border.width: 1
         Behavior on color { ColorAnimation { duration: 140 } }
@@ -326,7 +326,7 @@ FocusScope {
                 radius: 14
                 color: view.cropMode
                        ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.24)
-                       : (cropMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05))
+                       : (cropMa.containsMouse ? ShellColors.fgA(0.12) : ShellColors.fgA(0.05))
                 border.color: view.cropMode
                               ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.5)
                               : view.sys.colLine
@@ -624,7 +624,7 @@ FocusScope {
             Layout.fillWidth: true
             Layout.preferredHeight: Math.min(180, recognizedEdit.implicitHeight + 24)
             visible: view.recognizedText.length > 0 && !view.isVideo
-            color: Qt.rgba(1, 1, 1, 0.06)
+            color: ShellColors.fgA(0.06)
             radius: 12
             border.color: view.sys.colLine
             clip: true
@@ -665,7 +665,7 @@ FocusScope {
                     width: parent.width
                     height: 6
                     radius: 3
-                    color: Qt.rgba(1, 1, 1, 0.12)
+                    color: ShellColors.fgA(0.12)
                 }
                 // выбранный кусок
                 Rectangle {
@@ -682,7 +682,7 @@ FocusScope {
                     width: track.xOf(player.position / 1000)
                     height: 6
                     radius: 3
-                    color: Qt.rgba(1, 1, 1, 0.35)
+                    color: ShellColors.fgA(0.35)
                 }
                 // головка
                 Rectangle {
@@ -841,7 +841,7 @@ FocusScope {
                 opacity: enabled ? 1 : 0.4
                 color: ocrMa.containsMouse
                        ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.34)
-                       : Qt.rgba(1, 1, 1, 0.08)
+                       : ShellColors.fgA(0.08)
                 border.color: Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.4)
                 border.width: 1
                 Behavior on color { ColorAnimation { duration: 150 } }

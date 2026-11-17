@@ -125,7 +125,7 @@ ColumnLayout {
             selectByMouse: true
             background: Rectangle {
                 radius: 10
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: ShellColors.fgA(0.06)
                 border.width: 1
                 border.color: parent.activeFocus ? page.sys.colOn : page.sys.colLine
             }

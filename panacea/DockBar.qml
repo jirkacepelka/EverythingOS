@@ -69,7 +69,7 @@ Rectangle {
                 Rectangle {
                     anchors.fill: parent
                     radius: Math.max(8, dock.radius - 10)
-                    color: ma.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : "transparent"
+                    color: ma.containsMouse ? ShellColors.fgA(0.12) : "transparent"
                 }
                 Image {
                     anchors.centerIn: parent

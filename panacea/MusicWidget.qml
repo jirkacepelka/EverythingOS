@@ -95,7 +95,7 @@ Rectangle {
                     width: parent.width - 10 - index * 7
                     height: width; radius: width / 2
                     color: "transparent"
-                    border.color: Qt.rgba(1, 1, 1, 0.07)
+                    border.color: ShellColors.fgA(0.07)
                     border.width: 1
                 }
             }
@@ -154,7 +154,7 @@ Rectangle {
         text: "33⅓ RPM"; color: "#66666c"
         font { family: card.sys ? card.sys.fontFam : "sans-serif"; pixelSize: card.fsBody; letterSpacing: 0.5 }
     }
-    Rectangle { x: 15; y: 30; width: card.width - 30; height: 1; color: Qt.rgba(1, 1, 1, 0.08) }
+    Rectangle { x: 15; y: 30; width: card.width - 30; height: 1; color: ShellColors.fgA(0.08) }
     Text {
         x: 110; y: 40; width: card.width - 126; height: 22
         text: card.hasTrack ? card.player.trackTitle : (card.sys ? card.sys.tr("Нет музыки") : "No media")

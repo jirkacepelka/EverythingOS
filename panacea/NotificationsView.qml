@@ -43,7 +43,7 @@ Item {
                 radius: 10
                 color: view.sys.dnd
                        ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.20)
-                       : (dndMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.06))
+                       : (dndMa.containsMouse ? ShellColors.fgA(0.12) : ShellColors.fgA(0.06))
                 border.color: view.sys.dnd ? view.sys.colOn : view.sys.colLine
                 border.width: 1
                 Behavior on color { ColorAnimation { duration: 160 } }
@@ -79,7 +79,7 @@ Item {
                 Layout.preferredHeight: 30
                 radius: 10
                 visible: view.sys.notifications.count > 0
-                color: clearMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+                color: clearMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
                 Behavior on color { ColorAnimation { duration: 150 } }
                 Text {
                     anchors.centerIn: parent
@@ -113,7 +113,7 @@ Item {
 
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AsNeeded
-                contentItem: Rectangle { radius: 2; color: Qt.rgba(1, 1, 1, 0.22) }
+                contentItem: Rectangle { radius: 2; color: ShellColors.fgA(0.22) }
             }
 
             delegate: Rectangle {
@@ -130,7 +130,7 @@ Item {
                 width: list.width
                 height: inner.implicitHeight + 20
                 radius: 12
-                color: rowMa.containsMouse ? Qt.rgba(1, 1, 1, 0.09) : Qt.rgba(1, 1, 1, 0.05)
+                color: rowMa.containsMouse ? ShellColors.fgA(0.09) : ShellColors.fgA(0.05)
                 border.color: row.nUrgent ? Qt.rgba(1, 0.27, 0.27, 0.35) : view.sys.colLine
                 border.width: 1
                 Behavior on color { ColorAnimation { duration: 140 } }
@@ -149,7 +149,7 @@ Item {
                         Layout.preferredHeight: 30
                         Layout.alignment: Qt.AlignTop
                         radius: 9
-                        color: row.nUrgent ? Qt.rgba(1, 0.27, 0.27, 0.18) : Qt.rgba(1, 1, 1, 0.08)
+                        color: row.nUrgent ? Qt.rgba(1, 0.27, 0.27, 0.18) : ShellColors.fgA(0.08)
                         Image {
                             id: rowIcon
                             anchors.fill: parent
@@ -186,7 +186,7 @@ Item {
                             }
                             Text {
                                 text: row.nApp + "  " + row.nTime
-                                color: Qt.rgba(1, 1, 1, 0.30)
+                                color: ShellColors.fgA(0.30)
                                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                         }

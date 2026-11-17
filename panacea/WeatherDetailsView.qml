@@ -79,7 +79,7 @@ Item {
         anchors.fill: parent
         radius: 26
         color: Qt.rgba(0.065, 0.065, 0.075, 0.98)
-        border.color: Qt.rgba(1, 1, 1, 0.08)
+        border.color: ShellColors.fgA(0.08)
         border.width: 1
         clip: true
 
@@ -137,8 +137,8 @@ Item {
                 Rectangle {
                     id: refBtn
                     width: 32; height: 32; radius: 16
-                    color: refMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.04)
-                    border.color: Qt.rgba(1, 1, 1, 0.08)
+                    color: refMa.containsMouse ? ShellColors.fgA(0.10) : ShellColors.fgA(0.04)
+                    border.color: ShellColors.fgA(0.08)
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -169,8 +169,8 @@ Item {
                 Rectangle {
                     id: closeBtn
                     width: 32; height: 32; radius: 16
-                    color: closeMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.04)
-                    border.color: Qt.rgba(1, 1, 1, 0.08)
+                    color: closeMa.containsMouse ? ShellColors.fgA(0.12) : ShellColors.fgA(0.04)
+                    border.color: ShellColors.fgA(0.08)
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -210,8 +210,8 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 100
                         radius: 16
-                        color: Qt.rgba(1, 1, 1, 0.035)
-                        border.color: Qt.rgba(1, 1, 1, 0.07)
+                        color: ShellColors.fgA(0.035)
+                        border.color: ShellColors.fgA(0.07)
                         border.width: 1
 
                         RowLayout {
@@ -242,7 +242,7 @@ Item {
                                         visible: view.activeDay !== null
                                         Layout.alignment: Qt.AlignVCenter
                                         radius: 6
-                                        color: Qt.rgba(1, 1, 1, 0.06)
+                                        color: ShellColors.fgA(0.06)
                                         implicitWidth: rangeText.implicitWidth + 12
                                         implicitHeight: 20
                                         Text {
@@ -281,8 +281,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             radius: 14
-                            color: Qt.rgba(1, 1, 1, 0.035)
-                            border.color: Qt.rgba(1, 1, 1, 0.06)
+                            color: ShellColors.fgA(0.035)
+                            border.color: ShellColors.fgA(0.06)
                             border.width: 1
 
                             ColumnLayout {
@@ -315,8 +315,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             radius: 14
-                            color: Qt.rgba(1, 1, 1, 0.035)
-                            border.color: Qt.rgba(1, 1, 1, 0.06)
+                            color: ShellColors.fgA(0.035)
+                            border.color: ShellColors.fgA(0.06)
                             border.width: 1
 
                             ColumnLayout {
@@ -349,8 +349,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             radius: 14
-                            color: Qt.rgba(1, 1, 1, 0.035)
-                            border.color: Qt.rgba(1, 1, 1, 0.06)
+                            color: ShellColors.fgA(0.035)
+                            border.color: ShellColors.fgA(0.06)
                             border.width: 1
 
                             ColumnLayout {
@@ -392,8 +392,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             radius: 14
-                            color: Qt.rgba(1, 1, 1, 0.035)
-                            border.color: Qt.rgba(1, 1, 1, 0.06)
+                            color: ShellColors.fgA(0.035)
+                            border.color: ShellColors.fgA(0.06)
                             border.width: 1
 
                             ColumnLayout {
@@ -435,8 +435,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             radius: 14
-                            color: Qt.rgba(1, 1, 1, 0.035)
-                            border.color: Qt.rgba(1, 1, 1, 0.06)
+                            color: ShellColors.fgA(0.035)
+                            border.color: ShellColors.fgA(0.06)
                             border.width: 1
 
                             ColumnLayout {
@@ -479,8 +479,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.fillHeight: true
                             radius: 14
-                            color: Qt.rgba(1, 1, 1, 0.035)
-                            border.color: Qt.rgba(1, 1, 1, 0.06)
+                            color: ShellColors.fgA(0.035)
+                            border.color: ShellColors.fgA(0.06)
                             border.width: 1
 
                             ColumnLayout {
@@ -528,7 +528,7 @@ Item {
                             Item { Layout.fillWidth: true }
                             Text {
                                 text: "◀  ▶"
-                                color: Qt.rgba(1, 1, 1, 0.25)
+                                color: ShellColors.fgA(0.25)
                                 font { family: view.sys ? view.sys.fontFam : "sans-serif"; pixelSize: view.sys.fontSize - 3 }
                             }
                         }
@@ -568,9 +568,9 @@ Item {
                                         width: 66
                                         height: 100
                                         radius: 13
-                                        color: superreg.index === 0 ? Qt.rgba(1, 1, 1, 0.10)
-                                                           : (hMa.containsMouse ? Qt.rgba(1, 1, 1, 0.06) : Qt.rgba(1, 1, 1, 0.025))
-                                        border.color: superreg.index === 0 ? (view.sys ? view.sys.colCrit : "#d71921") : Qt.rgba(1, 1, 1, 0.06)
+                                        color: superreg.index === 0 ? ShellColors.fgA(0.10)
+                                                           : (hMa.containsMouse ? ShellColors.fgA(0.06) : ShellColors.fgA(0.025))
+                                        border.color: superreg.index === 0 ? (view.sys ? view.sys.colCrit : "#d71921") : ShellColors.fgA(0.06)
                                         border.width: 1
                                         Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -649,9 +649,9 @@ Item {
                                 Layout.fillHeight: true
                                 radius: 14
                                 color: view.selectedDayIndex === index
-                                       ? Qt.rgba(1, 1, 1, 0.12)
-                                       : (dayMa.containsMouse ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(1, 1, 1, 0.025))
-                                border.color: view.selectedDayIndex === index ? (view.sys ? view.sys.colCrit : "#d71921") : Qt.rgba(1, 1, 1, 0.06)
+                                       ? ShellColors.fgA(0.12)
+                                       : (dayMa.containsMouse ? ShellColors.fgA(0.05) : ShellColors.fgA(0.025))
+                                border.color: view.selectedDayIndex === index ? (view.sys ? view.sys.colCrit : "#d71921") : ShellColors.fgA(0.06)
                                 border.width: 1
                                 Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -737,7 +737,7 @@ Item {
                                     Rectangle {
                                         anchors.fill: parent
                                         radius: 2.5
-                                        color: Qt.rgba(1, 1, 1, 0.08)
+                                        color: ShellColors.fgA(0.08)
                                     }
 
                                     Rectangle {
@@ -747,7 +747,7 @@ Item {
                                         radius: 2.5
                                         color: view.selectedDayIndex === dayItem.index
                                                ? (view.sys ? view.sys.colCrit : "#d71921")
-                                               : Qt.rgba(1, 1, 1, 0.75)
+                                               : ShellColors.fgA(0.75)
                                     }
                                 }
 

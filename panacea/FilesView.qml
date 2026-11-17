@@ -1039,7 +1039,7 @@ Item {
             Layout.leftMargin: 10
             Layout.bottomMargin: 2
             text: sec.title
-            color: Qt.rgba(1, 1, 1, 0.32)
+            color: ShellColors.fgA(0.32)
             font {
                 family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
                 bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
@@ -1061,7 +1061,7 @@ Item {
                 Layout.preferredHeight: disk.model.dSize > 0 ? 58 : 34
                 radius: 12
                 color: diskMa.containsMouse ? view.sys.colHover
-                     : (disk.active ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
+                     : (disk.active ? ShellColors.fgA(0.07) : "transparent")
                 Behavior on color { ColorAnimation { duration: 130 } }
 
                 ColumnLayout {
@@ -1080,13 +1080,13 @@ Item {
                                       disk.model.dDev === "mtp" ? 0xF011C
                                     : sec.removable ? 0xF129B
                                                     : 0xF02CA)
-                            color: disk.active ? view.sys.colOn : (disk.mounted ? view.sys.colMuted : Qt.rgba(1, 1, 1, 0.35))
+                            color: disk.active ? view.sys.colOn : (disk.mounted ? view.sys.colMuted : ShellColors.fgA(0.35))
                             font { family: view.sys.fontFam; pixelSize: 15 }
                         }
                         Text {
                             Layout.fillWidth: true
                             text: disk.model.dLabel
-                            color: disk.active ? view.sys.colFg : (disk.mounted ? view.sys.colFg : Qt.rgba(1, 1, 1, 0.65))
+                            color: disk.active ? view.sys.colFg : (disk.mounted ? view.sys.colFg : ShellColors.fgA(0.65))
                             elide: Text.ElideRight
                             font {
                                 family: view.sys.fontFam
@@ -1100,12 +1100,12 @@ Item {
                             Layout.preferredWidth: 20
                             Layout.preferredHeight: 20
                             radius: 5
-                            color: ejectMa.containsMouse ? Qt.rgba(1, 1, 1, 0.16) : "transparent"
+                            color: ejectMa.containsMouse ? ShellColors.fgA(0.16) : "transparent"
                             Behavior on color { ColorAnimation { duration: 120 } }
                             Text {
                                 anchors.centerIn: parent
                                 text: "⏏"
-                                color: ejectMa.containsMouse ? view.sys.colCrit : Qt.rgba(1, 1, 1, 0.65)
+                                color: ejectMa.containsMouse ? view.sys.colCrit : ShellColors.fgA(0.65)
                                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; bold: false }
                             }
                             MouseArea {
@@ -1120,7 +1120,7 @@ Item {
                             visible: disk.mounted && disk.model.dSize > 0 && !(sec.removable && diskMa.containsMouse)
                             text: Math.round(disk.frac * 100) + "%"
                             color: disk.frac > 0.9 ? view.sys.colCrit
-                                                   : Qt.rgba(1, 1, 1, 0.42)
+                                                   : ShellColors.fgA(0.42)
                             font {
                                 family: view.sys.fontFam
                                 pixelSize: view.sys.fontSize - 3
@@ -1135,7 +1135,7 @@ Item {
                         text: disk.mounted
                               ? (view.human(disk.model.dUsed) + " / " + view.human(disk.model.dSize))
                               : (view.human(disk.model.dSize) + " • " + view.sys.tr("Подключить"))
-                        color: disk.mounted ? Qt.rgba(1, 1, 1, 0.28) : view.sys.colOn
+                        color: disk.mounted ? ShellColors.fgA(0.28) : view.sys.colOn
                         elide: Text.ElideRight
                         font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
@@ -1146,7 +1146,7 @@ Item {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 3
                         radius: 2
-                        color: Qt.rgba(1, 1, 1, 0.10)
+                        color: ShellColors.fgA(0.10)
                         Rectangle {
                             width: parent.width * Math.max(0, Math.min(1, disk.frac))
                             height: parent.height
@@ -1192,7 +1192,7 @@ Item {
         // не имела высоты. Считаем координату через положение в раскладке.
         y: col.y + headSep.y + headSep.height
         height: Math.max(0, view.height - y)
-        color: Qt.rgba(1, 1, 1, 0.14)
+        color: ShellColors.fgA(0.14)
         visible: !view.openWithFile.length && height > 0
     }
 
@@ -1215,7 +1215,7 @@ Item {
             Rectangle {
                 Layout.preferredWidth: 40; Layout.preferredHeight: 40
                 radius: 13
-                color: upMa.containsMouse ? view.sys.colHover : Qt.rgba(1, 1, 1, 0.05)
+                color: upMa.containsMouse ? view.sys.colHover : ShellColors.fgA(0.05)
                 border.color: view.sys.colLine
                 border.width: 1
                 Behavior on color { ColorAnimation { duration: 140 } }
@@ -1259,7 +1259,7 @@ Item {
                 Layout.preferredWidth: 260
                 Layout.preferredHeight: 38
                 radius: 19
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: ShellColors.fgA(0.06)
                 border.color: view.filter.length ? view.sys.colOn : view.sys.colLine
                 border.width: 1
                 Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -1277,7 +1277,7 @@ Item {
                     Text {
                         Layout.fillWidth: true
                         text: view.filter.length ? view.filter : view.sys.tr("Просто печатайте")
-                        color: view.filter.length ? view.sys.colFg : Qt.rgba(1, 1, 1, 0.30)
+                        color: view.filter.length ? view.sys.colFg : ShellColors.fgA(0.30)
                         elide: Text.ElideRight
                         font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
@@ -1292,7 +1292,7 @@ Item {
                 Layout.preferredWidth: 76
                 Layout.preferredHeight: 38
                 radius: 19
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: ShellColors.fgA(0.06)
                 border.color: view.sys.colLine
                 border.width: 1
 
@@ -1314,7 +1314,7 @@ Item {
                             radius: 15
                             color: on ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                                 view.sys.colOn.b, 0.25)
-                                 : (modeMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08)
+                                 : (modeMa.containsMouse ? ShellColors.fgA(0.08)
                                                          : "transparent")
                             Behavior on color { ColorAnimation { duration: 130 } }
 
@@ -1371,7 +1371,7 @@ Item {
                         Layout.preferredHeight: 38
                         radius: 12
                         color: placeMa.containsMouse ? view.sys.colHover
-                             : (place.active ? Qt.rgba(1, 1, 1, 0.07) : "transparent")
+                             : (place.active ? ShellColors.fgA(0.07) : "transparent")
                         Behavior on color { ColorAnimation { duration: 130 } }
 
                         RowLayout {
@@ -1470,7 +1470,7 @@ Item {
                         radius: 9
                         color: on ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                             view.sys.colOn.b, 0.20)
-                             : (sortMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent")
+                             : (sortMa.containsMouse ? ShellColors.fgA(0.10) : "transparent")
                         Behavior on color { ColorAnimation { duration: 140 } }
                         Behavior on Layout.preferredWidth { NumberAnimation { duration: 140 } }
 
@@ -1506,7 +1506,7 @@ Item {
 
                     Text {
                         text: view.sys.tr("Сортировка")
-                        color: Qt.rgba(1, 1, 1, 0.30)
+                        color: ShellColors.fgA(0.30)
                         font {
                             family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
                             bold: false; capitalization: Font.AllUppercase; letterSpacing: 1
@@ -1529,7 +1529,7 @@ Item {
                         color: view.sys.cfg.filesHidden
                                ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                          view.sys.colOn.b, 0.18)
-                             : (hidMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent")
+                             : (hidMa.containsMouse ? ShellColors.fgA(0.10) : "transparent")
                         Behavior on color { ColorAnimation { duration: 140 } }
 
                         RowLayout {
@@ -1570,7 +1570,7 @@ Item {
                         color: view.foldersFirst
                                ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                          view.sys.colOn.b, 0.18)
-                             : (ffMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent")
+                             : (ffMa.containsMouse ? ShellColors.fgA(0.10) : "transparent")
                         Behavior on color { ColorAnimation { duration: 140 } }
 
                         RowLayout {
@@ -1742,8 +1742,8 @@ Item {
                              : row.isSelected
                                ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                          view.sys.colOn.b, 0.20)
-                             : index === view.current ? Qt.rgba(1, 1, 1, 0.09)
-                             : (rowMa.containsMouse ? Qt.rgba(1, 1, 1, 0.05) : "transparent")
+                             : index === view.current ? ShellColors.fgA(0.09)
+                             : (rowMa.containsMouse ? ShellColors.fgA(0.05) : "transparent")
                         Behavior on color { ColorAnimation { duration: 120 } }
                         border.color: row.dropTarget ? view.sys.colOn
                                     : row.isSelected ? view.sys.colOn
@@ -1788,14 +1788,14 @@ Item {
                             // дата изменения — у всех, включая папки
                             Text {
                                 text: view.timeText(row.model)
-                                color: Qt.rgba(1, 1, 1, 0.26)
+                                color: ShellColors.fgA(0.26)
                                 horizontalAlignment: Text.AlignRight
                                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
                             Text {
                                 Layout.preferredWidth: 62
                                 text: view.sizeText(row.model)
-                                color: Qt.rgba(1, 1, 1, 0.32)
+                                color: ShellColors.fgA(0.32)
                                 horizontalAlignment: Text.AlignRight
                                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                             }
@@ -1980,8 +1980,8 @@ Item {
                              : tile.isSelected
                                ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                          view.sys.colOn.b, 0.20)
-                             : index === view.current ? Qt.rgba(1, 1, 1, 0.09)
-                             : (tileMa.containsMouse ? Qt.rgba(1, 1, 1, 0.05) : "transparent")
+                             : index === view.current ? ShellColors.fgA(0.09)
+                             : (tileMa.containsMouse ? ShellColors.fgA(0.05) : "transparent")
                         Behavior on color { ColorAnimation { duration: 120 } }
                         border.color: tile.dropTarget ? view.sys.colOn
                                     : tile.isSelected ? view.sys.colOn
@@ -2184,7 +2184,7 @@ Item {
                     // Выделена выбранная строка, а не первая: раньше подсветка
                     // стояла на программе по умолчанию и не двигалась, из-за
                     // чего было не видно, что именно запустит Enter.
-                    color: appRow.index === appList.index ? Qt.rgba(1, 1, 1, 0.11)
+                    color: appRow.index === appList.index ? ShellColors.fgA(0.11)
                          : (appMa.containsMouse ? view.sys.colHover : "transparent")
                     Behavior on color { ColorAnimation { duration: 120 } }
 
@@ -2852,7 +2852,7 @@ Item {
             Rectangle {
                 Layout.preferredWidth: 40; Layout.preferredHeight: 40
                 radius: 20
-                color: dialogField.text.trim().length ? view.sys.colOn : Qt.rgba(1, 1, 1, 0.10)
+                color: dialogField.text.trim().length ? view.sys.colOn : ShellColors.fgA(0.10)
                 Behavior on color { ColorAnimation { duration: 150 } }
                 Text {
                     anchors.centerIn: parent
@@ -2929,7 +2929,7 @@ Item {
                 Rectangle {
                     Layout.preferredWidth: 40; Layout.preferredHeight: 40
                     radius: 11
-                    color: Qt.rgba(1, 1, 1, 0.08)
+                    color: ShellColors.fgA(0.08)
                     Glyph {
                         anchors.fill: parent
                         glyph: String.fromCodePoint(propsPanel.isDir ? 0xF024B : 0xF0224)

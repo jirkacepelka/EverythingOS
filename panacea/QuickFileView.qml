@@ -47,7 +47,7 @@ ColumnLayout {
         Layout.fillWidth: true
         implicitHeight: 47
         radius: 14
-        color: hit.containsMouse && available ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.045)
+        color: hit.containsMouse && available ? ShellColors.fgA(0.10) : ShellColors.fgA(0.045)
         border.color: hit.containsMouse && available ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.48) : view.sys.colLine
         border.width: 1
         opacity: available ? 1 : 0.45

@@ -71,7 +71,7 @@ Item {
         Layout.preferredWidth: 30
         Layout.preferredHeight: 30
         radius: 10
-        color: navMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+        color: navMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
         Behavior on color { ColorAnimation { duration: 150 } }
 
         Text {
@@ -160,7 +160,7 @@ Item {
                     color: cell.modelData.isToday
                            ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.22)
                            : (cellMa.containsMouse && cell.modelData.inMonth
-                              ? Qt.rgba(1, 1, 1, 0.08) : "transparent")
+                              ? ShellColors.fgA(0.08) : "transparent")
                     border.color: cell.modelData.isToday ? view.sys.colOn : "transparent"
                     border.width: 1
                     Behavior on color { ColorAnimation { duration: 140 } }
@@ -168,7 +168,7 @@ Item {
                     Text {
                         anchors.centerIn: parent
                         text: cell.modelData.day
-                        color: !cell.modelData.inMonth ? Qt.rgba(1, 1, 1, 0.18)
+                        color: !cell.modelData.inMonth ? ShellColors.fgA(0.18)
                              : cell.modelData.isToday  ? view.sys.colFg
                              : cell.modelData.weekend  ? Qt.rgba(1, 0.42, 0.42, 0.85)
                                                        : view.sys.colFg
@@ -197,7 +197,7 @@ Item {
             radius: 10
             visible: view.viewMonth !== view.today.getMonth()
                      || view.viewYear !== view.today.getFullYear()
-            color: todayMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+            color: todayMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
             Behavior on color { ColorAnimation { duration: 150 } }
             Text {
                 anchors.centerIn: parent

@@ -73,7 +73,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 38
             radius: 10
-            color: Qt.rgba(1, 1, 1, 0.06)
+            color: ShellColors.fgA(0.06)
             visible: page.passwordSecurity === "eap"
             TextInput {
                 id: userField
@@ -88,7 +88,7 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 38
             radius: 10
-            color: Qt.rgba(1, 1, 1, 0.06)
+            color: ShellColors.fgA(0.06)
             TextInput {
                 id: pwField
                 anchors { fill: parent; leftMargin: 12; rightMargin: 12 }
@@ -149,7 +149,7 @@ ColumnLayout {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 52
                 radius: 12
-                color: model.connected ? Qt.rgba(1, 1, 1, 0.06) : "transparent"
+                color: model.connected ? ShellColors.fgA(0.06) : "transparent"
 
                 RowLayout {
                     anchors { fill: parent; leftMargin: 12; rightMargin: 10 }

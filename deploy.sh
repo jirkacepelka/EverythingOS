@@ -11,4 +11,8 @@ install -Dm644 "$D/foot/nothing.ini" "$HOME/.config/foot/nothing.ini"
 install -Dm644 "$D/fastfetch/nothing.jsonc" "$HOME/.config/fastfetch/nothing.jsonc"
 install -Dm644 "$D/fastfetch/nothing-logo.txt" "$HOME/.config/fastfetch/nothing-logo.txt"
 install -Dm644 "$D/fish/nothing-init.fish" "$HOME/.config/fish/nothing-init.fish"
+# Doto (Google Fonts, SIL OFL): dot-matrix font offered in Settings -> Appearance -> fonts
+install -Dm644 "$D/fonts/Doto-Variable.ttf" "$HOME/.local/share/fonts/Doto-Variable.ttf"
+install -Dm644 "$D/fonts/Doto-OFL.txt" "$HOME/.local/share/fonts/Doto-OFL.txt"
+fc-cache -f "$HOME/.local/share/fonts" >/dev/null 2>&1 || true
 echo deployed

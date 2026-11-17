@@ -44,7 +44,7 @@ Rectangle {
                 readonly property bool sel: card.index === view.idx
                 width: view.cardW; height: view.cardH
                 radius: 20
-                color: card.sel ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(1, 1, 1, 0.04)
+                color: card.sel ? ShellColors.fgA(0.14) : ShellColors.fgA(0.04)
                 border.width: card.sel ? 2 : 0
                 border.color: view.sys.colFg
                 Image {

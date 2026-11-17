@@ -94,9 +94,9 @@ ColumnLayout {
                     width: parent.width - 12
                     height: Math.floor((parent.width - 12) * 9 / 16)
                     radius: 12
-                    color: Qt.rgba(1, 1, 1, 0.05)
+                    color: ShellColors.fgA(0.05)
                     border.width: tile.modelData.wActive ? 2 : 1
-                    border.color: tile.modelData.wActive ? page.sys.colOn : Qt.rgba(1, 1, 1, 0.12)
+                    border.color: tile.modelData.wActive ? page.sys.colOn : ShellColors.fgA(0.12)
                     clip: true
 
                     Image {

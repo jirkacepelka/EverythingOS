@@ -109,7 +109,7 @@ ColumnLayout {
                     Layout.fillWidth: true
                     Layout.preferredHeight: visible ? 52 : 0
                     radius: 12
-                    color: modelData.connected ? Qt.rgba(1, 1, 1, 0.06) : "transparent"
+                    color: modelData.connected ? ShellColors.fgA(0.06) : "transparent"
 
                     RowLayout {
                         anchors { fill: parent; leftMargin: 12; rightMargin: 10 }

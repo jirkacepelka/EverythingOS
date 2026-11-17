@@ -355,8 +355,8 @@ FocusScope {
             Layout.fillWidth: true
             Layout.preferredHeight: 42
             radius: 13
-            color: Qt.rgba(1, 1, 1, 0.06)
-            border.color: input.activeFocus ? Qt.rgba(1, 1, 1, 0.22) : view.sys.colLine
+            color: ShellColors.fgA(0.06)
+            border.color: input.activeFocus ? ShellColors.fgA(0.22) : view.sys.colLine
             border.width: 1
             Behavior on border.color { ColorAnimation { duration: 150 } }
 
@@ -504,7 +504,7 @@ FocusScope {
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AsNeeded
                 width: 3
-                contentItem: Rectangle { radius: 2; color: Qt.rgba(1, 1, 1, 0.22) }
+                contentItem: Rectangle { radius: 2; color: ShellColors.fgA(0.22) }
             }
 
             delegate: Rectangle {
@@ -515,8 +515,8 @@ FocusScope {
                 width: list.width
                 height: 44
                 radius: 12
-                color: index === view.index ? Qt.rgba(1, 1, 1, 0.11)
-                     : (rowMa.containsMouse ? Qt.rgba(1, 1, 1, 0.06) : "transparent")
+                color: index === view.index ? ShellColors.fgA(0.11)
+                     : (rowMa.containsMouse ? ShellColors.fgA(0.06) : "transparent")
                 Behavior on color { ColorAnimation { duration: 120 } }
 
                 RowLayout {
@@ -546,7 +546,7 @@ FocusScope {
                             anchors.fill: parent
                             visible: !appIcon.visible
                             radius: 7
-                            color: Qt.rgba(1, 1, 1, 0.10)
+                            color: ShellColors.fgA(0.10)
                             // у своих строк иконки в теме нет и быть не может —
                             // рисуем глиф, а буквой обходятся только приложения
                             Glyph {

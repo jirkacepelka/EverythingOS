@@ -469,7 +469,7 @@ Item {
                         id: pulse
                         anchors.fill: parent
                         visible: img.status === Image.Loading
-                        color: Qt.rgba(1, 1, 1, 0.06)
+                        color: ShellColors.fgA(0.06)
                         // именно по id: внутри анимации parent — null
                         SequentialAnimation on opacity {
                             running: pulse.visible
@@ -514,8 +514,8 @@ Item {
                         radius: frame.r
                         color: "transparent"
                         border.color: card.wActive ? "#e23b3b"
-                                    : card.centered ? Qt.rgba(1, 1, 1, 0.55)
-                                                    : Qt.rgba(1, 1, 1, 0.10)
+                                    : card.centered ? ShellColors.fgA(0.55)
+                                                    : ShellColors.fgA(0.10)
                         border.width: card.centered || card.wActive ? 2 : 1
                         Behavior on border.color { ColorAnimation { duration: 200 } }
                     }
@@ -575,7 +575,7 @@ Item {
                                 radius: 13
                                 visible: card.wOwn && !card.wActive
                                 color: delMa.containsMouse ? view.sys.colCrit
-                                                           : Qt.rgba(1, 1, 1, 0.12)
+                                                           : ShellColors.fgA(0.12)
                                 Behavior on color { ColorAnimation { duration: 140 } }
                                 Text {
                                     anchors.centerIn: parent
@@ -674,7 +674,7 @@ Item {
                     Layout.preferredWidth: hintKey.implicitWidth + 16
                     Layout.preferredHeight: 26
                     radius: 8
-                    color: Qt.rgba(1, 1, 1, 0.10)
+                    color: ShellColors.fgA(0.10)
                     Text {
                         id: hintKey
                         anchors.centerIn: parent
@@ -701,7 +701,7 @@ Item {
             Layout.preferredWidth: Math.max(196, liveRow.implicitWidth + 24)
             Layout.preferredHeight: 38
             radius: 13
-            color: folderMa.containsMouse ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(1, 1, 1, 0.06)
+            color: folderMa.containsMouse ? ShellColors.fgA(0.14) : ShellColors.fgA(0.06)
             border.color: folderMa.containsMouse ? view.sys.colOn : view.sys.colLine
             border.width: 1
             Behavior on color { ColorAnimation { duration: 160 } }
@@ -740,7 +740,7 @@ Item {
             Layout.preferredWidth: Math.max(156, ownRow.implicitWidth + 24)
             Layout.preferredHeight: 38
             radius: 13
-            color: addMa.containsMouse ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(1, 1, 1, 0.06)
+            color: addMa.containsMouse ? ShellColors.fgA(0.14) : ShellColors.fgA(0.06)
             border.color: addMa.containsMouse ? view.sys.colOn : view.sys.colLine
             border.width: 1
             Behavior on color { ColorAnimation { duration: 160 } }

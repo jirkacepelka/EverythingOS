@@ -16,8 +16,8 @@ FocusScope {
     Keys.onEscapePressed: view.close()
     Keys.onReturnPressed: view.close()
 
-    readonly property color cardBg:   Qt.rgba(1, 1, 1, 0.05)
-    readonly property color cardLine: Qt.rgba(1, 1, 1, 0.10)
+    readonly property color cardBg:   ShellColors.fgA(0.05)
+    readonly property color cardLine: ShellColors.fgA(0.10)
     readonly property color accent:   view.sys.colFg
     readonly property int fs: view.sys.fontSize
 
@@ -126,7 +126,7 @@ FocusScope {
                         visible: parent.on
                         anchors { right: parent.right; rightMargin: 14; verticalCenter: parent.verticalCenter }
                         width: editTxt.implicitWidth + 24; height: 32; radius: 16
-                        color: Qt.rgba(1, 1, 1, 0.10)
+                        color: ShellColors.fgA(0.10)
                         Text { id: editTxt; anchors.centerIn: parent; text: "Edit layout"; color: view.sys.colFg
                                font { family: view.sys.fontFam; pixelSize: view.fs - 3 } }
                         MouseArea {

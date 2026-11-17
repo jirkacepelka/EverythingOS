@@ -136,8 +136,8 @@ Item {
             view.movePos(dl.wid, dl.sx + p.x - dl.pp.x, dl.sy + p.y - dl.pp.y, true);
         }
         Rectangle {
-            anchors.fill: parent; radius: view.cardRadius; color: Qt.rgba(1, 1, 1, dl.pressed ? 0.10 : 0.04)
-            border.color: Qt.rgba(1, 1, 1, 0.55); border.width: 1.5
+            anchors.fill: parent; radius: view.cardRadius; color: ShellColors.fgA(dl.pressed ? 0.10 : 0.04)
+            border.color: ShellColors.fgA(0.55); border.width: 1.5
         }
         Rectangle {   // hide this built-in widget (restore from the tray)
             anchors { top: parent.top; right: parent.right; margins: 6 }
@@ -293,6 +293,7 @@ Item {
                         id: clockCanvas
                         anchors.fill: parent
 
+                        Connections { target: ShellColors; function onFgChanged() { clockCanvas.requestPaint(); } }
                         Connections {
                             target: view.sys
                             function onTimeSecondChanged() { clockCanvas.requestPaint(); }
@@ -332,11 +333,11 @@ Item {
                                     if (i % 3 === 0) {
                                         // 12, 3, 6, 9 часов: акцентные белые точки
                                         ctx.arc(x, y, 2.0, 0, Math.PI * 2);
-                                        ctx.fillStyle = "#ffffff";
+                                        ctx.fillStyle = ShellColors.fgCss(1);
                                     } else {
                                         // Промежуточные часы: полупрозрачные точки
                                         ctx.arc(x, y, 1.3, 0, Math.PI * 2);
-                                        ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+                                        ctx.fillStyle = ShellColors.fgCss(0.35);
                                     }
                                     ctx.fill();
                                 }
@@ -350,15 +351,15 @@ Item {
                                     if (j % 6 === 0) {
                                         // 00 (полночь/верх), 06 (утро/право), 12 (полдень/низ), 18 (вечер/лево)
                                         ctx.arc(x24, y24, 2.0, 0, Math.PI * 2);
-                                        ctx.fillStyle = "#ffffff";
+                                        ctx.fillStyle = ShellColors.fgCss(1);
                                     } else if (j % 2 === 0) {
                                         // Четные часы: средние белые точки
                                         ctx.arc(x24, y24, 1.4, 0, Math.PI * 2);
-                                        ctx.fillStyle = "rgba(255, 255, 255, 0.50)";
+                                        ctx.fillStyle = ShellColors.fgCss(0.50);
                                     } else {
                                         // Нечетные часы: тонкие деликатные точки
                                         ctx.arc(x24, y24, 1.0, 0, Math.PI * 2);
-                                        ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+                                        ctx.fillStyle = ShellColors.fgCss(0.25);
                                     }
                                     ctx.fill();
                                 }
@@ -378,7 +379,7 @@ Item {
                             ctx.beginPath();
                             ctx.lineWidth = 3.6;
                             ctx.lineCap = "round";
-                            ctx.strokeStyle = "#ffffff";
+                            ctx.strokeStyle = ShellColors.fgCss(1);
                             ctx.moveTo(cx + Math.cos(hAng) * 3, cy + Math.sin(hAng) * 3);
                             ctx.lineTo(cx + Math.cos(hAng) * (r * 0.50), cy + Math.sin(hAng) * (r * 0.50));
                             ctx.stroke();
@@ -388,7 +389,7 @@ Item {
                             ctx.beginPath();
                             ctx.lineWidth = 2.0;
                             ctx.lineCap = "round";
-                            ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
+                            ctx.strokeStyle = ShellColors.fgCss(0.95);
                             ctx.moveTo(cx + Math.cos(mAng) * 3, cy + Math.sin(mAng) * 3);
                             ctx.lineTo(cx + Math.cos(mAng) * (r * 0.78), cy + Math.sin(mAng) * (r * 0.78));
                             ctx.stroke();
@@ -409,7 +410,7 @@ Item {
                             ctx.fillStyle = "#141414";
                             ctx.fill();
                             ctx.lineWidth = 1.0;
-                            ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+                            ctx.strokeStyle = ShellColors.fgCss(0.25);
                             ctx.stroke();
 
                             // Красная точка в самом центре
@@ -548,8 +549,8 @@ Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 52
                             radius: 14
-                            color: Qt.rgba(1, 1, 1, 0.035)
-                            border.color: Qt.rgba(1, 1, 1, 0.06)
+                            color: ShellColors.fgA(0.035)
+                            border.color: ShellColors.fgA(0.06)
                             border.width: 1
 
                             RowLayout {
@@ -593,8 +594,8 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 60
                                 radius: 16
-                                color: Qt.rgba(1, 1, 1, 0.035)
-                                border.color: Qt.rgba(1, 1, 1, 0.06)
+                                color: ShellColors.fgA(0.035)
+                                border.color: ShellColors.fgA(0.06)
                                 border.width: 1
 
                                 ColumnLayout {
@@ -621,8 +622,8 @@ Item {
                                 Layout.fillWidth: true
                                 Layout.preferredHeight: 60
                                 radius: 16
-                                color: Qt.rgba(1, 1, 1, 0.035)
-                                border.color: Qt.rgba(1, 1, 1, 0.06)
+                                color: ShellColors.fgA(0.035)
+                                border.color: ShellColors.fgA(0.06)
                                 border.width: 1
 
                                 ColumnLayout {
@@ -708,7 +709,7 @@ Item {
 
                                 ctx.beginPath();
                                 ctx.arc(cx, cy, r1, 0, Math.PI * 2);
-                                ctx.strokeStyle = "rgba(255, 255, 255, 0.10)";
+                                ctx.strokeStyle = ShellColors.fgCss(0.10);
                                 ctx.stroke();
 
                                 if (ram > 0) {
@@ -716,7 +717,7 @@ Item {
                                     var aStart = -Math.PI / 2;
                                     var aEnd = aStart + (Math.min(100, ram) / 100) * Math.PI * 2;
                                     ctx.arc(cx, cy, r1, aStart, aEnd);
-                                    ctx.strokeStyle = ram > 85 ? (view.sys ? String(view.sys.colCrit) : "#d71921") : "rgba(255, 255, 255, 0.95)";
+                                    ctx.strokeStyle = ram > 85 ? (view.sys ? String(view.sys.colCrit) : "#d71921") : ShellColors.fgCss(0.95);
                                     ctx.stroke();
                                 }
 
@@ -724,7 +725,7 @@ Item {
                                 var r2 = 21;
                                 ctx.beginPath();
                                 ctx.arc(cx, cy, r2, 0, Math.PI * 2);
-                                ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                                ctx.strokeStyle = ShellColors.fgCss(0.08);
                                 ctx.stroke();
 
                                 if (disk > 0) {
@@ -848,10 +849,10 @@ Item {
                             Layout.preferredHeight: 6
                             radius: 3
                             color: index < view.curHour
-                                   ? Qt.rgba(1, 1, 1, 0.88)
+                                   ? ShellColors.fgA(0.88)
                                    : (index === view.curHour
                                       ? (view.sys ? view.sys.colCrit : "#d71921")
-                                      : Qt.rgba(1, 1, 1, 0.12))
+                                      : ShellColors.fgA(0.12))
                             opacity: index === view.curHour ? view.pulseOpacity : 1.0
                         }
                     }
@@ -872,10 +873,10 @@ Item {
                             Layout.preferredHeight: 6
                             radius: 3
                             color: index < view.curMonth
-                                   ? Qt.rgba(1, 1, 1, 0.88)
+                                   ? ShellColors.fgA(0.88)
                                    : (index === view.curMonth
                                       ? (view.sys ? view.sys.colCrit : "#d71921")
-                                      : Qt.rgba(1, 1, 1, 0.12))
+                                      : ShellColors.fgA(0.12))
                             opacity: index === view.curMonth ? view.pulseOpacity : 1.0
                         }
                     }
@@ -1151,7 +1152,7 @@ Item {
         y: view.height - height - 28
         width: barRow.implicitWidth + 28; height: 46; radius: 23
         color: view.sys ? view.sys.colBg : "#000"
-        border.color: Qt.rgba(1, 1, 1, 0.18); border.width: 1
+        border.color: ShellColors.fgA(0.18); border.width: 1
         Row {
             id: barRow
             anchors.centerIn: parent

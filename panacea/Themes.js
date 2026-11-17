@@ -30,7 +30,9 @@
 // выделяют яркостью, а не оттенком, и единственный цвет — красный —
 // приберегается для записи и разряженной батареи.
 var list = [
-    { id: "nothing",  name: "Nothing",     bg: "#000000", fg: "#ffffff", on: "#ffffff", ok: "#ffffff", crit: "#d71921" }
+    { id: "nothing",  name: "Nothing",     bg: "#000000", fg: "#ffffff", on: "#ffffff", ok: "#ffffff", crit: "#d71921" },
+    // White mode: the same Nothing language inverted — off-white surfaces, black ink, the same red.
+    { id: "light",    name: "Nothing White", bg: "#f2f2f2", fg: "#0b0b0b", on: "#0b0b0b", ok: "#0b0b0b", crit: "#d71921" }
 ];
 
 // Неизвестное имя отдаёт первую тему (Nothing): настройки могли приехать

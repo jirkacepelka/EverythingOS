@@ -892,8 +892,8 @@ FocusScope {
             width: 280
             height: 36
             radius: 11
-            color: Qt.rgba(1, 1, 1, 0.12)
-            border.color: Qt.rgba(1, 1, 1, search.activeFocus ? 0.26 : 0.14)
+            color: ShellColors.fgA(0.12)
+            border.color: ShellColors.fgA(search.activeFocus ? 0.26 : 0.14)
             border.width: 1
 
             Text {
@@ -902,7 +902,7 @@ FocusScope {
                 anchors.leftMargin: 12
                 anchors.verticalCenter: parent.verticalCenter
                 text: ""
-                color: Qt.rgba(1, 1, 1, 0.6)
+                color: ShellColors.fgA(0.6)
                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
             TextInput {
@@ -923,7 +923,7 @@ FocusScope {
                     anchors.fill: parent
                     visible: !search.text.length
                     text: view.sys.tr("Поиск")
-                    color: Qt.rgba(1, 1, 1, 0.5)
+                    color: ShellColors.fgA(0.5)
                     font: search.font
                     verticalAlignment: Text.AlignVCenter
                 }
@@ -1053,7 +1053,7 @@ FocusScope {
                     // текущая точка вытягивается в пилюлю и плавно едет за жестом
                     readonly property real near: Math.max(0, 1 - Math.abs(index - view.shownPos))
                     width: 8 + 14 * near; height: 8; radius: 4
-                    color: Qt.rgba(1, 1, 1, 0.35 + 0.6 * near)
+                    color: ShellColors.fgA(0.35 + 0.6 * near)
                     MouseArea {
                         anchors.fill: parent
                         anchors.margins: -6
@@ -1068,7 +1068,7 @@ FocusScope {
             anchors.centerIn: parent
             visible: view.searching && view.results.length === 0
             text: view.sys.tr("Ничего не найдено")
-            color: Qt.rgba(1, 1, 1, 0.6)
+            color: ShellColors.fgA(0.6)
             font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
@@ -1100,8 +1100,8 @@ FocusScope {
             width: folderGrid.fcols * view.cellW + 56
             height: Math.min(parent.height * 0.72, folderName.height + 40 + folderGrid.frows * view.cellH + 28)
             radius: 30
-            color: Qt.rgba(1, 1, 1, 0.10)
-            border.color: Qt.rgba(1, 1, 1, 0.18)
+            color: ShellColors.fgA(0.10)
+            border.color: ShellColors.fgA(0.18)
             border.width: 1
             scale: view.folder ? 1 : 0.85
             Behavior on scale { NumberAnimation { duration: view.sys.animMs; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
@@ -1247,7 +1247,7 @@ FocusScope {
             width: tile.v.iconSize + 16
             height: tile.v.iconSize + 16
             radius: tile.v.iconSize * 0.3
-            color: Qt.rgba(1, 1, 1, tile.selected ? 0.20 : (tileMa.containsMouse && !tile.v.dragging ? 0.08 : 0))
+            color: ShellColors.fgA(tile.selected ? 0.20 : (tileMa.containsMouse && !tile.v.dragging ? 0.08 : 0))
             Behavior on color { ColorAnimation { duration: 120 } }
         }
 
@@ -1274,8 +1274,8 @@ FocusScope {
                 anchors.fill: parent
                 visible: tile.isFolder
                 radius: width * 0.24
-                color: Qt.rgba(1, 1, 1, tile.isMergeTarget && tile.v.mergeArmed ? 0.34 : 0.22)
-                border.color: Qt.rgba(1, 1, 1, 0.20)
+                color: ShellColors.fgA(tile.isMergeTarget && tile.v.mergeArmed ? 0.34 : 0.22)
+                border.color: ShellColors.fgA(0.20)
                 border.width: 1
 
                 Grid {
@@ -1301,7 +1301,7 @@ FocusScope {
                 visible: tile.isMergeTarget && !tile.isFolder
                 radius: width * 0.26
                 color: "transparent"
-                border.color: Qt.rgba(1, 1, 1, tile.v.mergeArmed ? 0.7 : 0.35)
+                border.color: ShellColors.fgA(tile.v.mergeArmed ? 0.7 : 0.35)
                 border.width: 2
             }
         }
@@ -1385,7 +1385,7 @@ FocusScope {
             anchors.fill: parent
             visible: !img.visible
             radius: width * 0.24
-            color: Qt.rgba(1, 1, 1, 0.16)
+            color: ShellColors.fgA(0.16)
             Text {
                 anchors.centerIn: parent
                 text: String(ai.app ? (ai.app.name || "?") : "?").charAt(0).toUpperCase()
@@ -1415,7 +1415,7 @@ FocusScope {
             anchors.fill: parent
             visible: view.dragEntry && view.dragEntry.kind === "folder"
             radius: width * 0.24
-            color: Qt.rgba(1, 1, 1, 0.28)
+            color: ShellColors.fgA(0.28)
         }
     }
 
@@ -1432,7 +1432,7 @@ FocusScope {
         height: menuCol.implicitHeight + 12
         radius: 12
         color: Qt.rgba(view.sys.colBg.r, view.sys.colBg.g, view.sys.colBg.b, 0.94)
-        border.color: Qt.rgba(1, 1, 1, 0.14)
+        border.color: ShellColors.fgA(0.14)
         border.width: 1
 
         function close() { visible = false; }
@@ -1485,7 +1485,7 @@ FocusScope {
                     width: menuCol.width
                     height: 32
                     radius: 8
-                    color: mItemMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+                    color: mItemMa.containsMouse ? ShellColors.fgA(0.10) : "transparent"
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
                         anchors.left: parent.left

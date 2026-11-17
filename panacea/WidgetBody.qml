@@ -12,7 +12,7 @@ Item {
     property bool interactive: true
     readonly property color red: sys ? sys.colCrit : "#D71921"
     readonly property color fg: sys ? sys.colFg : "#ffffff"
-    readonly property color dim: Qt.rgba(1, 1, 1, 0.18)
+    readonly property color dim: ShellColors.fgA(0.18)
 
     function two(n) { return ("0" + n).slice(-2); }
 
@@ -176,6 +176,7 @@ Item {
         Canvas {
             id: cv
             Connections { target: root.sys; function onTimeSecondChanged() { cv.requestPaint(); } }
+            Connections { target: ShellColors; function onFgChanged() { cv.requestPaint(); } }
             onPaint: {
                 var ctx = getContext("2d"); ctx.reset();
                 var cx = width / 2, cy = height / 2, r = Math.min(cx, cy) - 16;
@@ -186,16 +187,16 @@ Item {
                     var major = i % (n / 4) === 0, mid = i % 2 === 0;
                     ctx.beginPath();
                     ctx.arc(cx + Math.cos(a) * r, cy + Math.sin(a) * r, major ? 2.0 : (is12 || mid ? 1.3 : 1.0), 0, 2 * Math.PI);
-                    ctx.fillStyle = major ? "#ffffff" : "rgba(255,255,255," + (is12 ? 0.35 : (mid ? 0.5 : 0.25)) + ")";
+                    ctx.fillStyle = major ? ShellColors.fgCss(1) : ShellColors.fgCss(is12 ? 0.35 : (mid ? 0.5 : 0.25));
                     ctx.fill();
                 }
                 var h = root.sys ? root.sys.timeHour : 0, m = root.sys ? root.sys.timeMinute : 0, s = root.sys ? root.sys.timeSecond : 0;
                 var hA = is12 ? (((h % 12) + m / 60) * Math.PI / 6 - Math.PI / 2) : ((h + m / 60) * Math.PI / 12 - Math.PI / 2);
                 var mA = (m + s / 60) * Math.PI / 30 - Math.PI / 2, sA = s * Math.PI / 30 - Math.PI / 2;
                 ctx.lineCap = "round";
-                ctx.beginPath(); ctx.lineWidth = 3.6; ctx.strokeStyle = "#ffffff";
+                ctx.beginPath(); ctx.lineWidth = 3.6; ctx.strokeStyle = ShellColors.fgCss(1);
                 ctx.moveTo(cx + Math.cos(hA) * 3, cy + Math.sin(hA) * 3); ctx.lineTo(cx + Math.cos(hA) * r * 0.5, cy + Math.sin(hA) * r * 0.5); ctx.stroke();
-                ctx.beginPath(); ctx.lineWidth = 2; ctx.strokeStyle = "rgba(255,255,255,0.95)";
+                ctx.beginPath(); ctx.lineWidth = 2; ctx.strokeStyle = ShellColors.fgCss(0.95);
                 ctx.moveTo(cx + Math.cos(mA) * 3, cy + Math.sin(mA) * 3); ctx.lineTo(cx + Math.cos(mA) * r * 0.78, cy + Math.sin(mA) * r * 0.78); ctx.stroke();
                 ctx.beginPath(); ctx.lineWidth = 1.2; ctx.strokeStyle = String(root.red);
                 ctx.moveTo(cx - Math.cos(sA) * r * 0.18, cy - Math.sin(sA) * r * 0.18); ctx.lineTo(cx + Math.cos(sA) * r * 0.82, cy + Math.sin(sA) * r * 0.82); ctx.stroke();
@@ -272,7 +273,7 @@ Item {
                     Rectangle {
                         required property var modelData
                         width: 124; height: 96; radius: 14
-                        color: Qt.rgba(1, 1, 1, 0.06)
+                        color: ShellColors.fgA(0.06)
                         WNum {
                             sys: root.sys
                             anchors.centerIn: parent
@@ -462,7 +463,7 @@ Item {
                     Rectangle {
                         required property int index
                         width: (parent.width - 23 * 3) / 24; height: 6; radius: 3
-                        color: index < parent.parent.hour ? Qt.rgba(1, 1, 1, 0.88) : (index === parent.parent.hour ? root.red : root.dim)
+                        color: index < parent.parent.hour ? ShellColors.fgA(0.88) : (index === parent.parent.hour ? root.red : root.dim)
                     }
                 }
             }

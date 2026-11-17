@@ -81,8 +81,8 @@ Item {
                 }
                 Rectangle {
                     anchors.fill: parent; radius: card.radius
-                    color: Qt.rgba(1, 1, 1, drag.pressed ? 0.10 : 0.04)
-                    border.color: Qt.rgba(1, 1, 1, 0.55); border.width: 1.5
+                    color: ShellColors.fgA(drag.pressed ? 0.10 : 0.04)
+                    border.color: ShellColors.fgA(0.55); border.width: 1.5
                 }
             }
 

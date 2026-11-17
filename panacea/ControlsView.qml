@@ -113,8 +113,8 @@ Item {
         Layout.preferredHeight: 54
         radius: 14
         color: active ? Qt.rgba(accent.r, accent.g, accent.b, 0.18)
-                      : (segMa.containsMouse ? Qt.rgba(1, 1, 1, 0.09)
-                                             : Qt.rgba(1, 1, 1, 0.05))
+                      : (segMa.containsMouse ? ShellColors.fgA(0.09)
+                                             : ShellColors.fgA(0.05))
         border.color: active ? Qt.rgba(accent.r, accent.g, accent.b, 0.40)
                              : view.sys.colLine
         border.width: 1
@@ -166,7 +166,7 @@ Item {
         Layout.fillWidth: true
         Layout.preferredHeight: 62
         radius: 16
-        color: on ? Qt.rgba(accent.r, accent.g, accent.b, 0.16) : Qt.rgba(1, 1, 1, 0.05)
+        color: on ? Qt.rgba(accent.r, accent.g, accent.b, 0.16) : ShellColors.fgA(0.05)
         border.color: on ? Qt.rgba(accent.r, accent.g, accent.b, 0.35) : view.sys.colLine
         border.width: 1
         Behavior on color { ColorAnimation { duration: 180 } }
@@ -184,7 +184,7 @@ Item {
                 Layout.preferredWidth: 40
                 Layout.preferredHeight: 40
                 radius: 20
-                color: parent.parent.on ? parent.parent.accent : Qt.rgba(1, 1, 1, 0.10)
+                color: parent.parent.on ? parent.parent.accent : ShellColors.fgA(0.10)
                 Behavior on color { ColorAnimation { duration: 180 } }
                 scale: iconMa.pressed ? 0.9 : (iconMa.containsMouse ? 1.06 : 1.0)
                 Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
@@ -257,7 +257,7 @@ Item {
         implicitHeight: 44
         radius: 13
         z: ibMa.containsMouse ? 10 : 0
-        color: ibMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
+        color: ibMa.containsMouse ? ShellColors.fgA(0.12) : ShellColors.fgA(0.05)
         border.color: active ? Qt.rgba(view.sys.colOk.r, view.sys.colOk.g, view.sys.colOk.b, 0.5) : view.sys.colLine
         border.width: 1
         Behavior on color { ColorAnimation { duration: 160 } }
@@ -445,7 +445,7 @@ Item {
         radius: view.tileR
         color: solid ? accent
              : on ? Qt.rgba(accent.r, accent.g, accent.b, 0.16)
-                  : Qt.rgba(1, 1, 1, 0.05)
+                  : ShellColors.fgA(0.05)
         border.color: solid ? accent
                     : on ? Qt.rgba(accent.r, accent.g, accent.b, 0.35)
                          : view.sys.colLine
@@ -477,7 +477,7 @@ Item {
                 radius: 19
                 color: tile.solid ? view.sys.colBg
                      : tile.on ? tile.accent
-                               : Qt.rgba(1, 1, 1, 0.10)
+                               : ShellColors.fgA(0.10)
                 Behavior on color { ColorAnimation { duration: 180 } }
                 scale: miniIconMa.pressed ? 0.9 : (miniIconMa.containsMouse ? 1.07 : 1.0)
                 Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
@@ -569,7 +569,7 @@ Item {
         implicitHeight: 44
         Layout.fillWidth: true
         radius: view.tileR
-        color: Qt.rgba(1, 1, 1, 0.05)
+        color: ShellColors.fgA(0.05)
         border.color: view.sys.colLine
         border.width: 1
 
@@ -602,7 +602,7 @@ Item {
         implicitHeight: primary ? 42 : 34
         radius: width / 2
         color: primary ? view.sys.colFg
-              : (mbMa.containsMouse ? view.sys.colHover : Qt.rgba(1, 1, 1, 0.08))
+              : (mbMa.containsMouse ? view.sys.colHover : ShellColors.fgA(0.08))
         opacity: enabledAction ? 1 : 0.35
         Behavior on color { ColorAnimation { duration: 140 } }
         scale: mbMa.pressed ? 0.9 : (mbMa.containsMouse ? 1.08 : 1.0)
@@ -681,7 +681,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             radius: height / 2
-            color: Qt.rgba(1, 1, 1, 0.12)
+            color: ShellColors.fgA(0.12)
             clip: true
 
             Rectangle {
@@ -769,7 +769,7 @@ Item {
         implicitWidth: 190
         implicitHeight: view.android ? 46 : 56
         radius: view.tileR
-        color: view.android ? "transparent" : Qt.rgba(1, 1, 1, 0.05)
+        color: view.android ? "transparent" : ShellColors.fgA(0.05)
         border.color: view.sys.colLine
         border.width: view.android ? 0 : 1
 
@@ -862,7 +862,7 @@ Item {
         implicitWidth: 190
         implicitHeight: view.android ? 46 : 56
         radius: view.tileR
-        color: view.android ? "transparent" : Qt.rgba(1, 1, 1, 0.05)
+        color: view.android ? "transparent" : ShellColors.fgA(0.05)
         border.color: view.sys.colLine
         border.width: view.android ? 0 : 1
 
@@ -986,7 +986,7 @@ Item {
         Layout.preferredHeight: 42
         radius: 12
         color: rowMa.containsMouse ? view.sys.colHover
-             : (highlight ? Qt.rgba(1, 1, 1, 0.06) : "transparent")
+             : (highlight ? ShellColors.fgA(0.06) : "transparent")
         Behavior on color { ColorAnimation { duration: 130 } }
 
         RowLayout {
@@ -1085,7 +1085,7 @@ Item {
         id: recCard
 
         radius: view.tileR
-        color: recBodyMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.05)
+        color: recBodyMa.containsMouse ? ShellColors.fgA(0.08) : ShellColors.fgA(0.05)
         border.color: view.sys.recActive
                       ? Qt.rgba(view.sys.colCrit.r, view.sys.colCrit.g,
                                 view.sys.colCrit.b, 0.45)
@@ -1118,7 +1118,7 @@ Item {
                 radius: 17
                 // Идёт запись — кнопка налита красным, значит «нажми, чтобы
                 // прекратить». Стоит — обычный кружок с треугольником.
-                color: view.sys.recActive ? view.sys.colCrit : Qt.rgba(1, 1, 1, 0.10)
+                color: view.sys.recActive ? view.sys.colCrit : ShellColors.fgA(0.10)
                 Behavior on color { ColorAnimation { duration: 180 } }
                 scale: recBtnMa.pressed ? 0.9 : (recBtnMa.containsMouse ? 1.07 : 1.0)
                 Behavior on scale { NumberAnimation { duration: 130; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
@@ -1208,7 +1208,7 @@ Item {
             Layout.preferredHeight: 3
             Layout.alignment: Qt.AlignVCenter
             radius: 1.5
-            color: Qt.rgba(1, 1, 1, 0.12)
+            color: ShellColors.fgA(0.12)
 
             Rectangle {
                 width: parent.width * Math.max(0, Math.min(100, lrow.pct)) / 100
@@ -1273,7 +1273,7 @@ Item {
 
     component LoadCard: Rectangle {
         radius: view.tileR
-        color: Qt.rgba(1, 1, 1, 0.05)
+        color: ShellColors.fgA(0.05)
         border.color: view.sys.colLine
         border.width: 1
 
@@ -1365,7 +1365,7 @@ Item {
                     Layout.fillWidth: true
                     Layout.preferredHeight: view.android ? 64 : 40
                     radius: 12
-                    color: clockMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                    color: clockMa.containsMouse ? ShellColors.fgA(0.08) : "transparent"
                     Behavior on color { ColorAnimation { duration: 150 } }
 
                     GridLayout {
@@ -1413,7 +1413,7 @@ Item {
                                 visible: view.sys.cfg.featCalendar && !view.android
                                 text: view.sys.tr("Календарь")
                                 color: clockMa.containsMouse ? view.sys.colOn
-                                                            : Qt.rgba(1, 1, 1, 0.28)
+                                                            : ShellColors.fgA(0.28)
                                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                                 Behavior on color { ColorAnimation { duration: 150 } }
                             }
@@ -1649,7 +1649,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 124
                 radius: 16
-                color: Qt.rgba(1, 1, 1, 0.05)
+                color: ShellColors.fgA(0.05)
                 border.color: view.sys.colLine
                 border.width: 1
 
@@ -1670,7 +1670,7 @@ Item {
                             Layout.preferredWidth: 42
                             Layout.preferredHeight: 42
                             radius: 10
-                            color: Qt.rgba(1, 1, 1, 0.07)
+                            color: ShellColors.fgA(0.07)
 
                             Image {
                                 id: cardArt
@@ -1827,7 +1827,7 @@ Item {
                             anchors.fill: parent
                             barCount: 46
                             gap: 3
-                            barColor: Qt.rgba(1, 1, 1, 0.22)
+                            barColor: ShellColors.fgA(0.22)
                             active: seek.p ? seek.p.isPlaying : false
                         }
 
@@ -1908,7 +1908,7 @@ Item {
                         PlainNum {
                             value: view.fmtTime(seek.dur)
                             size: view.sys.dotHSmall
-                            color: Qt.rgba(1, 1, 1, 0.28)
+                            color: ShellColors.fgA(0.28)
                         }
                     }
                 }
@@ -2016,7 +2016,7 @@ Item {
                 radius: 12
                 color: view.sys.keepAwake
                        ? Qt.rgba(awakeRow.tint.r, awakeRow.tint.g, awakeRow.tint.b, 0.16)
-                       : (awakeMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.05))
+                       : (awakeMa.containsMouse ? ShellColors.fgA(0.10) : ShellColors.fgA(0.05))
                 border.color: view.sys.keepAwake
                               ? Qt.rgba(awakeRow.tint.r, awakeRow.tint.g, awakeRow.tint.b, 0.40)
                               : view.sys.colLine
@@ -2052,7 +2052,7 @@ Item {
                         Layout.preferredWidth: 38
                         Layout.preferredHeight: 21
                         radius: 11
-                        color: view.sys.keepAwake ? awakeRow.tint : Qt.rgba(1, 1, 1, 0.14)
+                        color: view.sys.keepAwake ? awakeRow.tint : ShellColors.fgA(0.14)
                         Behavior on color { ColorAnimation { duration: 180 } }
                         Rectangle {
                             width: 17; height: 17; radius: 9
@@ -2133,7 +2133,7 @@ Item {
                         Layout.preferredHeight: 32
                         z: trayMa.containsMouse ? 10 : 0
                         radius: 10
-                        color: trayMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.05)
+                        color: trayMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.05)
                         border.color: view.sys.colLine
                         border.width: 1
                         Behavior on color { ColorAnimation { duration: 150 } }
@@ -2236,7 +2236,7 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 62
                 radius: 14
-                color: Qt.rgba(1, 1, 1, 0.05)
+                color: ShellColors.fgA(0.05)
                 border.color: view.sys.colLine
                 border.width: 1
 
@@ -2416,7 +2416,7 @@ Item {
                 Layout.preferredHeight: 46
                 visible: wifiPage.passwordFor.length > 0
                 radius: 12
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: ShellColors.fgA(0.06)
                 border.color: view.sys.colLine
                 border.width: 1
 
@@ -2455,7 +2455,7 @@ Item {
                         Layout.preferredWidth: 34; Layout.preferredHeight: 32
                         radius: 10
                         color: pwField.text.length && (wifiPage.passwordSecurity !== "eap" || userField.text.length)
-                               ? view.sys.colOn : Qt.rgba(1, 1, 1, 0.10)
+                               ? view.sys.colOn : ShellColors.fgA(0.10)
                         Behavior on color { ColorAnimation { duration: 150 } }
                         Text {
                             anchors.centerIn: parent

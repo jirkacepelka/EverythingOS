@@ -31,7 +31,7 @@ Item {
             y: view.oy + Math.floor(index / view.gcols) * view.py
             width: view.px - 12; height: view.py - 12; radius: 10
             color: "transparent"
-            border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.07)
+            border.width: 1; border.color: ShellColors.fgA(0.07)
         }
     }
 
@@ -46,7 +46,7 @@ Item {
         radius: view.sys.shapeR
         color: view.sys.colBg
         opacity: 0.92
-        border.color: Qt.rgba(1, 1, 1, 0.7); border.width: 1.5
+        border.color: ShellColors.fgA(0.7); border.width: 1.5
         WidgetBody {
             anchors.fill: parent
             sys: view.sys
@@ -104,14 +104,14 @@ Item {
                             height: 118
                             Rectangle {
                                 anchors.fill: parent; radius: Math.max(10, view.sys.winR - 6)
-                                color: tma.containsMouse || tma.pressed ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+                                color: tma.containsMouse || tma.pressed ? ShellColors.fgA(0.10) : "transparent"
                             }
                             WCard {
                                 sys: view.sys
                                 anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 8 }
                                 width: tile.modelData.w * tile.sc; height: tile.modelData.h * tile.sc
                                 radius: Math.max(5, view.sys.shapeR * tile.sc)
-                                color: tile.modelData.bare ? Qt.rgba(1, 1, 1, 0.05) : view.sys.colBg
+                                color: tile.modelData.bare ? ShellColors.fgA(0.05) : view.sys.colBg
                                 border.width: tile.modelData.bare ? 0 : view.sys.edgeW
                                 clip: true
                                 WidgetBody {
@@ -174,7 +174,7 @@ Item {
                             width: 96; height: 118
                             Rectangle {
                                 anchors.fill: parent; radius: Math.max(10, view.sys.winR - 6)
-                                color: bma.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+                                color: bma.containsMouse ? ShellColors.fgA(0.10) : "transparent"
                             }
                             WCard {
                                 sys: view.sys
@@ -223,7 +223,7 @@ Item {
                         x: modelData < 0 ? 0 : parent.width - width
                         width: 30; height: 30; radius: 15
                         color: view.sys.colBg
-                        border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.3)
+                        border.width: 1; border.color: ShellColors.fgA(0.3)
                         z: 5
                         Text { anchors.centerIn: parent; text: modelData < 0 ? "‹" : "›"; color: view.sys.colFg; font.pixelSize: 20 }
                         MouseArea {
@@ -234,7 +234,7 @@ Item {
                 }
             }
 
-            Rectangle { width: 1; height: 60; anchors.verticalCenter: parent.verticalCenter; color: Qt.rgba(1, 1, 1, 0.12) }
+            Rectangle { width: 1; height: 60; anchors.verticalCenter: parent.verticalCenter; color: ShellColors.fgA(0.12) }
 
             Column {
                 id: rightCol

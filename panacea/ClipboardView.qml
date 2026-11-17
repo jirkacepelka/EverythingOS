@@ -209,8 +209,8 @@ FocusScope {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 38
                 radius: 12
-                color: Qt.rgba(1, 1, 1, 0.06)
-                border.color: input.activeFocus ? Qt.rgba(1, 1, 1, 0.22) : view.sys.colLine
+                color: ShellColors.fgA(0.06)
+                border.color: input.activeFocus ? ShellColors.fgA(0.22) : view.sys.colLine
                 border.width: 1
                 Behavior on border.color { ColorAnimation { duration: 150 } }
 
@@ -294,7 +294,7 @@ FocusScope {
 
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AsNeeded
-                contentItem: Rectangle { radius: 2; color: Qt.rgba(1, 1, 1, 0.22) }
+                contentItem: Rectangle { radius: 2; color: ShellColors.fgA(0.22) }
             }
 
             delegate: Rectangle {
@@ -308,9 +308,9 @@ FocusScope {
                 width: list.width
                 height: 40
                 radius: 10
-                color: index === list.currentIndex ? Qt.rgba(1, 1, 1, 0.12)
+                color: index === list.currentIndex ? ShellColors.fgA(0.12)
                      : rowMa.containsMouse ? view.sys.colHover : "transparent"
-                border.color: isPinned ? Qt.rgba(1, 1, 1, 0.18) : "transparent"
+                border.color: isPinned ? ShellColors.fgA(0.18) : "transparent"
                 border.width: isPinned ? 1 : 0
                 Behavior on color { ColorAnimation { duration: 130 } }
 
@@ -344,7 +344,7 @@ FocusScope {
                             radius: 4
                             color: rowDelegate.cType === "color" ? preview.trim() : "transparent"
                             border.width: 1
-                            border.color: Qt.rgba(1, 1, 1, 0.3)
+                            border.color: ShellColors.fgA(0.3)
                         }
 
                         // Image file thumbnail
@@ -391,7 +391,7 @@ FocusScope {
                             Layout.preferredHeight: 22
                             Layout.preferredWidth: 36
                             radius: 5
-                            color: rgbMa.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.10)
+                            color: rgbMa.containsMouse ? ShellColors.fgA(0.22) : ShellColors.fgA(0.10)
                             Text {
                                 anchors.centerIn: parent
                                 text: "RGB"
@@ -413,7 +413,7 @@ FocusScope {
                             Layout.preferredHeight: 22
                             Layout.preferredWidth: 36
                             radius: 5
-                            color: hslMa.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.10)
+                            color: hslMa.containsMouse ? ShellColors.fgA(0.22) : ShellColors.fgA(0.10)
                             Text {
                                 anchors.centerIn: parent
                                 text: "HSL"
@@ -435,7 +435,7 @@ FocusScope {
                             Layout.preferredHeight: 22
                             Layout.preferredWidth: 26
                             radius: 5
-                            color: urlMa.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.10)
+                            color: urlMa.containsMouse ? ShellColors.fgA(0.22) : ShellColors.fgA(0.10)
                             Text {
                                 anchors.centerIn: parent
                                 text: "󰌹"
@@ -457,7 +457,7 @@ FocusScope {
                             Layout.preferredHeight: 22
                             Layout.preferredWidth: 26
                             radius: 5
-                            color: fileMa.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.10)
+                            color: fileMa.containsMouse ? ShellColors.fgA(0.22) : ShellColors.fgA(0.10)
                             Text {
                                 anchors.centerIn: parent
                                 text: "󰈙"
@@ -478,7 +478,7 @@ FocusScope {
                             Layout.preferredHeight: 22
                             Layout.preferredWidth: 26
                             radius: 5
-                            color: pinMa.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : (isPinned ? Qt.rgba(1, 0, 0, 0.16) : Qt.rgba(1, 1, 1, 0.08))
+                            color: pinMa.containsMouse ? ShellColors.fgA(0.22) : (isPinned ? Qt.rgba(1, 0, 0, 0.16) : ShellColors.fgA(0.08))
                             Text {
                                 anchors.centerIn: parent
                                 text: "󰤱"

@@ -85,9 +85,9 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 42
             radius: 12
-            color: Qt.rgba(1, 1, 1, 0.06)
+            color: ShellColors.fgA(0.06)
             border.color: view.flow && view.flow.failed ? view.sys.colCrit
-                        : pw.activeFocus ? Qt.rgba(1, 1, 1, 0.25)
+                        : pw.activeFocus ? ShellColors.fgA(0.25)
                                          : view.sys.colLine
             border.width: 1
             Behavior on border.color { ColorAnimation { duration: 160 } }
@@ -150,7 +150,7 @@ Item {
                 Layout.preferredWidth: 104
                 Layout.preferredHeight: 34
                 radius: 11
-                color: cancelMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+                color: cancelMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
                 Behavior on color { ColorAnimation { duration: 150 } }
                 Text {
                     anchors.centerIn: parent

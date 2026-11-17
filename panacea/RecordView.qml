@@ -38,7 +38,7 @@ Item {
         implicitHeight: 30
         radius: 15
         color: active ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g, view.sys.colOn.b, 0.18)
-             : (chipMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.05))
+             : (chipMa.containsMouse ? ShellColors.fgA(0.10) : ShellColors.fgA(0.05))
         border.color: active ? Qt.rgba(view.sys.colOn.r, view.sys.colOn.g,
                                        view.sys.colOn.b, 0.45)
                              : view.sys.colLine
@@ -80,7 +80,7 @@ Item {
         Layout.fillWidth: true
         Layout.preferredHeight: 40
         radius: 12
-        color: tglMa.containsMouse ? Qt.rgba(1, 1, 1, 0.09) : Qt.rgba(1, 1, 1, 0.04)
+        color: tglMa.containsMouse ? ShellColors.fgA(0.09) : ShellColors.fgA(0.04)
         Behavior on color { ColorAnimation { duration: 150 } }
         opacity: view.sys.recActive ? 0.45 : 1
 
@@ -108,7 +108,7 @@ Item {
                 Layout.preferredWidth: 38
                 Layout.preferredHeight: 21
                 radius: 11
-                color: tog.checked ? view.sys.colOn : Qt.rgba(1, 1, 1, 0.14)
+                color: tog.checked ? view.sys.colOn : ShellColors.fgA(0.14)
                 Behavior on color { ColorAnimation { duration: 180 } }
                 Rectangle {
                     width: 17; height: 17; radius: 9
@@ -148,7 +148,7 @@ Item {
         Layout.preferredHeight: 30
         radius: 9
         color: micMa.containsMouse ? view.sys.colHover
-             : (active ? Qt.rgba(1, 1, 1, 0.06) : "transparent")
+             : (active ? ShellColors.fgA(0.06) : "transparent")
         Behavior on color { ColorAnimation { duration: 130 } }
 
         RowLayout {
@@ -197,7 +197,7 @@ Item {
         Layout.preferredHeight: 46
         radius: 14
         color: filled ? Qt.rgba(tint.r, tint.g, tint.b, bigMa.containsMouse ? 0.34 : 0.22)
-                      : (bigMa.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.05))
+                      : (bigMa.containsMouse ? ShellColors.fgA(0.10) : ShellColors.fgA(0.05))
         border.color: filled ? Qt.rgba(tint.r, tint.g, tint.b, 0.5) : view.sys.colLine
         border.width: 1
         Behavior on color { ColorAnimation { duration: 150 } }
@@ -455,7 +455,7 @@ Item {
             Layout.fillWidth: true
             visible: !view.sys.recActive
             text: view.sys.tr("Файл ляжет в ") + view.sys.cfg.recDir
-            color: Qt.rgba(1, 1, 1, 0.30)
+            color: ShellColors.fgA(0.30)
             elide: Text.ElideMiddle
             font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }

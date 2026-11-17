@@ -72,7 +72,7 @@ Item {
                     required property var modelData
                     width: serviceName.implicitWidth + 35
                     height: 32; radius: 16
-                    color: view.service === modelData.id ? Qt.rgba(1,1,1,0.12) : "transparent"
+                    color: view.service === modelData.id ? ShellColors.fgA(0.12) : "transparent"
                     Row {
                         anchors.centerIn: parent; spacing: 6
                         Text { anchors.verticalCenter: parent.verticalCenter; visible: modelData.id === "chat"; text: "✦"; color: view.service === modelData.id ? view.sys.colFg : view.sys.colMuted; font.pixelSize: view.sys.fontSize - 3 }
@@ -115,7 +115,7 @@ Item {
                     delegate: Rectangle {
                         required property var modelData
                         width: parent.width; height: eventText.implicitHeight + 20; radius: 12
-                        color: Qt.rgba(1,1,1,0.06)
+                        color: ShellColors.fgA(0.06)
                         Text { id: eventText; x: 10; y: 10; width: parent.width - 20; text: modelData.app + ": " + modelData.title + (modelData.body ? "\n" + modelData.body : ""); color: view.sys.colFg; wrapMode: Text.Wrap; textFormat: Text.PlainText; font.pixelSize: view.sys.fontSize - 3 }
                     }
                 }
@@ -124,7 +124,7 @@ Item {
                     delegate: Rectangle {
                         required property var modelData
                         width: parent.width; height: message.implicitHeight + 20; radius: 12
-                        color: modelData.role === "user" ? Qt.rgba(1,1,1,0.1) : Qt.rgba(1,1,1,0.04)
+                        color: modelData.role === "user" ? ShellColors.fgA(0.1) : ShellColors.fgA(0.04)
                         Text { id: message; x: 10; y: 10; width: parent.width - 20; text: modelData.content; color: view.sys.colFg; wrapMode: Text.Wrap; textFormat: Text.PlainText; font.pixelSize: view.sys.fontSize - 3 }
                     }
                 }
@@ -144,14 +144,14 @@ Item {
             Layout.preferredHeight: Math.max(50, Math.min(110, input.contentHeight + 20))
             visible: view.service === "chat"
             radius: height / 2
-            color: Qt.rgba(1, 1, 1, 0.07)
+            color: ShellColors.fgA(0.07)
             border.width: 1
-            border.color: input.activeFocus ? Qt.rgba(1, 1, 1, 0.25) : Qt.rgba(1, 1, 1, 0.07)
+            border.color: input.activeFocus ? ShellColors.fgA(0.25) : ShellColors.fgA(0.07)
             RowLayout {
                 anchors.fill: parent; anchors.margins: 6; spacing: 8
                 Rectangle {
                     Layout.preferredWidth: 36; Layout.preferredHeight: 36; radius: 18
-                    color: attachMouse.containsMouse ? Qt.rgba(1,1,1,0.16) : Qt.rgba(1,1,1,0.07)
+                    color: attachMouse.containsMouse ? ShellColors.fgA(0.16) : ShellColors.fgA(0.07)
                     Glyph { anchors.centerIn: parent; glyph: String.fromCodePoint(0xF03E2); fontFam: view.sys.fontFam; size: 19; color: view.sys.colFg }
                     MouseArea { id: attachMouse; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: view.sys.chatFilePickerOpen = true }
                 }
@@ -178,7 +178,7 @@ Item {
                 }
                 Rectangle {
                     Layout.preferredWidth: 36; Layout.preferredHeight: 36; radius: 18
-                    color: !view.busy && (input.text.trim().length || view.attachments.length) ? view.sys.colFg : Qt.rgba(1,1,1,0.09)
+                    color: !view.busy && (input.text.trim().length || view.attachments.length) ? view.sys.colFg : ShellColors.fgA(0.09)
                     Text { anchors.centerIn: parent; text: "↑"; color: !view.busy && (input.text.trim().length || view.attachments.length) ? view.sys.colBg : view.sys.colMuted; font { pixelSize: view.sys.fontSize - 3; bold: false } }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; enabled: !view.busy && (input.text.trim().length || view.attachments.length) > 0; onClicked: view.send() }
                 }

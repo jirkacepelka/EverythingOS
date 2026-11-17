@@ -223,7 +223,7 @@ FocusScope {
         Text {
             Layout.alignment: Qt.AlignHCenter
             text: view.sys.tr("Рабочие столы")
-            color: Qt.rgba(1, 1, 1, 0.55)
+            color: ShellColors.fgA(0.55)
             font {
                 family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3
                 bold: false; capitalization: Font.AllUppercase; letterSpacing: 2
@@ -266,8 +266,8 @@ FocusScope {
                     color: Qt.rgba(0.06, 0.06, 0.07, 0.92)
                     border.color: card.dropHover ? view.sys.colFg
                                 : card.picked ? view.sys.colOn
-                                : card.live ? Qt.rgba(1, 1, 1, 0.35)
-                                            : Qt.rgba(1, 1, 1, 0.12)
+                                : card.live ? ShellColors.fgA(0.35)
+                                            : ShellColors.fgA(0.12)
                     border.width: (card.picked || card.dropHover) ? 2 : 1
                     clip: true
                     Behavior on border.color { ColorAnimation { duration: 150 } }
@@ -343,8 +343,8 @@ FocusScope {
                             Rectangle {
                                 anchors.fill: parent
                                 radius: 6
-                                color: Qt.rgba(1, 1, 1, 0.05)
-                                border.color: Qt.rgba(1, 1, 1, 0.10)
+                                color: ShellColors.fgA(0.05)
+                                border.color: ShellColors.fgA(0.10)
                                 border.width: 1
                                 clip: true
 
@@ -405,7 +405,7 @@ FocusScope {
                                     visible: parent.children.length > 0
                                              && !parent.children[0].hasContent
                                     text: String(win.geo.cls || "")
-                                    color: Qt.rgba(1, 1, 1, 0.45)
+                                    color: ShellColors.fgA(0.45)
                                     elide: Text.ElideRight
                                     width: parent.width - 12
                                     horizontalAlignment: Text.AlignHCenter
@@ -467,7 +467,7 @@ FocusScope {
         Text {
             Layout.alignment: Qt.AlignHCenter
             text: view.sys.tr("Стрелки — выбрать · Enter — перейти · Esc — закрыть")
-            color: Qt.rgba(1, 1, 1, 0.30)
+            color: ShellColors.fgA(0.30)
             font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
     }
@@ -504,7 +504,7 @@ FocusScope {
                                     && view.dragX > newZone.x && view.dragX < newZone.x + newZone.width
         color: newZone.hot ? view.sys.colFg : Qt.rgba(0, 0, 0, 0.7)
         border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.3)
+        border.color: ShellColors.fgA(0.3)
         onHotChanged: if (hot) view.dropWs = view.newWsId; else if (view.dropWs === view.newWsId) view.dropWs = 0
         Text {
             anchors.centerIn: parent

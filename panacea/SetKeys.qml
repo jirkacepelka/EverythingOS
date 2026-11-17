@@ -284,7 +284,7 @@ ColumnLayout {
             radius: 9
             color: brow.capturing
                    ? Qt.rgba(page.sys.colOn.r, page.sys.colOn.g, page.sys.colOn.b, 0.20)
-                   : (bMa.containsMouse ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.07))
+                   : (bMa.containsMouse ? ShellColors.fgA(0.12) : ShellColors.fgA(0.07))
             border.color: brow.capturing ? page.sys.colOn : page.sys.colLine
             border.width: 1
             Behavior on color { ColorAnimation { duration: 160 } }
@@ -399,7 +399,7 @@ ColumnLayout {
     Text {
         Layout.fillWidth: true
         text: page.sys.tr("Нажмите на сочетание, чтобы изменить. × убирает клавишу.")
-        color: Qt.rgba(1, 1, 1, 0.32)
+        color: ShellColors.fgA(0.32)
         font { family: page.sys.fontBody; pixelSize: page.sys.fontSize - 3 }
     }
 

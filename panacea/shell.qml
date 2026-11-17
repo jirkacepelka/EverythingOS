@@ -674,7 +674,7 @@ PanelWindow {
     Process {
         id: pFonts
         command: ["sh", "-c",
-            "fc-list :spacing=100 family | tr ',' '\\n' | sed 's/^ *//' | sort -u | grep -v '^$'"]
+            "{ fc-list :spacing=100 family; fc-list family | grep -i '^doto'; } | tr ',' '\\n' | sed 's/^ *//' | sort -u | grep -v '^$'"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: {
@@ -1466,6 +1466,25 @@ PanelWindow {
     readonly property color colOn:     theme.on
     readonly property color colOk:     theme.ok
     readonly property color colCrit:   theme.crit
+
+    // White / dark system mode: ShellColors feeds every hard-coded overlay and text colour in the UI,
+    // and the system color-scheme follows so GTK/libadwaita apps flip together with the shell.
+    readonly property bool lightMode: cfg.themeId === "light"
+    Binding { target: ShellColors; property: "fg"; value: root.colFg }
+    Binding { target: ShellColors; property: "bg"; value: root.colBg }
+    Binding { target: ShellColors; property: "light"; value: root.lightMode }
+    function setLightMode(on) {
+        cfg.themeId = on ? "light" : "nothing";
+        saveCfg();
+    }
+    Process { id: pScheme }
+    function applySystemScheme() {
+        pScheme.command = ["sh", "-c",
+            "gsettings set org.gnome.desktop.interface color-scheme " + (lightMode ? "prefer-light" : "prefer-dark") + " 2>/dev/null; true"];
+        pScheme.running = false;
+        pScheme.running = true;
+    }
+    onLightModeChanged: applySystemScheme()
 
     // Цвета состояний, которых в палитре темы нет. На теме Nothing цветного
     // выделения не бывает вовсе: смысл там несёт яркость, а не оттенок, и
@@ -4877,6 +4896,7 @@ PanelWindow {
         function switcherDone(): void { root.switcherCommit(); }
         function onboarding(): void { root.onboardingOpen = !root.onboardingOpen; }
         function widgetsEdit(): void { root.widgetEdit = !root.widgetEdit; }
+        function lightmode(on: string): void { root.setLightMode(on === "on" ? true : on === "off" ? false : !root.lightMode); }
         function widgetsReset(): void { root.cfg.widgetPosJson = ""; root.saveCfg(); }
         // removes every tray widget, restores hidden built-ins and resets positions
         function widgetsClear(): void { root.cfg.widgetItemsJson = "[]"; root.cfg.widgetHiddenJson = "[]"; root.cfg.widgetPosJson = ""; root.saveCfg(); }
@@ -5719,7 +5739,7 @@ PanelWindow {
                 Layout.alignment: Qt.AlignTop
                 radius: 10
                 color: root.notifUrgent ? Qt.rgba(1, 0.27, 0.27, 0.18)
-                                        : Qt.rgba(1, 1, 1, 0.08)
+                                        : ShellColors.fgA(0.08)
 
                 Image {
                     id: toastIcon
@@ -5826,7 +5846,7 @@ PanelWindow {
             anchors.rightMargin: 18
             height: 3; radius: 2; z: 120
             visible: root.toastActive && root.approvalToast
-            color: Qt.rgba(1,1,1,0.12)
+            color: ShellColors.fgA(0.12)
             Rectangle { width: parent.width * Math.max(0, Math.min(1, root.approvalToastRemaining / 30000)); height: parent.height; radius: 2; color: root.colFg }
         }
 
@@ -5974,7 +5994,7 @@ PanelWindow {
                     anchors.fill: parent
                     visible: !root.btToastDisconnected && root.btConnectedBattery < 0
                     radius: 14
-                    color: Qt.rgba(1, 1, 1, 0.10)
+                    color: ShellColors.fgA(0.10)
                     Text {
                         anchors.centerIn: parent
                         text: String.fromCodePoint(0xF00AF)
@@ -6283,7 +6303,7 @@ PanelWindow {
                     radius: 9
                     implicitWidth: chipTxt.implicitWidth + 20
                     implicitHeight: 26
-                    color: chipMa.containsMouse ? root.colOn : Qt.rgba(1, 1, 1, 0.10)
+                    color: chipMa.containsMouse ? root.colOn : ShellColors.fgA(0.10)
                     Behavior on color { ColorAnimation { duration: 120 } }
 
                     Text {
@@ -6391,7 +6411,7 @@ PanelWindow {
                 Layout.preferredHeight: 5
                 Layout.alignment: Qt.AlignVCenter
                 radius: 3
-                color: Qt.rgba(1, 1, 1, 0.16)
+                color: ShellColors.fgA(0.16)
 
                 Rectangle {
                     width: parent.width * (root.osdMuted ? 0 : root.osdValue)
@@ -6893,7 +6913,7 @@ PanelWindow {
                         Layout.preferredWidth: 22
                         Layout.preferredHeight: 22
                         radius: 7
-                        color: Qt.rgba(1, 1, 1, 0.08)
+                        color: ShellColors.fgA(0.08)
 
                         Image {
                             id: vertArt
@@ -6992,7 +7012,7 @@ PanelWindow {
                     Layout.preferredWidth: 14
                     Layout.preferredHeight: 1
                     visible: root.mediaActive
-                    color: Qt.rgba(1, 1, 1, 0.18)
+                    color: ShellColors.fgA(0.18)
                 }
 
                 // день недели столбиком
@@ -7075,8 +7095,8 @@ PanelWindow {
                 height: 4
                 radius: 2
                 color: root.pillDragging ? root.colOn
-                     : (handleMa.containsMouse ? Qt.rgba(1, 1, 1, 0.45)
-                                               : Qt.rgba(1, 1, 1, 0.18))
+                     : (handleMa.containsMouse ? ShellColors.fgA(0.45)
+                                               : ShellColors.fgA(0.18))
                 Behavior on color { ColorAnimation { duration: 140 } }
             }
 
@@ -7119,7 +7139,7 @@ PanelWindow {
             z: 65
             width: 34; height: 34; radius: 17
             visible: root.backShown
-            color: backBtnMa.containsMouse ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(1, 1, 1, 0.08)
+            color: backBtnMa.containsMouse ? ShellColors.fgA(0.14) : ShellColors.fgA(0.08)
             Behavior on color { ColorAnimation { duration: 120 } }
             Text {
                 anchors.centerIn: parent
@@ -7152,7 +7172,7 @@ PanelWindow {
                     required property var modelData
                     width: root.page === modelData.page ? tabText.implicitWidth + 48 : 40
                     height: 34; radius: 17
-                    color: root.page === modelData.page ? Qt.rgba(1,1,1,0.12) : "transparent"
+                    color: root.page === modelData.page ? ShellColors.fgA(0.12) : "transparent"
                     Row {
                         anchors.centerIn: parent; spacing: 8
                         IslandTabIcon { anchors.verticalCenter: parent.verticalCenter; width: 19; height: 19; kind: modelData.page === "main" ? "home" : (modelData.page === "music" ? "music" : (modelData.page === "cal" ? "cal" : "chat")); tint: root.page === modelData.page ? root.colFg : root.colMuted }
@@ -7170,7 +7190,7 @@ PanelWindow {
             anchors.right: parent.right; anchors.rightMargin: 18
             z: 65; width: 34; height: 34; radius: 17
             visible: root.expanded && !root.settingsMode && root.tabbedPage
-            color: root.vpnConnected ? root.colFg : (root.page === "vpn" ? Qt.rgba(1,1,1,0.12) : "transparent")
+            color: root.vpnConnected ? root.colFg : (root.page === "vpn" ? ShellColors.fgA(0.12) : "transparent")
             Behavior on color { ColorAnimation { duration: root.animFast } }
             Text { anchors.centerIn: parent; text: root.vpnBusy ? "···" : root.vpnCountry; color: root.vpnConnected ? root.colBg : root.colFg; font { family: root.fontBody; pixelSize: root.fontSize - 3; bold: false } }
             Canvas {
@@ -7900,7 +7920,7 @@ PanelWindow {
                     Layout.preferredHeight: 30
                     radius: 15
                     visible: root.fileOpActive || root.fileOpError.length > 0
-                    color: fileOpBtnMa.containsMouse ? Qt.rgba(0.94, 0.27, 0.27, 0.22) : Qt.rgba(1, 1, 1, 0.07)
+                    color: fileOpBtnMa.containsMouse ? Qt.rgba(0.94, 0.27, 0.27, 0.22) : ShellColors.fgA(0.07)
                     Behavior on color { ColorAnimation { duration: 120 } }
                     Text {
                         id: fileOpBtnTxt
@@ -7928,7 +7948,7 @@ PanelWindow {
                 Layout.preferredHeight: 5
                 radius: 3
                 visible: !root.fileOpError.length
-                color: Qt.rgba(1, 1, 1, 0.10)
+                color: ShellColors.fgA(0.10)
                 clip: true
                 Rectangle {
                     visible: root.fileOpPhase !== "sync"
@@ -8020,7 +8040,7 @@ LazyLoader {
             delegate: Rectangle {
                 required property var modelData
                 width: 112; height: 34; radius: 17
-                color: modelData.accept ? root.colFg : Qt.rgba(1,1,1,0.09)
+                color: modelData.accept ? root.colFg : ShellColors.fgA(0.09)
                 opacity: modelData.accept && chatPickerFiles.selectedCount === 0 ? 0.4 : 1
                 Text { anchors.centerIn: parent; text: modelData.text; color: modelData.accept ? root.colBg : root.colFg }
                 MouseArea { anchors.fill: parent; enabled: !modelData.accept || chatPickerFiles.selectedCount > 0; cursorShape: Qt.PointingHandCursor; onClicked: { if (modelData.accept) root.chatFilesPicked(chatPickerFiles.selectedPaths); root.chatFilePickerOpen = false; } }
@@ -8146,13 +8166,13 @@ PanelWindow {
                     Rectangle {
                         visible: mi.modelData.t === "-"
                         anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter }
-                        height: 1; color: Qt.rgba(1, 1, 1, 0.12)
+                        height: 1; color: ShellColors.fgA(0.12)
                     }
                     Rectangle {
                         visible: mi.modelData.t !== "-"
                         anchors.fill: parent
                         radius: Math.max(8, root.winR - 8)
-                        color: ma.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+                        color: ma.containsMouse ? ShellColors.fgA(0.10) : "transparent"
                         Text {
                             anchors { left: parent.left; leftMargin: 14; verticalCenter: parent.verticalCenter }
                             text: mi.modelData.t

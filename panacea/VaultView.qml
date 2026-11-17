@@ -50,7 +50,7 @@ FocusScope {
         Layout.fillWidth: true
         Layout.preferredHeight: 32
         radius: 10
-        color: Qt.rgba(1, 1, 1, 0.06)
+        color: ShellColors.fgA(0.06)
         border.width: 1
         border.color: fin.activeFocus ? view.sys.colOn : view.sys.colLine
         TextInput {
@@ -69,7 +69,7 @@ FocusScope {
                 anchors.verticalCenter: parent.verticalCenter
                 visible: fin.text.length === 0
                 text: fld.hint
-                color: Qt.rgba(1, 1, 1, 0.26)
+                color: ShellColors.fgA(0.26)
                 font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
             }
         }
@@ -90,7 +90,7 @@ FocusScope {
                 Layout.preferredHeight: 40
                 radius: 12
                 color: view.sys.vaultUnlocked ? Qt.rgba(view.sys.colOk.r, view.sys.colOk.g, view.sys.colOk.b, 0.16)
-                                              : Qt.rgba(1, 1, 1, 0.08)
+                                              : ShellColors.fgA(0.08)
                 Glyph {
                     anchors.fill: parent
                     glyph: String.fromCodePoint(view.sys.vaultUnlocked ? 0xF0FC6 : 0xF033E)
@@ -125,7 +125,7 @@ FocusScope {
                 Layout.preferredWidth: 34
                 Layout.preferredHeight: 34
                 radius: 11
-                color: lockMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+                color: lockMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
                 Glyph {
                     anchors.fill: parent
                     glyph: String.fromCodePoint(0xF033E)
@@ -151,7 +151,7 @@ FocusScope {
             Layout.fillWidth: true
             Layout.preferredHeight: 42
             radius: 12
-            color: Qt.rgba(1, 1, 1, 0.06)
+            color: ShellColors.fgA(0.06)
             border.width: 1
             border.color: pw.activeFocus ? view.sys.colOn : view.sys.colLine
             Behavior on border.color { ColorAnimation { duration: 140 } }
@@ -176,7 +176,7 @@ FocusScope {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: pw.text.length === 0
                         text: view.sys.tr("Пароль")
-                        color: Qt.rgba(1, 1, 1, 0.28)
+                        color: ShellColors.fgA(0.28)
                         font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
@@ -203,7 +203,7 @@ FocusScope {
             visible: !view.sys.vaultUnlocked
             Layout.fillWidth: true
             text: view.sys.tr("Хранилище шифруется этим же паролем и закрывается само через 15 минут простоя.")
-            color: Qt.rgba(1, 1, 1, 0.30)
+            color: ShellColors.fgA(0.30)
             wrapMode: Text.WordWrap
             font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
         }
@@ -218,7 +218,7 @@ FocusScope {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 36
                 radius: 11
-                color: Qt.rgba(1, 1, 1, 0.06)
+                color: ShellColors.fgA(0.06)
                 border.width: 1
                 border.color: search.activeFocus ? view.sys.colOn : view.sys.colLine
 
@@ -236,7 +236,7 @@ FocusScope {
                         anchors.verticalCenter: parent.verticalCenter
                         visible: search.text.length === 0
                         text: view.sys.tr("Поиск")
-                        color: Qt.rgba(1, 1, 1, 0.28)
+                        color: ShellColors.fgA(0.28)
                         font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3 }
                     }
                 }
@@ -247,7 +247,7 @@ FocusScope {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
                 radius: 11
-                color: scanMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+                color: scanMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
                 opacity: view.sys.browserScanning ? 0.6 : 1
 
                 Glyph {
@@ -281,7 +281,7 @@ FocusScope {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 36
                 radius: 11
-                color: addMa.containsMouse ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.06)
+                color: addMa.containsMouse ? ShellColors.fgA(0.13) : ShellColors.fgA(0.06)
                 Glyph {
                     anchors.fill: parent
                     glyph: String.fromCodePoint(0xF0415)      // плюс
@@ -371,7 +371,7 @@ FocusScope {
 
                 ScrollBar.vertical: ScrollBar {
                     policy: ScrollBar.AsNeeded
-                    contentItem: Rectangle { radius: 2; color: Qt.rgba(1, 1, 1, 0.22) }
+                    contentItem: Rectangle { radius: 2; color: ShellColors.fgA(0.22) }
                 }
 
                 delegate: Rectangle {
@@ -380,7 +380,7 @@ FocusScope {
                     width: ListView.view.width
                     height: 44
                     radius: 11
-                    color: Qt.rgba(1, 1, 1, 0.05)
+                    color: ShellColors.fgA(0.05)
                     border.width: 1
                     border.color: view.sys.colLine
 
@@ -430,7 +430,7 @@ FocusScope {
                             Layout.preferredHeight: 30
                             radius: 10
                             color: impMa.containsMouse ? Qt.rgba(view.sys.colOk.r, view.sys.colOk.g, view.sys.colOk.b, 0.28)
-                                                       : Qt.rgba(1, 1, 1, 0.07)
+                                                       : ShellColors.fgA(0.07)
                             Glyph {
                                 anchors.fill: parent
                                 glyph: String.fromCodePoint(0xF0415)   // плюс
@@ -464,7 +464,7 @@ FocusScope {
 
             ScrollBar.vertical: ScrollBar {
                 policy: ScrollBar.AsNeeded
-                contentItem: Rectangle { radius: 2; color: Qt.rgba(1, 1, 1, 0.22) }
+                contentItem: Rectangle { radius: 2; color: ShellColors.fgA(0.22) }
             }
 
             delegate: Rectangle {
@@ -475,7 +475,7 @@ FocusScope {
                 width: list.width
                 height: row.editing ? 112 : 56
                 radius: 12
-                color: rowMa.containsMouse ? Qt.rgba(1, 1, 1, 0.09) : Qt.rgba(1, 1, 1, 0.05)
+                color: rowMa.containsMouse ? ShellColors.fgA(0.09) : ShellColors.fgA(0.05)
                 border.width: 1
                 border.color: view.sys.colLine
                 Behavior on height { NumberAnimation { duration: view.sys.animQuick } }
@@ -502,7 +502,7 @@ FocusScope {
                             Layout.preferredWidth: 30
                             Layout.preferredHeight: 30
                             radius: 9
-                            color: Qt.rgba(1, 1, 1, 0.08)
+                            color: ShellColors.fgA(0.08)
                             Glyph {
                                 anchors.fill: parent
                                 glyph: String.fromCodePoint(0xF0306)     // ключ
@@ -538,7 +538,7 @@ FocusScope {
                             Layout.preferredWidth: 32
                             Layout.preferredHeight: 32
                             radius: 10
-                            color: copyMa.containsMouse ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(1, 1, 1, 0.07)
+                            color: copyMa.containsMouse ? ShellColors.fgA(0.14) : ShellColors.fgA(0.07)
                             Glyph {
                                 anchors.fill: parent
                                 glyph: String.fromCodePoint(copyMa.done ? 0xF012C : 0xF018F)
@@ -565,7 +565,7 @@ FocusScope {
                             Layout.preferredWidth: 32
                             Layout.preferredHeight: 32
                             radius: 10
-                            color: editMa.containsMouse ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(1, 1, 1, 0.07)
+                            color: editMa.containsMouse ? ShellColors.fgA(0.14) : ShellColors.fgA(0.07)
                             Glyph {
                                 anchors.fill: parent
                                 glyph: String.fromCodePoint(0xF03EB)     // карандаш
@@ -587,7 +587,7 @@ FocusScope {
                             Layout.preferredWidth: 32
                             Layout.preferredHeight: 32
                             radius: 10
-                            color: delMa.containsMouse ? Qt.rgba(1, 0.27, 0.27, 0.18) : Qt.rgba(1, 1, 1, 0.07)
+                            color: delMa.containsMouse ? Qt.rgba(1, 0.27, 0.27, 0.18) : ShellColors.fgA(0.07)
                             Glyph {
                                 anchors.fill: parent
                                 glyph: String.fromCodePoint(0xF01B4)     // корзина
