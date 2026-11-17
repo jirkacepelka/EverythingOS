@@ -1,0 +1,12 @@
+EverythingOS
+Copyright 2026 jirkacepelka
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This project is a derivative work of Panacea (https://github.com/EnsixD/Panacea),
+Copyright (c) 2026 EnsixD, which is distributed under the MIT License. The MIT
+copyright and permission notice is retained in LICENSE-MIT-Panacea and continues
+to apply to the portions derived from Panacea.
+
+Bundled fonts keep their own licences: Doto and Space Mono are distributed under
+the SIL Open Font License 1.1 (see fonts/Doto-OFL.txt and fonts/SpaceMono-OFL.txt).

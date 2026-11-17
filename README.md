@@ -9,7 +9,7 @@
 ![Linux](https://img.shields.io/badge/Linux-Wayland-18181b)
 ![Hyprland](https://img.shields.io/badge/Hyprland-primary-ffffff)
 ![Niri](https://img.shields.io/badge/Niri-experimental-888888)
-![License](https://img.shields.io/badge/license-MIT-d71920)
+![License](https://img.shields.io/badge/license-Apache%202.0-d71920)
 
 [Screenshots](#screenshots) · [Features](#pages) · [Install](#install-these-dotfiles)
 
@@ -339,7 +339,7 @@ none are bundled. Drop `.mp4`, `.webm`, `.mkv` or `.mov` into
 
 Interface font: [JetBrains Mono Nerd Font](https://www.nerdfonts.com) (SIL OFL),
 with [Material Design Icons](https://pictogrammers.com/library/mdi/) for every
-glyph. `assets/logo*.png` is drawn for this project, same licence as the code.
+glyph. `assets/logo*.png` is drawn for this project, same licence as the code (Apache 2.0).
 
 Built on [Hyprland](https://hyprland.org) · [Quickshell](https://quickshell.org) ·
 [cava](https://github.com/karlstav/cava) · [cliphist](https://github.com/sentriz/cliphist) ·
@@ -348,6 +348,9 @@ Built on [Hyprland](https://hyprland.org) · [Quickshell](https://quickshell.org
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE). It covers the configs, the QML and the scripts.
-Wallpapers, fonts and anything else bundled from elsewhere keep the terms of
-their own authors.
+Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE). It covers the configs,
+the QML and the scripts. EverythingOS is derived from
+[Panacea](https://github.com/EnsixD/Panacea) by EnsixD, which is MIT-licensed; that
+notice is kept in [LICENSE-MIT-Panacea](LICENSE-MIT-Panacea) and still applies to the
+derived parts. Wallpapers, fonts and anything else bundled from elsewhere keep the terms
+of their own authors.
