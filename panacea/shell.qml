@@ -6249,24 +6249,30 @@ PanelWindow {
             // klikací jsou jen pilulky (viz capsuleRegion).
             readonly property bool splitOn: root.splitMode
             readonly property real splitPad: 18
-            // Index sekcí středového popupu (hudba · chat · kalendář), vidět i zavřený
+            // Closed-state media index in the center pill: note icon + track title
+            readonly property string trackName: root.player ? String(root.player.trackTitle || "") : ""
+            readonly property bool showMedia: root.mediaActive && trackName.length > 0
             Row {
-                id: midDots
-                visible: nothingCapsule.splitOn
-                x: nClock.x + nClock.width + 10
+                id: midMedia
+                visible: nothingCapsule.splitOn && nothingCapsule.showMedia
+                x: nClock.x + nClock.width + 12
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 5
-                Repeater {
-                    model: root.centerPages
-                    Rectangle {
-                        required property string modelData
-                        width: root.lastCenter === modelData ? 12 : 5; height: 5; radius: 2.5
-                        color: root.colFg
-                        opacity: root.lastCenter === modelData ? 1 : 0.3
-                        Behavior on width { NumberAnimation { duration: root.animFast } }
-                    }
+                spacing: 6
+                IslandTabIcon {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 14; height: 14; kind: "music"
+                    tint: root.player && root.player.isPlaying ? root.colFg : root.colMuted
+                }
+                Text {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(implicitWidth, 130)
+                    text: nothingCapsule.trackName
+                    elide: Text.ElideRight
+                    color: root.player && root.player.isPlaying ? root.colFg : root.colMuted
+                    font { family: root.fontFam; pixelSize: root.fontSize - 3 }
                 }
             }
+            readonly property real midExtra: nothingCapsule.showMedia ? midMedia.implicitWidth + 12 : 0
             Rectangle {
                 id: leftPill
                 z: -1; visible: nothingCapsule.splitOn
@@ -6279,8 +6285,8 @@ PanelWindow {
                 id: midPill
                 z: -1; visible: nothingCapsule.splitOn && !root.midCover
                 border.width: root.edgeW; border.color: root.edgeColor
-                x: nClock.x - nothingCapsule.splitPad - 42
-                width: nClock.width + 2 * nothingCapsule.splitPad + 84
+                x: nClock.x - nothingCapsule.splitPad
+                width: nClock.width + 2 * nothingCapsule.splitPad + nothingCapsule.midExtra
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
             }
             Rectangle {
@@ -6459,7 +6465,7 @@ PanelWindow {
             PlainNum {
                 id: nClock
                 anchors.centerIn: parent
-                anchors.horizontalCenterOffset: mascot.active && !nothingCapsule.splitOn ? -80 : 0
+                anchors.horizontalCenterOffset: nothingCapsule.splitOn ? -nothingCapsule.midExtra / 2 : (mascot.active ? -80 : 0)
                 Behavior on anchors.horizontalCenterOffset { enabled: !root.expanded && capsule.height <= root.pillH + 2; NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
                 value: root.timeText
                 size: root.dotHPill
@@ -6996,7 +7002,7 @@ PanelWindow {
         Component { id: notifComp;    NotificationsView { sys: root } }
         Component { id: audioComp;    AudioView { sys: root } }
         Component { id: calComp;      CalendarView { sys: root } }
-        Component { id: musicComp;    Item { implicitHeight: 190; MusicWidget { x: 0; y: 0; width: parent.width; height: 180; sys: root } } }
+        Component { id: musicComp;    ControlsView { sys: root; onlyMedia: true } }
         Component { id: recordComp;   RecordView { sys: root } }
         Component { id: filesComp;    FilesView { sys: root } }
         Component { id: mediaComp;    MediaView { sys: root } }

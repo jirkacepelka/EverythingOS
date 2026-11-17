@@ -16,6 +16,9 @@ import Quickshell.Bluetooth
 Item {
     id: view
     property var sys
+    // Split island: "media" = only the player card (center Music tab); Home hides the player
+    property bool onlyMedia: false
+    readonly property bool hideMedia: !view.onlyMedia && view.sys && view.sys.splitMode
 
     // Макет для вкладки настроек: та же панель, только неживая. Показывает
     // всегда главную страницу и слушается не сохранённой раскладки, а той,
@@ -1305,11 +1308,29 @@ Item {
         // сам код блоков ради этого не пришлось.
         GridLayout {
             id: mainPage
+            Component.onCompleted: {
+                if (!view.onlyMedia) return;
+                for (var i = 0; i < mainPage.children.length; i++) {
+                    var ch = mainPage.children[i];
+                    if (ch.objectName !== "cc-media" && ch.objectName !== "cc-empty") ch.visible = false;
+                }
+            }
+            Text {
+                objectName: "cc-empty"
+                visible: view.onlyMedia && !(view.sys.mediaActive && view.sys.cfg.featPlayer)
+                Layout.fillWidth: true
+                Layout.preferredHeight: 90
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                text: "Nothing is playing"
+                color: view.sys.colMuted
+                font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 2 }
+            }
             width: parent.width
             columns: 1
             columnSpacing: 0
             rowSpacing: 9
-            opacity: (view.preview || view.sys.page === "main") ? 1 : 0
+            opacity: (view.preview || view.onlyMedia || view.sys.page === "main") ? 1 : 0
             visible: opacity > 0.01
             Behavior on opacity { NumberAnimation { duration: view.sys.animFast } }
 
@@ -1535,7 +1556,7 @@ Item {
                 id: mediaCard
                 readonly property var p: view.sys.player
 
-                visible: view.sys.mediaActive && view.sys.cfg.featPlayer
+                visible: view.sys.mediaActive && view.sys.cfg.featPlayer && !view.hideMedia
                 Layout.fillWidth: true
                 Layout.preferredHeight: 124
                 radius: 16
