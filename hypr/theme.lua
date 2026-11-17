@@ -7,7 +7,9 @@ local BAH = string.format("%02x", math.floor(BA * 255 / 100))
 local BIH = string.format("%02x", math.floor(BA * 255 / 200))
 local BC = (okGap and type(gd) == "table" and gd.bc) or "9a9aa2"
 return {
-    gaps_in = GAP,
+    -- gaps_in applies to each window, so the space between two windows is 2 * gaps_in:
+    -- halve it so it equals the outer gap
+    gaps_in = math.floor(GAP / 2),
     gaps_out = GAP,
     border_size = BW,
     -- Рамка активного окна. Красный конец прежнего градиента лез в кадр
