@@ -1583,7 +1583,7 @@ PanelWindow {
         // панель закрылась — показываем карточки, накопившиеся за это время
         if (!expanded) toastPump.restart();
     }
-    onPageChanged:     { morphing = true; morphTimer.restart(); if (centerPages.indexOf(page) >= 0) lastCenter = page }
+    onPageChanged:     { morphing = true; morphTimer.restart(); if (centerPages.indexOf(page) >= 0) lastCenter = page; if (page !== "vpn") vpnFromCenter = false }
     // Держим дольше самой анимации: высота страницы приходит с задержкой
     // в кадр-другой, и без запаса второй шаг ехал бы по «быстрой» кривой.
     Timer { id: morphTimer; interval: root.animMs + 140; onTriggered: root.morphing = false }
@@ -1760,7 +1760,9 @@ PanelWindow {
     readonly property bool rightCover: splitMode && !settingsMode && !splitIdle && !toastish && (expanded ? splitRight : capsule.heldRight)
     readonly property bool midCover: splitMode && !settingsMode && !splitIdle && !rightCover
     readonly property var rightPages: ["main", "notif", "vpn", "audio", "power", "record", "wifi", "bt"]
-    readonly property bool splitRight: splitMode && rightPages.indexOf(page) >= 0
+    // VPN opened from the middle pill's popup stays centred under it instead of jumping right
+    property bool vpnFromCenter: false
+    readonly property bool splitRight: splitMode && rightPages.indexOf(page) >= 0 && !(page === "vpn" && vpnFromCenter)
     readonly property var centerPages: ["music", "chat", "cal"]
     readonly property bool splitCenter: splitMode && centerPages.indexOf(page) >= 0
     property string lastCenter: "music"
@@ -5243,6 +5245,14 @@ PanelWindow {
                     capsule.splitW = capsule.pillStartW(capsule.heldRight);
                 }
             }
+            // sub-pages (Wi-Fi, Bluetooth…) are wider than the quick-settings page:
+            // follow the new popup width, otherwise the card stays narrow and clips its content
+            function onPopupWChanged() {
+                if (root.expanded && root.splitMode && !root.keepVis && !root.settingsMode) {
+                    capsule.splitAnim = true;
+                    capsule.splitW = root.popupW;
+                }
+            }
             function onSplitRightChanged() {
                 if (root.expanded) capsule.heldRight = root.splitRight;
                 if (root.expanded && root.splitMode && !root.keepVis) { capsule.splitAnim = true; capsule.splitW = root.popupW; }
@@ -6980,7 +6990,7 @@ PanelWindow {
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: root.page = "main"
+                onClicked: root.page = (root.page === "vpn" && root.vpnFromCenter) ? root.lastCenter : "main"
             }
         }
 
@@ -7029,7 +7039,7 @@ PanelWindow {
             MouseArea {
                 anchors.fill: parent; acceptedButtons: Qt.LeftButton | Qt.RightButton; cursorShape: Qt.PointingHandCursor
                 onClicked: mouse => {
-                    if (mouse.button === Qt.RightButton || (!root.cfg.vpnPreferred && !root.cfg.vpnPreferredClient)) { root.page = "vpn"; root.holdOpen = true; }
+                    if (mouse.button === Qt.RightButton || (!root.cfg.vpnPreferred && !root.cfg.vpnPreferredClient)) { root.vpnFromCenter = root.splitMode && root.splitCenter; root.page = "vpn"; root.holdOpen = true; }
                     else root.togglePreferredVpn();
                 }
             }

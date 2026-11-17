@@ -995,6 +995,8 @@ Item {
             anchors.rightMargin: 11
             spacing: 10
             Text {
+                Layout.preferredWidth: 20
+                horizontalAlignment: Text.AlignHCenter
                 text: row1id.icon
                 color: row1id.highlight ? view.sys.colOn : view.sys.colFg
                 font { family: view.sys.fontFam; pixelSize: 15 }

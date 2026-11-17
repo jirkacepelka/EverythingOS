@@ -7,7 +7,7 @@ Item {
     id: view
     required property var sys
     property bool settingsMode: false
-    implicitHeight: settingsMode ? Math.min(720, content.implicitHeight + 12) : 470
+    implicitHeight: settingsMode ? Math.min(720, content.implicitHeight + 12) : Math.min(470, content.implicitHeight + 12)
     property var profiles: []
     property var apps: []
     property string error: ""
