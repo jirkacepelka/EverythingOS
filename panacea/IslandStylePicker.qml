@@ -76,7 +76,7 @@ ColumnLayout {
                 delegate: Rectangle {
                     required property int index
                     y: pk.attached ? 0 : 8; height: 14; radius: 7; color: "#000000"
-                    topLeftRadius: pk.attached ? 0 : -1; topRightRadius: pk.attached ? 0 : -1
+                    topLeftRadius: pk.attached ? 0 : radius; topRightRadius: pk.attached ? 0 : radius
                     width: index === 1 ? 34 : 50
                     x: index === 0 ? 8 : index === 1 ? (scr.width - width) / 2 : scr.width - width - 8
                 }

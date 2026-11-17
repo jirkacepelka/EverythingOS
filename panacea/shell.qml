@@ -6334,7 +6334,7 @@ PanelWindow {
                 x: nLeft.x - nothingCapsule.splitPad
                 width: nLeft.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
-                topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
+                topLeftRadius: root.cfg.notchMode ? 0 : radius; topRightRadius: root.cfg.notchMode ? 0 : radius
                 // concave flares into the screen edge (Attached mode), like the single notch
                 NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
                 NotchCorner { visible: root.cfg.notchMode; side: "right"; fill: root.colBg; r: root.cfg.notchFlare; x: parent.width; y: 0 }
@@ -6346,7 +6346,7 @@ PanelWindow {
                 x: nClock.x - nothingCapsule.splitPad
                 width: nClock.width + 2 * nothingCapsule.splitPad + nothingCapsule.midExtra
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
-                topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
+                topLeftRadius: root.cfg.notchMode ? 0 : radius; topRightRadius: root.cfg.notchMode ? 0 : radius
                 // concave flares into the screen edge (Attached mode), like the single notch
                 NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
                 NotchCorner { visible: root.cfg.notchMode; side: "right"; fill: root.colBg; r: root.cfg.notchFlare; x: parent.width; y: 0 }
@@ -6358,7 +6358,7 @@ PanelWindow {
                 x: nRight.x - nothingCapsule.splitPad
                 width: nRight.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
-                topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
+                topLeftRadius: root.cfg.notchMode ? 0 : radius; topRightRadius: root.cfg.notchMode ? 0 : radius
                 // concave flares into the screen edge (Attached mode), like the single notch
                 NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
                 NotchCorner { visible: root.cfg.notchMode; side: "right"; fill: root.colBg; r: root.cfg.notchFlare; x: parent.width; y: 0 }
