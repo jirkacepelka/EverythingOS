@@ -1,6 +1,7 @@
 import QtQuick
 
 // Catalogue of the widgets that can be placed on the desktop from the tray.
+// bare: true means no card background or border (the widget sits straight on the wallpaper).
 // The desktop is a grid of square cells (pitch 78 px, cell 66 px, gap 12 px):
 // cw x ch is the span in cells, w / h the resulting card size in pixels.
 QtObject {
@@ -16,7 +17,12 @@ QtObject {
         { id: "clockDot",     name: "Dot clock",  cw: 4, ch: 2 },
         { id: "clockFlip",    name: "Flip clock", cw: 4, ch: 2 },
         { id: "battery",      name: "Battery",    cw: 2, ch: 2 },
-        { id: "calendar",     name: "Calendar",   cw: 4, ch: 3 }
+        { id: "calendar",     name: "Calendar",   cw: 4, ch: 3 },
+        { id: "clockHuge",    name: "Huge clock", cw: 8, ch: 3, bare: true },
+        { id: "clockMinimal", name: "Minimal",    cw: 4, ch: 1, bare: true },
+        { id: "date",         name: "Date",       cw: 2, ch: 2 },
+        { id: "weather",      name: "Weather",    cw: 2, ch: 2 },
+        { id: "progress",     name: "Day",        cw: 4, ch: 1 }
     ].map(function (t) { t.w = t.cw * 78 - 12; t.h = t.ch * 78 - 12; return t; })
 
     function find(id) {

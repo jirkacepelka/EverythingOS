@@ -40,6 +40,8 @@ Item {
             x: card.px; y: card.py
             width: card.t ? card.t.cw * view.sys.pitchX - 12 : 0
             height: card.t ? card.t.ch * view.sys.pitchY - 12 : 0
+            color: (card.t && card.t.bare) ? "transparent" : view.sys.colBg
+            border.width: (card.t && card.t.bare) ? 0 : view.sys.edgeW
 
             WidgetBody {
                 anchors.fill: parent

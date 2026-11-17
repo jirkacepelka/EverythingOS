@@ -1835,6 +1835,19 @@ PanelWindow {
         if (widgetHidden.indexOf(id) >= 0) return;
         cfg.widgetHiddenJson = JSON.stringify(widgetHidden.concat([id])); saveCfg();
     }
+    // built-in widgets currently removed from the desktop (shown as tiles in the editor tray)
+    readonly property var removedBuiltins: {
+        var l = widgetHidden.slice();
+        if (cfg.widgetMusic === false && l.indexOf("music") < 0) l.push("music");
+        if (cfg.widgetScratchpad === false && l.indexOf("scratch") < 0) l.push("scratch");
+        return l;
+    }
+    function showBuiltin(id) {
+        cfg.widgetHiddenJson = JSON.stringify(widgetHidden.filter(function (x) { return x !== id; }));
+        if (id === "music") cfg.widgetMusic = true;
+        if (id === "scratch") cfg.widgetScratchpad = true;
+        saveCfg();
+    }
     function restoreBuiltins() { cfg.widgetHiddenJson = "[]"; saveCfg(); }
     Process {
         id: onboardCheck
@@ -8220,10 +8233,7 @@ PanelWindow {
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.namespace: "panacea-widget-editor"
     WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
-    mask: Region {
-        item: trayView.bar
-        Region { item: trayView.optionsOpen ? trayView.panel : null; intersection: Intersection.Combine }
-    }
+    mask: Region { item: trayView.bar }
     WidgetTray { id: trayView; anchors.fill: parent; sys: root }
 }
 

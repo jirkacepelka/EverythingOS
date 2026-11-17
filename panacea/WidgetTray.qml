@@ -1,6 +1,5 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Layouts
 import Quickshell
 
 // Full-screen widget editor layer: a tray at the bottom with every widget type.
@@ -11,8 +10,6 @@ Item {
 
     property var sys
     readonly property alias bar: bar
-    readonly property alias panel: panel
-    property bool optionsOpen: false
 
     WidgetCatalog { id: cat }
 
@@ -59,79 +56,12 @@ Item {
     }
 
 
-    // widget options (modes, built-in visibility) live here, in the editor, not in Settings
-    Rectangle {
-        id: panel
-        visible: view.optionsOpen
-        z: 60
-        anchors { horizontalCenter: parent.horizontalCenter; bottom: bar.top; bottomMargin: 12 }
-        width: 400
-        height: panelCol.implicitHeight + 32
-        radius: view.sys.winR
-        color: view.sys.colBg
-        border.width: view.sys.edgeW
-        border.color: view.sys.edgeColor
-
-        ColumnLayout {
-            id: panelCol
-            x: 16; y: 16
-            width: parent.width - 32
-            spacing: 12
-
-            SetLabel { sys: view.sys; text: "Widget options" }
-            SetSelect {
-                Layout.fillWidth: true
-                sys: view.sys; label: "Clock style"
-                options: [ { id: "analog", text: "Analog" }, { id: "digital", text: "Dot digits" } ]
-                value: view.sys.cfg.widgetClockMode || "analog"
-                onPicked: id => { view.sys.cfg.widgetClockMode = id; view.sys.saveCfg(); }
-            }
-            SetSelect {
-                Layout.fillWidth: true
-                sys: view.sys; label: "Info block"
-                options: [ { id: "weather", text: "Weather" }, { id: "system", text: "System" } ]
-                value: view.sys.cfg.widgetRightMode || "weather"
-                onPicked: id => { view.sys.cfg.widgetRightMode = id; view.sys.saveCfg(); }
-            }
-            SetSelect {
-                Layout.fillWidth: true
-                sys: view.sys; label: "Progress bar"
-                options: [ { id: "day", text: "Day" }, { id: "year", text: "Year" } ]
-                value: view.sys.cfg.widgetProgressMode || "day"
-                onPicked: id => { view.sys.cfg.widgetProgressMode = id; view.sys.saveCfg(); }
-            }
-            SetToggle {
-                Layout.fillWidth: true
-                sys: view.sys; label: "Music player"
-                on: view.sys.cfg.widgetMusic !== false
-                onToggled: v => { view.sys.cfg.widgetMusic = v; view.sys.saveCfg(); }
-            }
-            SetToggle {
-                Layout.fillWidth: true
-                sys: view.sys; label: "Scratchpad"
-                on: view.sys.cfg.widgetScratchpad !== false
-                onToggled: v => { view.sys.cfg.widgetScratchpad = v; view.sys.saveCfg(); }
-            }
-            SetToggle {
-                Layout.fillWidth: true
-                sys: view.sys; label: "Desktop widgets"
-                sub: "Turn every widget off or on."
-                on: view.sys.cfg.featWidgets
-                onToggled: v => { view.sys.cfg.featWidgets = v; view.sys.saveCfg(); }
-            }
-            RowLayout {
-                spacing: 8
-                SetButton { sys: view.sys; text: "Reset layout"; onClicked: view.sys.widgetsResetAll() }
-            }
-        }
-    }
-
     Rectangle {
         id: bar
         z: 50
         anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: view.sys.cfg.islandGap + 1 }
         width: Math.min(view.width - 40, row.implicitWidth + 40)
-        height: 160
+        height: 140
         radius: view.sys.winR
         color: view.sys.colBg
         border.width: view.sys.edgeW
@@ -160,6 +90,8 @@ Item {
                         anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 8 }
                         width: tile.modelData.w * tile.sc; height: tile.modelData.h * tile.sc
                         radius: Math.max(5, view.sys.shapeR * tile.sc)
+                        color: tile.modelData.bare ? Qt.rgba(1, 1, 1, 0.05) : view.sys.colBg
+                        border.width: tile.modelData.bare ? 0 : view.sys.edgeW
                         clip: true
                         WidgetBody {
                             width: tile.modelData.w; height: tile.modelData.h
@@ -208,6 +140,47 @@ Item {
                 }
             }
 
+            // built-in widgets that were removed from the desktop: click to put them back
+            Repeater {
+                model: view.sys.removedBuiltins
+                delegate: Item {
+                    id: bt
+                    required property string modelData
+                    readonly property var info: ({
+                        date: "Date", clock: "Clock", weather: "Weather", right: "Info",
+                        progress: "Progress", music: "Music", scratch: "Notes"
+                    })
+                    width: 96; height: 118
+                    Rectangle {
+                        anchors.fill: parent; radius: Math.max(10, view.sys.winR - 6)
+                        color: bma.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent"
+                    }
+                    WCard {
+                        sys: view.sys
+                        anchors { horizontalCenter: parent.horizontalCenter; top: parent.top; topMargin: 8 }
+                        width: 78; height: 78
+                        radius: 10
+                        WCaption {
+                            sys: view.sys
+                            anchors.centerIn: parent
+                            text: bt.info[bt.modelData] || bt.modelData
+                            color: view.sys.colFg
+                        }
+                    }
+                    WCaption {
+                        sys: view.sys
+                        anchors { horizontalCenter: parent.horizontalCenter; bottom: parent.bottom; bottomMargin: 8 }
+                        text: "Add"
+                        font.pixelSize: view.sys.fontSize - 5
+                    }
+                    MouseArea {
+                        id: bma
+                        anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                        onClicked: view.sys.showBuiltin(bt.modelData)
+                    }
+                }
+            }
+
             Rectangle { width: 1; height: 60; anchors.verticalCenter: parent.verticalCenter; color: Qt.rgba(1, 1, 1, 0.12) }
 
             Column {
@@ -219,21 +192,6 @@ Item {
                     Text { anchors.centerIn: parent; text: "Done"; color: view.sys.colBg
                            font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 3; weight: Font.DemiBold } }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.sys.widgetEdit = false }
-                }
-                Rectangle {
-                    width: 84; height: 32; radius: 16
-                    color: view.optionsOpen ? Qt.rgba(1, 1, 1, 0.14) : "transparent"; border.width: 1; border.color: view.sys.colLine
-                    Text { anchors.centerIn: parent; text: "Options"; color: view.sys.colFg
-                           font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 } }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.optionsOpen = !view.optionsOpen }
-                }
-                Rectangle {
-                    visible: view.sys.widgetHidden.length > 0
-                    width: 84; height: 32; radius: 16
-                    color: "transparent"; border.width: 1; border.color: view.sys.colLine
-                    Text { anchors.centerIn: parent; text: "Restore"; color: view.sys.colMuted
-                           font { family: view.sys.fontFam; pixelSize: view.sys.fontSize - 4 } }
-                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: view.sys.restoreBuiltins() }
                 }
                 Rectangle {
                     width: 84; height: 32; radius: 16

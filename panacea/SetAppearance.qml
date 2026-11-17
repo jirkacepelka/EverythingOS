@@ -179,11 +179,6 @@ ColumnLayout {
         }
     }
 
-    SetButton { sys: page.sys; text: "Widget settings…"; primary: true; onClicked: page.sys.openSettingsPage("widgets") }
-            Item { Layout.fillWidth: true }
-        }
-    }
-
     SetButton {
         sys: page.sys
         text: page.detailsOpen ? page.sys.tr("Скрыть подробности") : page.sys.tr("Подробные настройки")

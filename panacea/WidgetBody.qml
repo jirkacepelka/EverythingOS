@@ -28,6 +28,11 @@ Item {
             case "clockFlip": return flipBody;
             case "battery": return batteryBody;
             case "calendar": return calendarBody;
+            case "clockHuge": return hugeBody;
+            case "clockMinimal": return minimalBody;
+            case "date": return dateBody;
+            case "weather": return weatherBody;
+            case "progress": return progressBody;
             }
             return null;
         }
@@ -301,6 +306,110 @@ Item {
                             opacity: parent.today ? 1 : (index % 7 >= 5 ? 0.8 : 0.9)
                             font { family: root.sys ? root.sys.fontFam : "sans-serif"; pixelSize: root.sys ? root.sys.fontSize - 3 : 10 }
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    Component {
+        id: hugeBody
+        Item {
+            WNum {
+                sys: root.sys
+                anchors.centerIn: parent
+                value: root.two(root.sys ? root.sys.timeHour : 0) + ":" + root.two(root.sys ? root.sys.timeMinute : 0)
+                size: Math.min(parent.height * 0.8, parent.width / 4.7)
+                gapRatio: 0.16
+            }
+        }
+    }
+
+    Component {
+        id: minimalBody
+        Item {
+            WNum {
+                sys: root.sys
+                x: 4; anchors.verticalCenter: parent.verticalCenter
+                value: root.two(root.sys ? root.sys.timeHour : 0) + ":" + root.two(root.sys ? root.sys.timeMinute : 0)
+                size: Math.min(parent.height * 0.62, 40)
+            }
+            WCaption {
+                sys: root.sys
+                anchors { right: parent.right; rightMargin: 4; verticalCenter: parent.verticalCenter }
+                text: Qt.formatDate(new Date(), "ddd · d MMM")
+                color: root.fg
+            }
+        }
+    }
+
+    Component {
+        id: dateBody
+        Item {
+            WNum {
+                sys: root.sys
+                anchors.centerIn: parent
+                value: root.sys ? root.sys.dayNum : ""
+                size: 50; gapRatio: 0.14
+            }
+            Text {
+                anchors { right: parent.right; rightMargin: 16; top: parent.top; topMargin: 13 }
+                text: root.sys ? root.sys.dayText : ""
+                color: (root.sys && root.sys.weekend) ? root.red : (root.sys ? root.sys.colMuted : "#888")
+                font { family: root.sys ? root.sys.fontFam : "sans-serif"; pixelSize: root.sys ? root.sys.fontSize - 3 : 10 }
+            }
+            WCaption {
+                sys: root.sys
+                anchors { left: parent.left; leftMargin: 16; right: parent.right; rightMargin: 16; bottom: parent.bottom; bottomMargin: 13 }
+                color: root.fg; opacity: 0.85
+                text: root.sys ? root.sys.monthText : ""
+            }
+        }
+    }
+
+    Component {
+        id: weatherBody
+        Item {
+            DotIcon {
+                x: 16; y: 14
+                code: root.sys ? root.sys.weatherIcon : ""
+                size: 22
+                color: root.fg
+            }
+            WNum {
+                sys: root.sys
+                x: 16; anchors.verticalCenter: parent.verticalCenter; anchors.verticalCenterOffset: 12
+                value: (root.sys && root.sys.weatherTemp.length) ? root.sys.weatherTemp + "°" : "--°"
+                size: 34
+            }
+            WCaption {
+                sys: root.sys
+                anchors { left: parent.left; leftMargin: 16; right: parent.right; rightMargin: 16; bottom: parent.bottom; bottomMargin: 13 }
+                text: (root.sys && root.sys.weatherReady) ? root.sys.weatherDesc : "No data"
+            }
+        }
+    }
+
+    Component {
+        id: progressBody
+        Item {
+            readonly property int hour: root.sys ? root.sys.timeHour : 0
+            WCaption { sys: root.sys; x: 16; y: 10; text: "Day progress" }
+            WNum {
+                sys: root.sys
+                anchors { right: parent.right; rightMargin: 16; top: parent.top; topMargin: 9 }
+                value: Math.floor((parent.hour * 60 + (root.sys ? root.sys.timeMinute : 0)) / 14.4) + "%"
+                size: 13; gapRatio: 0.15
+            }
+            Row {
+                anchors { left: parent.left; leftMargin: 16; right: parent.right; rightMargin: 16; bottom: parent.bottom; bottomMargin: 14 }
+                spacing: 3
+                Repeater {
+                    model: 24
+                    Rectangle {
+                        required property int index
+                        width: (parent.width - 23 * 3) / 24; height: 6; radius: 3
+                        color: index < parent.parent.hour ? Qt.rgba(1, 1, 1, 0.88) : (index === parent.parent.hour ? root.red : root.dim)
                     }
                 }
             }
