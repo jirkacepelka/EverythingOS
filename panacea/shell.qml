@@ -6291,8 +6291,8 @@ PanelWindow {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 18
-            anchors.rightMargin: 18
+            anchors.leftMargin: root.splitMode ? splitPad : 18
+            anchors.rightMargin: root.splitMode ? splitPad : 18
             height: root.pillH
             visible: root.splitMode || ((!root.expanded || (root.keepVis && !root.settingsMode)) && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
                      && !root.osdActive && !root.toastActive)
@@ -6337,7 +6337,7 @@ PanelWindow {
                 border.width: root.cfg.notchMode ? 0 : root.edgeW; border.color: root.edgeColor
                 x: nLeft.x - nothingCapsule.splitPad
                 width: nLeft.width + 2 * nothingCapsule.splitPad
-                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
+                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : 12; color: root.colBg
                 topLeftRadius: root.cfg.notchMode ? 0 : radius; topRightRadius: root.cfg.notchMode ? 0 : radius
                 // concave flares into the screen edge (Attached mode), like the single notch
                 NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
@@ -6349,7 +6349,7 @@ PanelWindow {
                 border.width: root.cfg.notchMode ? 0 : root.edgeW; border.color: root.edgeColor
                 x: nClock.x - nothingCapsule.splitPad
                 width: nClock.width + 2 * nothingCapsule.splitPad + nothingCapsule.midExtra
-                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
+                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : 12; color: root.colBg
                 topLeftRadius: root.cfg.notchMode ? 0 : radius; topRightRadius: root.cfg.notchMode ? 0 : radius
                 // concave flares into the screen edge (Attached mode), like the single notch
                 NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
@@ -6361,7 +6361,7 @@ PanelWindow {
                 border.width: root.cfg.notchMode ? 0 : root.edgeW; border.color: root.edgeColor
                 x: nRight.x - nothingCapsule.splitPad
                 width: nRight.width + 2 * nothingCapsule.splitPad
-                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
+                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : 12; color: root.colBg
                 topLeftRadius: root.cfg.notchMode ? 0 : radius; topRightRadius: root.cfg.notchMode ? 0 : radius
                 // concave flares into the screen edge (Attached mode), like the single notch
                 NotchCorner { visible: root.cfg.notchMode; side: "left"; fill: root.colBg; r: root.cfg.notchFlare; x: -width; y: 0 }
