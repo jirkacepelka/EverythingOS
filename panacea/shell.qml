@@ -3361,6 +3361,15 @@ PanelWindow {
                 events.unshift({title: sum, body: String(n.body || ""), app: app});
                 root.islandAgentEvents = events.slice(0, 20);
             }
+            // progress notifications (hint "value", 0-100): show in the notch, not as a card
+            if (n.hints && n.hints["value"] !== undefined && n.hints["value"] !== null && app !== "EverythingOS") {
+                var nv = Number(n.hints["value"]);
+                if (isFinite(nv)) {
+                    root.extProgress("notif:" + app + ":" + sum, app || sum, nv, nv < 100);
+                    n.tracked = false;
+                    return;
+                }
+            }
             var isTransient = (app === "EverythingOS"
                                || sum === root.tr("Скриншот")
                                || sum === "Скриншот"
@@ -3867,12 +3876,14 @@ PanelWindow {
     property string osdLabel: ""
     property bool   osdBusy: false
     function showTask(label, busy) {
+        if (busy) { root.beginBusy(label, String.fromCodePoint(0xF0BC4), -1); return; }
+        root.endBusy();
         osdKind = "task";
         osdLabel = label;
-        osdBusy = busy;
+        osdBusy = false;
         osdMuted = false;
         osdValue = 1;
-        if (busy) osdTimer.stop(); else osdTimer.restart();
+        osdTimer.restart();
     }
     function showOsd(kind, value, muted) {
         if (!cfg.featOsd) return;
@@ -4414,11 +4425,74 @@ PanelWindow {
         root.busyLabel = label;
         root.busyGlyph = glyph;
         root.busyProgress = progress === undefined ? -1 : progress;
+        // the notch shows it as a task capsule (see showTask / osdCapsule)
+        root.osdKind = "task";
+        root.osdLabel = label;
+        root.osdMuted = false;
+        root.osdValue = root.busyProgress < 0 ? 0.04 : root.busyProgress / 100;
+        osdTimer.stop();
+        taskCreep.running = root.busyProgress < 0;
+    }
+    // unknown total: the fill creeps towards ~90% instead of bouncing around
+    Timer {
+        id: taskCreep
+        interval: 250; repeat: true
+        onTriggered: root.osdValue += (0.92 - root.osdValue) * 0.05
+    }
+    onBusyProgressChanged: {
+        if (root.osdKind === "task" && root.busyLabel.length > 0) {
+            taskCreep.running = root.busyProgress < 0;
+            if (root.busyProgress >= 0) root.osdValue = root.busyProgress / 100;
+        }
     }
     function endBusy() {
         root.busyLabel = "";
         root.busyGlyph = "";
         root.busyProgress = -1;
+        taskCreep.running = false;
+        if (root.osdKind === "task") root.osdKind = "";
+    }
+
+    // ----------------------------------- progress published by other programs
+    // scripts/progress-watch.py reports com.canonical.Unity.LauncherEntry (downloads, file
+    // managers, many apps) and PackageKit installs; notifications with a "value" hint go
+    // through the same function. Shown in the notch via the busy mechanism above. Programs
+    // that only talk to libflatpak in-process (Bazaar) publish nothing, so they can't be followed.
+    property string extBusyId: ""
+    function prettyApp(id) {
+        var n = String(id).split("/").pop().replace(/\.desktop$/, "").split(".").pop().replace(/[-_]/g, " ");
+        return n.charAt(0).toUpperCase() + n.slice(1);
+    }
+    function extProgress(id, label, pct, active) {
+        if (active) {
+            // someone else's work (updates, file copy) keeps the notch
+            if (root.busyLabel.length > 0 && root.extBusyId !== id && root.extBusyId !== "") return;
+            if (root.busyLabel.length > 0 && root.extBusyId === "") return;
+            root.extBusyId = id;
+            root.beginBusy(root.prettyApp(label), String.fromCodePoint(0xF01DA), pct < 0 ? -1 : Math.min(100, pct));
+            extBusyGuard.restart();
+        } else if (root.extBusyId === id) {
+            root.extBusyId = "";
+            root.endBusy();
+            extBusyGuard.stop();
+        }
+    }
+    // a program that vanishes mid-download must not leave the bar stuck
+    Timer {
+        id: extBusyGuard
+        interval: 20000
+        onTriggered: if (root.extBusyId !== "") { root.extBusyId = ""; root.endBusy(); }
+    }
+    Process {
+        running: true
+        command: [root.scriptDir + "/progress-watch.py"]
+        stdout: SplitParser {
+            onRead: line => {
+                var p = String(line).split("\t");
+                if (p.length < 4) return;
+                root.extProgress(p[0], p[1], parseInt(p[2]), p[3] === "1");
+            }
+        }
     }
 
     // ------------------------------------------ длительная файловая операция
@@ -6480,27 +6554,12 @@ PanelWindow {
                 radius: 3
                 color: ShellColors.fgA(0.16)
 
-                // indeterminate shuttle while a task runs
                 Rectangle {
-                    id: osdShuttle
-                    visible: root.osdKind === "task" && root.osdBusy
-                    width: parent.width * 0.35
-                    height: parent.height
-                    radius: 3
-                    color: root.colOn
-                    SequentialAnimation on x {
-                        running: osdShuttle.visible
-                        loops: Animation.Infinite
-                        NumberAnimation { from: 0; to: 150 * 0.65; duration: 700; easing.type: Easing.InOutSine }
-                        NumberAnimation { from: 150 * 0.65; to: 0; duration: 700; easing.type: Easing.InOutSine }
-                    }
-                }
-                Rectangle {
-                    visible: !(root.osdKind === "task" && root.osdBusy)
                     width: parent.width * (root.osdMuted ? 0 : root.osdValue)
                     height: parent.height
                     radius: 3
-                    color: root.osdKind === "bright" ? root.colWarn : root.colOn
+                    color: root.osdKind === "bright" ? root.colWarn
+                           : root.osdKind === "task" ? "#ff9f0a" : root.colOn
                     Behavior on width {
                         NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
                     }
@@ -6509,9 +6568,11 @@ PanelWindow {
             }
 
             Text {
-                Layout.preferredWidth: root.osdKind === "task" ? 96 : mBatt.width
+                Layout.preferredWidth: root.osdKind === "task" ? 130 : mBatt.width
+                elide: Text.ElideRight
                 horizontalAlignment: Text.AlignRight
-                text: root.osdKind === "task" ? root.osdLabel
+                text: root.osdKind === "task"
+                      ? root.osdLabel + (root.busyLabel.length > 0 && root.busyProgress >= 0 ? " " + root.busyProgress + "%" : "")
                       : root.osdMuted ? "—" : Math.round(root.osdValue * 100) + "%"
                 color: root.colMuted
                 font { family: root.fontFam; pixelSize: root.fontSize - 3; bold: false }
