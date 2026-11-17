@@ -54,7 +54,7 @@ PanelWindow {
             // узкую полоску у самого края.
             property bool   pillAutoHide: false
             // Режим оверлея: остров парит поверх окон без резервирования полосы
-            property bool   pillOverlay: true
+            property bool   pillOverlay: false
             // Остров виден при раскрытии (панель открывается отдельной плавающей карточкой)
             property bool   pillKeepVisible: false
             // Закрывать оверлей Panacea по Super+Q (иначе убивать фоновое окно)
@@ -81,7 +81,7 @@ PanelWindow {
             property int    collapsedW: 260
             property int    expandedH: 620
             // отступ капсулы от кромки, когда режим выреза выключен
-            property int    islandGap: 12
+            property int    islandGap: 10
             // скругление капсулы вне режима выреза (0 — по половине высоты)
             property int    islandRadius: 0
 
@@ -420,12 +420,12 @@ PanelWindow {
         fontDisplay: "JetBrainsMono Nerd Font", fontSize: 15, iconSize: 17,
         colFg: "#ffffff", colOn: "#ffffff", mutedAlpha: 0.45, themeId: "nothing",
         spacingUnit: 8, smallRadius: 10,
-        pillH: 38, pillPos: "top", pillScreen: "auto", pillAutoHide: false, pillOverlay: true,
+        pillH: 38, pillPos: "top", pillScreen: "auto", pillAutoHide: false, pillOverlay: false,
         pillKeepVisible: false, closePanaceaFirst: true,
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 12, islandRadius: 0,
+        islandGap: 10, islandRadius: 0,
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -4735,7 +4735,7 @@ PanelWindow {
     color: "transparent"
     // зазор между пилюлей и окнами (0 в режиме оверлея или при скрытии)
     exclusiveZone: (root.cfg.pillOverlay || root.pillHidden || (root.fullscreenActive && !root.expanded))
-                   ? 0 : pillH + gap
+                   ? 0 : pillH + (root.cfg.notchMode ? 0 : root.cfg.islandGap)
     WlrLayershell.layer: WlrLayer.Overlay
 
     // Пока поверх экрана развёрнутое окно, пилюли не видно совсем.
