@@ -7867,7 +7867,7 @@ PanelWindow {
     // Widgety stojí na mřížce oken: okraj 10 px mezery + 1 px rámeček zleva a
     // pod zónou ostrova shora. Výchozí pozice, pak je uživatel přetahuje.
     readonly property int edgeInset: root.cfg.islandGap + 1
-    readonly property int topInset: ((root.cfg.pillOverlay || root.pillHidden) ? 0
+    readonly property int topInset: (root.pillHidden ? 0
                                     : root.pillH + (root.cfg.notchMode ? 0 : root.cfg.islandGap)) + root.cfg.islandGap + 1
     color: "transparent"
     exclusionMode: ExclusionMode.Ignore
