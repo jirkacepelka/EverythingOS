@@ -11,7 +11,7 @@ ColumnLayout {
     property var sys
     readonly property var cfg: pk.sys.cfg
     readonly property bool attached: pk.cfg.notchMode
-    readonly property bool split: pk.cfg.splitIsland && !pk.cfg.notchMode
+    readonly property bool split: pk.cfg.splitIsland
     property int cardHeight: 150
 
     Layout.fillWidth: true
@@ -19,12 +19,10 @@ ColumnLayout {
 
     function pickPosition(att) {
         pk.cfg.notchMode = att;
-        if (att) pk.cfg.splitIsland = false;
         pk.sys.saveCfg();
     }
     function pickLayout(split) {
         pk.cfg.splitIsland = split;
-        if (split) pk.cfg.notchMode = false;
         pk.sys.saveCfg();
     }
 
@@ -73,11 +71,12 @@ ColumnLayout {
                 y: 8; width: 110; height: 14; radius: 7
                 color: "#000000"
             }
-            Repeater {    // three pills
+            Repeater {    // three pills (flush with the top edge when Attached is selected)
                 model: card.kind === "pills" ? 3 : 0
                 delegate: Rectangle {
                     required property int index
-                    y: 8; height: 14; radius: 7; color: "#000000"
+                    y: pk.attached ? 0 : 8; height: 14; radius: 7; color: "#000000"
+                    topLeftRadius: pk.attached ? 0 : -1; topRightRadius: pk.attached ? 0 : -1
                     width: index === 1 ? 34 : 50
                     x: index === 0 ? 8 : index === 1 ? (scr.width - width) / 2 : scr.width - width - 8
                 }
@@ -128,7 +127,7 @@ ColumnLayout {
         spacing: 12
         Card { kind: "together"; title: "Together"; sub: "One capsule"
                sel: !pk.split; onClicked: pk.pickLayout(false) }
-        Card { kind: "pills"; title: "3 pills"; sub: "Workspaces · clock · system (floating)"
+        Card { kind: "pills"; title: "3 pills"; sub: "Workspaces · clock · system"
                sel: pk.split; onClicked: pk.pickLayout(true) }
     }
 }

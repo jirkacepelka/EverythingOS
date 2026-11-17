@@ -919,7 +919,7 @@ PanelWindow {
     // со стороны выглядело, будто две наклейки слетаются к острову с разных
     // сторон. Пока он едет, их просто нет, и приезжает он целым.
     readonly property bool cornersWanted:
-        !(root.settingsMode || root.wallsOpen || root.pillHidden)
+        !(root.settingsMode || root.wallsOpen || root.pillHidden || root.splitMode)
     property bool cornersOn: false
     Timer {
         id: cornerReveal
@@ -1657,7 +1657,7 @@ PanelWindow {
     property var islandChatMessages: []
     property var islandAgentEvents: []
     // Rozdělený ostrov (3 pilulky) vždy drží ostrov viditelný: popup je samostatná karta
-    readonly property bool splitMode: cfg.splitIsland && !cfg.notchMode && !settingsMode && !pillSide
+    readonly property bool splitMode: cfg.splitIsland && !settingsMode && !pillSide
     readonly property bool keepVis: cfg.pillKeepVisible
     // Uvítací okno (OnboardingView): při každém spuštění Panacea, jde vypnout
     // Společný okraj (cfg.islandGap): mezera oken od okrajů i mezi sebou (Hyprland
@@ -5009,8 +5009,8 @@ PanelWindow {
         id: splitLayer
         visible: root.splitMode
         z: root.splitIdle ? 5 : -1
-        x: capsule.freeGap + 1
-        width: root.width - 2 * (capsule.freeGap + 1)
+        x: root.cfg.islandGap + 1
+        width: root.width - 2 * (root.cfg.islandGap + 1)
         y: root.pillAtBottom ? root.height - capsule.freeGap - root.pillH : capsule.freeGap
         height: root.pillH
     }
@@ -5101,7 +5101,7 @@ PanelWindow {
         anchors.horizontalCenter: root.pillSide ? undefined : parent.horizontalCenter
         // Pilulky: pravé stránky ukotvit vpravo (okraj = společná mezera)
         anchors.horizontalCenterOffset: ((root.splitRight && root.expanded && !root.keepVis) || (capsule.collapsing && capsule.heldRight))
-                                        ? Math.round((root.width - width) / 2 - (freeGap + 1)) : 0
+                                        ? Math.round((root.width - width) / 2 - (root.cfg.islandGap + 1)) : 0
         Behavior on anchors.horizontalCenterOffset { enabled: !root.splitMode; NumberAnimation { duration: root.animMs; easing.type: Easing.InOutCubic } }
         anchors.verticalCenter:   root.pillSide ? parent.verticalCenter : undefined
 
@@ -5175,7 +5175,7 @@ PanelWindow {
                 : root.osdActive ? capsule.evenUp(osdCapsule.implicitWidth + 32)
                 : root.pillSide  ? capsule.evenUp(Math.max(vertCapsule.implicitHeight + 30,
                                                            capsule.collapsedMin))
-                : root.splitMode ? capsule.evenUp(root.width - 2 * (capsule.freeGap + 1))
+                : root.splitMode ? capsule.evenUp(root.width - 2 * (root.cfg.islandGap + 1))
                 : capsule.evenUp(Math.max(nothingCapsule.implicitWidth + (mascot.active && !nothingCapsule.splitOn ? 140 : 28),
                                           capsule.collapsedMin))
         readonly property real idleThick: (root.fileOverIsland || fileAbsorbAnimation.running) ? 58
@@ -6334,6 +6334,7 @@ PanelWindow {
                 x: nLeft.x - nothingCapsule.splitPad
                 width: nLeft.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
+                topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
             }
             Rectangle {
                 id: midPill
@@ -6342,6 +6343,7 @@ PanelWindow {
                 x: nClock.x - nothingCapsule.splitPad
                 width: nClock.width + 2 * nothingCapsule.splitPad + nothingCapsule.midExtra
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
+                topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
             }
             Rectangle {
                 id: rightPill
@@ -6350,6 +6352,7 @@ PanelWindow {
                 x: nRight.x - nothingCapsule.splitPad
                 width: nRight.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
+                topLeftRadius: root.cfg.notchMode ? 0 : -1; topRightRadius: root.cfg.notchMode ? 0 : -1
             }
 
             // Место под точки столов: пять слотов по шесть пикселей, просветы
