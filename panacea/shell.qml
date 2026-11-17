@@ -1651,6 +1651,9 @@ PanelWindow {
     property string islandChatService: "chat"
     property var islandChatMessages: []
     property var islandAgentEvents: []
+    // Rozdělený ostrov (3 pilulky) vždy drží ostrov viditelný: popup je samostatná karta
+    readonly property bool splitMode: cfg.splitIsland && !cfg.notchMode && !settingsMode && !pillSide
+    readonly property bool keepVis: cfg.pillKeepVisible || (cfg.splitIsland && !cfg.notchMode)
     property string page: "main"
     // что показывает медиаплеер (страница "media")
     property string quickFilePath: ""
@@ -4793,14 +4796,17 @@ PanelWindow {
 
     Region {
         id: capsuleRegion
-        item: capsule
+        item: nothingCapsule.splitOn ? null : capsule
+        Region { item: nothingCapsule.splitOn ? leftPill : null;  intersection: Intersection.Combine }
+        Region { item: nothingCapsule.splitOn ? midPill : null;   intersection: Intersection.Combine }
+        Region { item: nothingCapsule.splitOn ? rightPill : null; intersection: Intersection.Combine }
         // спрятанный остров вне экрана, и без полоски его не позвать
         Region {
             item: root.cfg.pillAutoHide ? revealStrip : null
             intersection: Intersection.Combine
         }
         Region {
-            item: (root.cfg.pillKeepVisible && !root.settingsMode && (root.expanded || detachedPanel.opacity > 0.005)) ? detachedPanel : null
+            item: (root.keepVis && !root.settingsMode && (root.expanded || detachedPanel.opacity > 0.005)) ? detachedPanel : null
             intersection: Intersection.Combine
         }
     }
@@ -4810,7 +4816,7 @@ PanelWindow {
     WlrLayershell.keyboardFocus: root.holdOpen && !root.chatFilePickerOpen ? WlrKeyboardFocus.Exclusive
                                               : WlrKeyboardFocus.None
 
-    readonly property var activePanel: (root.cfg.pillKeepVisible && root.expanded && !root.settingsMode) ? detachedPanel : capsule
+    readonly property var activePanel: (root.keepVis && root.expanded && !root.settingsMode) ? detachedPanel : capsule
 
     // Клик мимо закреплённой панели — закрыть.
     // Области лежат строго ВОКРУГ активной панели, поэтому клики по элементам
@@ -5036,6 +5042,7 @@ PanelWindow {
                 : root.osdActive ? capsule.evenUp(osdCapsule.implicitWidth + 32)
                 : root.pillSide  ? capsule.evenUp(Math.max(vertCapsule.implicitHeight + 30,
                                                            capsule.collapsedMin))
+                : root.splitMode ? capsule.evenUp(root.width - 2 * (capsule.freeGap + 1))
                 : capsule.evenUp(Math.max(nothingCapsule.implicitWidth + (mascot.active && !nothingCapsule.splitOn ? 140 : 28),
                                           capsule.collapsedMin))
         readonly property real idleThick: (root.fileOverIsland || fileAbsorbAnimation.running) ? 58
@@ -5046,7 +5053,7 @@ PanelWindow {
                 ? toastCapsule.implicitHeight + 24 : root.pillH
 
         width: root.settingsMode ? root.settingsW
-             : (root.expanded && !root.cfg.pillKeepVisible) ? root.panelW
+             : (root.expanded && !root.keepVis) ? root.panelW
              : root.pillSide     ? idleThick
                                  : idleLen
         // целевая высота — к ней анимируется height и по ней же сразу
@@ -5092,7 +5099,7 @@ PanelWindow {
         // Раскрытая панель не выше expandedH: страницы бывают длинные, но
         // их высоту ограничивает уже своя прокрутка, а не остров.
         readonly property real targetH: root.settingsMode ? Math.min(contentH, root.height - 48)
-                : (root.expanded && !root.cfg.pillKeepVisible) ? Math.min(contentH, root.cfg.expandedH)
+                : (root.expanded && !root.keepVis) ? Math.min(contentH, root.cfg.expandedH)
                 : root.pillSide ? idleLen
                                 : idleThick
         // Не выше экрана: у боковых кромок вертикальная раскладка страницы
@@ -5141,7 +5148,7 @@ PanelWindow {
         readonly property real edgeR: (root.settingsMode || !root.cfg.notchMode)
                                       ? (root.cfg.islandRadius > 0 ? root.cfg.islandRadius : 26)
                                       : 0
-        readonly property real freeR: (root.settingsMode || (root.expanded && !root.cfg.pillKeepVisible))
+        readonly property real freeR: (root.settingsMode || (root.expanded && !root.keepVis))
                 ? (root.cfg.islandRadius > 0 && !root.cfg.notchMode ? root.cfg.islandRadius : 26)
                 : (root.cfg.islandRadius > 0 && !root.cfg.notchMode
                    ? root.cfg.islandRadius : root.pillH / 2)
@@ -5238,10 +5245,24 @@ PanelWindow {
         // страницы не подсовывают: трек живёт карточкой прямо здесь, а до
         // пульта записи один клик по плитке — зато не приходится гадать,
         // что откроется.
-        function openPanel() {
+        // Rozdělený ostrov: pilulka pod kurzorem určuje popup
+        // (uprostřed kalendář, vpravo controls, vlevo nic).
+        function splitPageAt(sceneX) {
+            if (!nothingCapsule.splitOn) return "main";
+            var m = midPill.mapToItem(null, 0, 0).x;
+            var r = rightPill.mapToItem(null, 0, 0).x;
+            if (sceneX >= r) return "main";
+            if (sceneX >= m) return "cal";
+            return "";
+        }
+        function openPanel(sceneX) {
+            var pg = capsule.splitPageAt(sceneX === undefined ? capsuleHover.point.scenePosition.x : sceneX);
+            if (pg === "") { return; }
             if (!root.expanded) {
                 pageResetTimer.stop();
-                root.page = "main";
+                root.page = pg;
+            } else if (nothingCapsule.splitOn && root.page !== pg && (root.page === "main" || root.page === "cal")) {
+                root.page = pg;
             }
             root.expanded = true;
         }
@@ -5271,7 +5292,7 @@ PanelWindow {
         Timer {
             id: collapseTimer; interval: 180
             onTriggered: {
-                if (capsuleHover.hovered || (detachedHover.hovered && root.cfg.pillKeepVisible) || root.holdOpen) return;
+                if (capsuleHover.hovered || (detachedHover.hovered && root.keepVis) || root.holdOpen) return;
                 root.collapse();
             }
         }
@@ -5283,14 +5304,18 @@ PanelWindow {
             enabled: !root.expanded && !root.toastActive && !root.pillDragging
                      && !root.osdActive && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
             cursorShape: Qt.PointingHandCursor
-            onClicked: capsule.openPanel()
+            onClicked: mouse => {
+                var sx = capsule.mapToItem(null, mouse.x, 0).x;
+                if (nothingCapsule.splitOn && capsule.splitPageAt(sx) === "") root.toggleOverview();
+                else capsule.openPanel(sx);
+            }
         }
 
         // В режиме pillKeepVisible при открытой отдельной панели клик по фону острова закрывает её
         MouseArea {
             anchors.fill: parent
             z: -1
-            enabled: root.cfg.pillKeepVisible && root.expanded && !root.settingsMode
+            enabled: root.keepVis && root.expanded && !root.settingsMode
                      && !root.toastActive && !root.pillDragging
             cursorShape: Qt.PointingHandCursor
             onClicked: root.collapse()
@@ -6083,35 +6108,38 @@ PanelWindow {
             anchors.leftMargin: 18
             anchors.rightMargin: 18
             height: root.pillH
-            visible: (!root.expanded || (root.cfg.pillKeepVisible && !root.settingsMode)) && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
+            visible: (!root.expanded || (root.keepVis && !root.settingsMode)) && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
                      && !root.osdActive && !root.toastActive
             opacity: root.pillSide ? 0 : (visible ? 1 : 0)
             Behavior on opacity { NumberAnimation { duration: root.animFast } }
 
             // просвет между часами и крайними группами
-            readonly property real armGap: splitOn ? 36 : 22
+            readonly property real armGap: 22
 
-            // Rozdělený ostrov: tři samostatné pilulky (stoly | hodiny | systém).
-            // Jen ve floating režimu a v klidovém stavu; kapsle je pak průhledná.
-            readonly property bool splitOn: root.cfg.splitIsland && !root.cfg.notchMode
-                                            && !root.settingsMode && !root.pillSide
-            readonly property real splitPad: 12
+            // Rozdělený ostrov: tři samostatné pilulky na krajích a uprostřed
+            // (stoly | hodiny | systém). Kapsle je přes celou šířku průhledná,
+            // klikací jsou jen pilulky (viz capsuleRegion).
+            readonly property bool splitOn: root.splitMode && nothingCapsule.visible
+            readonly property real splitPad: 18
             Rectangle {
+                id: leftPill
                 z: -1; visible: nothingCapsule.splitOn
-                x: nLeft.x - nothingCapsule.splitPad - 6
-                width: nLeft.width + 2 * nothingCapsule.splitPad + 6
+                x: nLeft.x - nothingCapsule.splitPad
+                width: nLeft.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: height / 2; color: root.colBg
             }
             Rectangle {
+                id: midPill
                 z: -1; visible: nothingCapsule.splitOn
-                x: nClock.x - nothingCapsule.splitPad - 6
-                width: nClock.width + 2 * nothingCapsule.splitPad + 12
+                x: nClock.x - nothingCapsule.splitPad
+                width: nClock.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: height / 2; color: root.colBg
             }
             Rectangle {
+                id: rightPill
                 z: -1; visible: nothingCapsule.splitOn
                 x: nRight.x - nothingCapsule.splitPad
-                width: nRight.width + 2 * nothingCapsule.splitPad + 6
+                width: nRight.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: height / 2; color: root.colBg
             }
 
@@ -6447,7 +6475,7 @@ PanelWindow {
                 anchors.centerIn: parent
                 width: root.pillH
                 spacing: 7
-                visible: (!root.expanded || (root.cfg.pillKeepVisible && !root.settingsMode)) && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
+                visible: (!root.expanded || (root.keepVis && !root.settingsMode)) && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.recPickActive && !root.voxActive
                 opacity: root.pillSide ? 1 : 0
                 Behavior on opacity { NumberAnimation { duration: root.animFast } }
 
@@ -6688,7 +6716,7 @@ PanelWindow {
 
         Row {
             id: islandTabs
-            parent: (root.cfg.pillKeepVisible && root.expanded && !root.settingsMode) ? detachedPanel : capsule
+            parent: (root.keepVis && root.expanded && !root.settingsMode) ? detachedPanel : capsule
             anchors.top: parent.top
             anchors.topMargin: 12
             anchors.left: parent.left
@@ -6715,7 +6743,7 @@ PanelWindow {
 
         Rectangle {
             id: vpnTab
-            parent: (root.cfg.pillKeepVisible && root.expanded && !root.settingsMode) ? detachedPanel : capsule
+            parent: (root.keepVis && root.expanded && !root.settingsMode) ? detachedPanel : capsule
             anchors.top: parent.top; anchors.topMargin: 12
             anchors.right: parent.right; anchors.rightMargin: 18
             z: 65; width: 34; height: 34; radius: 17
@@ -6741,7 +6769,7 @@ PanelWindow {
         Loader {
             id: contentLoader
             z: 10
-            parent: (root.cfg.pillKeepVisible && !root.settingsMode && (root.expanded || detachedPanel.opacity > 0.005)) ? detachedPanel : capsule
+            parent: (root.keepVis && !root.settingsMode && (root.expanded || detachedPanel.opacity > 0.005)) ? detachedPanel : capsule
             anchors.top: parent ? parent.top : undefined
             anchors.topMargin: (root.page === "main" || root.page === "chat" || root.page === "vpn") && !root.settingsMode ? 55 : 15
             anchors.horizontalCenter: parent ? parent.horizontalCenter : undefined
@@ -6753,7 +6781,7 @@ PanelWindow {
             // раскрытой панели не рисуем: при старте записи из quick settings
             // панель сворачивается, а её содержимое иначе видно ещё пару кадров
             // позади карточки — экраны «проблёскивали».
-            active: (root.expanded || capsule.height > root.pillH + 4 || (root.cfg.pillKeepVisible && detachedPanel.opacity > 0.005))
+            active: (root.expanded || capsule.height > root.pillH + 4 || (root.keepVis && detachedPanel.opacity > 0.005))
                     && !root.recPickActive && !root.btToastActive && !root.wifiToastActive
                     && !root.acToastActive && !root.voxActive
             visible: !root.recPickActive && !root.btToastActive && !root.wifiToastActive && !root.acToastActive && !root.voxActive
@@ -6835,9 +6863,9 @@ PanelWindow {
     Rectangle {
         id: detachedPanel
         z: 50
-        readonly property bool showMe: root.cfg.pillKeepVisible && !root.settingsMode && root.expanded
+        readonly property bool showMe: root.keepVis && !root.settingsMode && root.expanded
 
-        visible: root.cfg.pillKeepVisible && !root.settingsMode && (root.expanded || opacity > 0.005)
+        visible: root.keepVis && !root.settingsMode && (root.expanded || opacity > 0.005)
         opacity: showMe ? 1 : 0
         scale: showMe ? 1 : 0.96
 
@@ -6894,10 +6922,10 @@ PanelWindow {
 
         readonly property real panelGap: root.cfg.islandGap > 0 ? root.cfg.islandGap : 10
 
-        width: (root.cfg.pillKeepVisible && !root.settingsMode && (root.expanded || opacity > 0.005)) ? root.panelW : 0
+        width: (root.keepVis && !root.settingsMode && (root.expanded || opacity > 0.005)) ? root.panelW : 0
 
         readonly property real detachedTargetH: Math.min(capsule.contentH, root.cfg.expandedH)
-        height: (root.cfg.pillKeepVisible && !root.settingsMode && (root.expanded || opacity > 0.005))
+        height: (root.keepVis && !root.settingsMode && (root.expanded || opacity > 0.005))
                 ? Math.min(detachedTargetH, root.height - (capsule.y + capsule.height + panelGap + 24))
                 : 0
         Behavior on height { NumberAnimation { duration: root.animQuick; easing.type: Easing.OutCubic } }
@@ -6906,6 +6934,8 @@ PanelWindow {
            ? (root.pillAtLeft  ? capsule.x + capsule.width + panelGap
               : root.pillAtRight ? capsule.x - width - panelGap
               : Math.max(12, Math.min(root.width - width - 12, capsule.x + (capsule.width - width) / 2)))
+           : root.splitMode && root.page === "main"
+              ? capsule.x + capsule.width - width
            : Math.max(12, Math.min(root.width - width - 12, capsule.x + (capsule.width - width) / 2))
 
         y: root.pillAtBottom
