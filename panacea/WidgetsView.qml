@@ -180,11 +180,12 @@ Item {
     }
 
     // Общий вид карточки: тёмная плашка со скруглением
-    // Stejné pozadí jako pilulky ostrova, bez okraje
+    // Stejné pozadí a společný okraj jako pilulky ostrova
     component Card: Rectangle {
         radius: view.cardRadius
         color: view.sys ? view.sys.colBg : "#000000"
-        border.width: 0
+        border.width: view.sys ? view.sys.edgeW : 0
+        border.color: view.sys ? view.sys.edgeColor : "transparent"
     }
 
     // Точечное число

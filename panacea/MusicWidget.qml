@@ -21,7 +21,8 @@ Rectangle {
     implicitHeight: 180
     radius: 22
     color: sys ? sys.colBg : "#000000"
-    border.width: 0
+    border.width: sys ? sys.edgeW : 0
+    border.color: sys ? sys.edgeColor : "transparent"
 
     Timer {
         interval: 500; repeat: true

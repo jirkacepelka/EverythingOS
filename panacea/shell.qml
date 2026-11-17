@@ -110,6 +110,8 @@ PanelWindow {
             property bool   splitIsland: false
             property bool   showOnboarding: true
             property string widgetPosJson: ""
+            property int    borderWidth: 1
+            property string borderColor: "#9a9aa2"
             property bool   reduceMotion: false
             property int    animMove: 230      // размер и положение, мс
             property int    animFade: 200      // прозрачность и цвет, мс
@@ -428,7 +430,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 16, islandRadius: 0, splitIsland: false, showOnboarding: true, widgetPosJson: "",
+        islandGap: 16, islandRadius: 0, splitIsland: false, showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2",
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -1660,15 +1662,18 @@ PanelWindow {
     // Společný okraj (cfg.islandGap): mezera oken od okrajů i mezi sebou (Hyprland
     // gaps), odstup ostrova od hrany a odsazení widgetů. Zapíše hypr/lua/gaps_data.lua
     // (platí i po restartu) a nastaví Hyprland za běhu.
+    readonly property color edgeColor: cfg.borderColor
+    readonly property int edgeW: cfg.borderWidth
     Process {
         id: gapApply
         command: ["sh", "-c",
-                  "printf 'return { gap = %s }\\n' \"$1\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
-                  "hyprctl dispatch \"hl.config({ general = { gaps_in = $1, gaps_out = $1 } })\" >/dev/null 2>&1; true",
-                  "_", String(root.cfg.islandGap)]
+                  "g=$1; w=$2; c=${3#\\#}; " +
+                  "printf 'return { gap = %s, bw = %s, bc = \"%s\" }\\n' \"$g\" \"$w\" \"$c\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
+                  "hyprctl dispatch \"hl.config({ general = { gaps_in = $g, gaps_out = $g, border_size = $w, col = { active_border = 'rgba(${c}ff)', inactive_border = 'rgba(${c}55)' } } })\" >/dev/null 2>&1; true",
+                  "_", String(root.cfg.islandGap), String(root.cfg.borderWidth), String(root.cfg.borderColor)]
     }
     Timer { id: gapTimer; interval: 200; onTriggered: gapApply.running = true }
-    Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } }
+    Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } function onBorderWidthChanged() { gapTimer.restart(); } function onBorderColorChanged() { gapTimer.restart(); } }
     Timer { interval: 2500; running: true; onTriggered: gapApply.running = true }
     // Přepínač oken Alt+Tab (AltTabView): seznam v pořadí posledního použití
     property bool switcherOpen: false
@@ -5248,7 +5253,8 @@ PanelWindow {
         // passare 1px di sfondo sul lato superiore: da qui l'impressione che
         // la pillola non fosse attaccata al bordo dello schermo e che il fondo
         // cambiasse all'apertura.
-        border.width: 0
+        border.width: (!root.cfg.notchMode && !nothingCapsule.splitOn) ? root.edgeW : 0
+        border.color: root.edgeColor
 
         // Bounce со вкладки Motion живёт здесь: остров меняет размер по
         // кривой с перелётом, и ползунок задаёт, насколько сильно он
@@ -6207,6 +6213,7 @@ PanelWindow {
             Rectangle {
                 id: leftPill
                 z: -1; visible: nothingCapsule.splitOn
+                border.width: root.edgeW; border.color: root.edgeColor
                 x: nLeft.x - nothingCapsule.splitPad
                 width: nLeft.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: height / 2; color: root.colBg
@@ -6214,6 +6221,7 @@ PanelWindow {
             Rectangle {
                 id: midPill
                 z: -1; visible: nothingCapsule.splitOn
+                border.width: root.edgeW; border.color: root.edgeColor
                 x: nClock.x - nothingCapsule.splitPad
                 width: nClock.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: height / 2; color: root.colBg
@@ -6221,6 +6229,7 @@ PanelWindow {
             Rectangle {
                 id: rightPill
                 z: -1; visible: nothingCapsule.splitOn
+                border.width: root.edgeW; border.color: root.edgeColor
                 x: nRight.x - nothingCapsule.splitPad
                 width: nRight.width + 2 * nothingCapsule.splitPad
                 height: root.pillH; radius: height / 2; color: root.colBg
@@ -7029,7 +7038,8 @@ PanelWindow {
 
         radius: root.cfg.islandRadius > 0 ? root.cfg.islandRadius : 24
         color: root.colBg
-        border.width: 0
+        border.width: root.edgeW
+        border.color: root.edgeColor
         clip: true
 
         HoverHandler {

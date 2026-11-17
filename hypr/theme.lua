@@ -1,14 +1,16 @@
 local okGap, gd = pcall(require, "lua.gaps_data")
 local GAP = (okGap and type(gd) == "table" and gd.gap) or 16
+local BW = (okGap and type(gd) == "table" and gd.bw) or 1
+local BC = (okGap and type(gd) == "table" and gd.bc) or "9a9aa2"
 return {
     gaps_in = GAP,
     gaps_out = GAP,
-    border_size = 1,
+    border_size = BW,
     -- Рамка активного окна. Красный конец прежнего градиента лез в кадр
     -- полосой под островом и спорил с чёрно-белой оболочкой; здесь он ничего
     -- не обозначал — просто цвет.
-    active_border = { colors = { "rgba(ffffffff)","rgba(8a8a8aff)" }, angle = 45 },
-    inactive_border = "rgba(2a2a2aaa)",
+    active_border = "rgba(" .. BC .. "ff)",
+    inactive_border = "rgba(" .. BC .. "55)",
     rounding = 12,
     rounding_power = 4.0,
     active_opacity = 1.0,
