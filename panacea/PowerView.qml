@@ -42,9 +42,11 @@ Item {
         // и снимается. Требовать на неё второе нажатие значило делать вид,
         // что кнопка не работает: первое-то не делает ничего.
         { id: "logout", instant: true, icon: String.fromCodePoint(0xF0343), label: view.sys.tr("Выйти"),
-          cmd: "if [ -n \"$NIRI_SOCKET\" ] || [ \"${XDG_CURRENT_DESKTOP,,}\" = \"niri\" ]; then "
+          cmd: "L=\"$HOME/.cache/panacea/logout.log\"; mkdir -p \"$(dirname \"$L\")\"; "
+             + "if [ -n \"$NIRI_SOCKET\" ] || [ \"$(printf %s \"$XDG_CURRENT_DESKTOP\" | tr A-Z a-z)\" = \"niri\" ]; then "
              + "niri msg action quit --skip-confirmation; "
-             + "else out=$(hyprctl dispatch 'hl.dsp.exit()' 2>&1); case \"$out\" in ok*) ;; *) hyprctl dispatch exit ;; esac; fi",
+             + "else { date; hyprctl dispatch 'hl.dsp.exit()'; sleep 1; hyprctl dispatch exit; sleep 2; "
+             + "loginctl terminate-session \"${XDG_SESSION_ID:-$(loginctl show-user $USER -p Display --value)}\"; } >\"$L\" 2>&1; fi",
           accent: view.sys.colWarn },  // md-logout
         { id: "reboot", icon: String.fromCodePoint(0xF0709), label: view.sys.tr("Перезагрузка"),
           cmd: "systemctl reboot -i || systemctl reboot || loginctl reboot",
