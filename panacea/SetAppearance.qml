@@ -11,6 +11,7 @@ ColumnLayout {
 
     property var sys
     property bool detailsOpen: false
+    readonly property color cur: Qt.color(page.sys.cfg.borderColor)
     property var localeOptions: [{ id: "en", text: "English" }, { id: "ru", text: "Русский" }, { id: "tr", text: "Türkçe" }]
 
     Process {
@@ -104,11 +105,21 @@ ColumnLayout {
             onMoved: v => { page.sys.cfg.borderWidth = v; page.sys.saveCfg(); }
         }
 
+        SetSlider {
+            sys: page.sys
+            label: "Barevný okraj – průhlednost"
+            from: 0; to: 100; step: 5
+            value: page.sys.cfg.borderAlpha
+            suffix: "%"
+            onMoved: v => { page.sys.cfg.borderAlpha = v; page.sys.saveCfg(); }
+        }
+
+        // Jemná paleta (tlumené tóny) – klik nastaví barvu okraje
         Flow {
             Layout.fillWidth: true
             spacing: 10
             Repeater {
-                model: ["#9a9aa2", "#ffffff", "#ff4d4d", "#ff9f43", "#ffd84d", "#4dd47a", "#4da6ff", "#a06bff", "#ff6bd5"]
+                model: ["#9a9aa2", "#d8d8dc", "#b9a7a0", "#c9a48a", "#c8bd8a", "#8fb59a", "#8aa9c4", "#a49bc4", "#c49bb4"]
                 delegate: Rectangle {
                     required property string modelData
                     width: 30; height: 30; radius: 15
@@ -121,6 +132,36 @@ ColumnLayout {
                     }
                 }
             }
+        }
+
+        // Vlastní barva: odstín / sytost / jas
+        Text {
+            text: "Vlastní barva (odstín · sytost · jas)"
+            color: page.sys.colMuted
+            font { family: page.sys.fontFam; pixelSize: page.sys.fontSize - 3 }
+        }
+        SetSlider {
+            sys: page.sys
+            label: "Odstín"
+            from: 0; to: 360; step: 1
+            value: Math.max(0, page.cur.hslHue) * 360
+            onMoved: v => { page.sys.cfg.borderColor = String(Qt.hsla(v / 360, Math.max(0.05, page.cur.hslSaturation), page.cur.hslLightness, 1)); page.sys.saveCfg(); }
+        }
+        SetSlider {
+            sys: page.sys
+            label: "Sytost"
+            from: 0; to: 100; step: 1
+            value: page.cur.hslSaturation * 100
+            suffix: "%"
+            onMoved: v => { page.sys.cfg.borderColor = String(Qt.hsla(Math.max(0, page.cur.hslHue), v / 100, page.cur.hslLightness, 1)); page.sys.saveCfg(); }
+        }
+        SetSlider {
+            sys: page.sys
+            label: "Jas"
+            from: 10; to: 95; step: 1
+            value: page.cur.hslLightness * 100
+            suffix: "%"
+            onMoved: v => { page.sys.cfg.borderColor = String(Qt.hsla(Math.max(0, page.cur.hslHue), page.cur.hslSaturation, v / 100, 1)); page.sys.saveCfg(); }
         }
     }
 

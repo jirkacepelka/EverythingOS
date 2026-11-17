@@ -112,6 +112,7 @@ PanelWindow {
             property string widgetPosJson: ""
             property int    borderWidth: 1
             property string borderColor: "#9a9aa2"
+            property int    borderAlpha: 55
             property bool   reduceMotion: false
             property int    animMove: 230      // размер и положение, мс
             property int    animFade: 200      // прозрачность и цвет, мс
@@ -430,7 +431,7 @@ PanelWindow {
         pillDrag: false, panelW: 540,
         monOverrides: "",
         notchMode: true, notchFlare: 12, collapsedW: 260, expandedH: 620,
-        islandGap: 16, islandRadius: 0, splitIsland: false, showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2",
+        islandGap: 16, islandRadius: 0, splitIsland: false, showOnboarding: true, widgetPosJson: "", borderWidth: 1, borderColor: "#9a9aa2", borderAlpha: 55,
         reduceMotion: false, animMove: 230, animFade: 200, animHover: 150, animBounce: 0,
         clock12: false, clockSeconds: false, clockWeekday: true,
         clockTz: "auto", clockDateFmt: "d MMMM",
@@ -1664,18 +1665,18 @@ PanelWindow {
     // (platí i po restartu) a nastaví Hyprland za běhu.
     // Společné zaoblení (0 = výchozí) pro widgety, popupy a okna
     readonly property int shapeR: cfg.islandRadius > 0 ? cfg.islandRadius : 22
-    readonly property color edgeColor: cfg.borderColor
+    readonly property color edgeColor: Qt.rgba(Qt.color(cfg.borderColor).r, Qt.color(cfg.borderColor).g, Qt.color(cfg.borderColor).b, cfg.borderAlpha / 100)
     readonly property int edgeW: cfg.borderWidth
     Process {
         id: gapApply
         command: ["sh", "-c",
-                  "g=$1; w=$2; c=${3#\\#}; r=$4; " +
-                  "printf 'return { gap = %s, bw = %s, bc = \"%s\", rd = %s }\\n' \"$g\" \"$w\" \"$c\" \"$r\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
-                  "hyprctl dispatch \"hl.config({ decoration = { rounding = $r }, general = { gaps_in = $g, gaps_out = $g, border_size = $w, col = { active_border = 'rgba(${c}ff)', inactive_border = 'rgba(${c}55)' } } })\" >/dev/null 2>&1; true",
-                  "_", String(root.cfg.islandGap), String(root.cfg.borderWidth), String(root.cfg.borderColor), String(root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, 24) : 12)]
+                  "g=$1; w=$2; c=${3#\\#}; r=$4; al=$5; a=$(printf '%02x' $((al*255/100))); ia=$(printf '%02x' $((al*255/200))); " +
+                  "printf 'return { gap = %s, bw = %s, bc = \"%s\", rd = %s, ba = %s }\\n' \"$g\" \"$w\" \"$c\" \"$r\" \"$al\" > \"$HOME/.config/hypr/lua/gaps_data.lua\"; " +
+                  "hyprctl dispatch \"hl.config({ decoration = { rounding = $r }, general = { gaps_in = $g, gaps_out = $g, border_size = $w, col = { active_border = 'rgba(${c}${a})', inactive_border = 'rgba(${c}${ia})' } } })\" >/dev/null 2>&1; true",
+                  "_", String(root.cfg.islandGap), String(root.cfg.borderWidth), String(root.cfg.borderColor), String(root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, 24) : 12), String(root.cfg.borderAlpha)]
     }
     Timer { id: gapTimer; interval: 200; onTriggered: gapApply.running = true }
-    Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } function onBorderWidthChanged() { gapTimer.restart(); } function onBorderColorChanged() { gapTimer.restart(); } function onIslandRadiusChanged() { gapTimer.restart(); } }
+    Connections { target: root.cfg; function onIslandGapChanged() { gapTimer.restart(); } function onBorderWidthChanged() { gapTimer.restart(); } function onBorderColorChanged() { gapTimer.restart(); } function onIslandRadiusChanged() { gapTimer.restart(); } function onBorderAlphaChanged() { gapTimer.restart(); } }
     Timer { interval: 2500; running: true; onTriggered: gapApply.running = true }
     // Přepínač oken Alt+Tab (AltTabView): seznam v pořadí posledního použití
     property bool switcherOpen: false
@@ -6218,7 +6219,7 @@ PanelWindow {
                 border.width: root.edgeW; border.color: root.edgeColor
                 x: nLeft.x - nothingCapsule.splitPad
                 width: nLeft.width + 2 * nothingCapsule.splitPad
-                height: root.pillH; radius: height / 2; color: root.colBg
+                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
             }
             Rectangle {
                 id: midPill
@@ -6226,7 +6227,7 @@ PanelWindow {
                 border.width: root.edgeW; border.color: root.edgeColor
                 x: nClock.x - nothingCapsule.splitPad
                 width: nClock.width + 2 * nothingCapsule.splitPad
-                height: root.pillH; radius: height / 2; color: root.colBg
+                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
             }
             Rectangle {
                 id: rightPill
@@ -6234,7 +6235,7 @@ PanelWindow {
                 border.width: root.edgeW; border.color: root.edgeColor
                 x: nRight.x - nothingCapsule.splitPad
                 width: nRight.width + 2 * nothingCapsule.splitPad
-                height: root.pillH; radius: height / 2; color: root.colBg
+                height: root.pillH; radius: root.cfg.islandRadius > 0 ? Math.min(root.cfg.islandRadius, height / 2) : height / 2; color: root.colBg
             }
 
             // Место под точки столов: пять слотов по шесть пикселей, просветы

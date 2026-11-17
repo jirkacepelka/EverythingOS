@@ -2,6 +2,9 @@ local okGap, gd = pcall(require, "lua.gaps_data")
 local GAP = (okGap and type(gd) == "table" and gd.gap) or 16
 local BW = (okGap and type(gd) == "table" and gd.bw) or 1
 local RD = (okGap and type(gd) == "table" and gd.rd) or 12
+local BA = (okGap and type(gd) == "table" and gd.ba) or 55
+local BAH = string.format("%02x", math.floor(BA * 255 / 100))
+local BIH = string.format("%02x", math.floor(BA * 255 / 200))
 local BC = (okGap and type(gd) == "table" and gd.bc) or "9a9aa2"
 return {
     gaps_in = GAP,
@@ -10,8 +13,8 @@ return {
     -- Рамка активного окна. Красный конец прежнего градиента лез в кадр
     -- полосой под островом и спорил с чёрно-белой оболочкой; здесь он ничего
     -- не обозначал — просто цвет.
-    active_border = "rgba(" .. BC .. "ff)",
-    inactive_border = "rgba(" .. BC .. "55)",
+    active_border = "rgba(" .. BC .. BAH .. ")",
+    inactive_border = "rgba(" .. BC .. BIH .. ")",
     rounding = RD,
     rounding_power = 4.0,
     active_opacity = 1.0,
