@@ -3,29 +3,29 @@
     "logo": {
         "type": "file",
         "source": "~/.config/fastfetch/nothing-logo.txt",
-        "padding": { "top": 1, "left": 1, "right": 4 },
-        "color": { "1": "white", "2": "#D71921" }
+        "padding": { "top": 2, "left": 1, "right": 6 },
+        "color": { "1": "#ffffff", "2": "#363636" }
     },
     "display": {
         "separator": "  ",
-        "color": { "keys": "#808080", "title": "white", "separator": "#D71921" },
-        "key": { "type": "string", "width": 8 }
+        "color": { "keys": "#737373", "title": "#ffffff", "separator": "#737373" },
+        "key": { "type": "string", "width": 8 },
+        "bar": { "border": { "left": "", "right": "" }, "char": { "elapsed": "●", "total": "·" }, "width": 12,
+                 "color": { "elapsed": "#ffffff", "total": "#404040" } },
+        "percent": { "type": 6, "width": 12 }
     },
     "modules": [
-        { "type": "title", "color": { "user": "white", "at": "#D71921", "host": "white" } },
-        { "type": "custom", "format": "────────────────────────", "outputColor": "#404040" },
+        { "type": "title", "color": { "user": "white", "at": "#737373", "host": "white" } },
+        { "type": "custom", "format": "{#38;2;64;64;64}────────────────────────────" },
         { "type": "os",       "key": "OS" },
-        { "type": "kernel",   "key": "KERNEL" },
+        { "type": "kernel",   "key": "KERNEL", "format": "{2}" },
         { "type": "uptime",   "key": "UPTIME" },
-        { "type": "packages", "key": "PKGS", "format": "{dpkg} dpkg · {flatpak-user} flatpak" },
-        { "type": "shell",    "key": "SHELL" },
-        { "type": "wm",       "key": "WM" },
-        { "type": "terminal", "key": "TERM" },
+        { "type": "wm",       "key": "WM", "format": "{1}" },
+        { "type": "shell",    "key": "SHELL", "format": "{6}" },
         { "type": "cpu",      "key": "CPU", "format": "{1}" },
-        { "type": "gpu",      "key": "GPU", "format": "{2}" },
-        { "type": "memory",   "key": "MEM", "format": "{1} / {2} ({3})" },
-        { "type": "disk",     "key": "DISK", "folders": "/", "format": "{1} / {2} ({3})" },
-        "break",
-        { "type": "custom", "format": "{#31}●{#}{#37} ● ● ● ● ● ● ●{#}", "key": " " }
+        { "type": "memory",   "key": "MEMORY", "format": "{percentage-bar}  {used} / {total}" },
+        { "type": "disk",     "key": "DISK", "folders": "/", "format": "{size-percentage-bar}  {size-used} / {size-total}" },
+        { "type": "custom", "format": "{#38;2;64;64;64}────────────────────────────" },
+        { "type": "custom", "key": " ", "format": "{#38;2;255;255;255}●  {#38;2;190;190;190}●  {#38;2;130;130;130}●  {#38;2;85;85;85}●  {#38;2;54;54;54}●" }
     ]
 }
